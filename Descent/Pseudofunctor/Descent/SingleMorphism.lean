@@ -13,7 +13,7 @@ import Descent.Pseudofunctor.Reindexing
 Defines descent data for a pseudofunctor along `p : E ⟶ B` using Čech overlaps,
 with cocycle convention `ξ₂₃ ≫ ξ₁₂ = ξ₁₃` and unit along the diagonal. Main
 definitions are `SingleMorphismDescentDatum`, `SingleMorphismDescentData`, and
-`single_morphism_comparison_xi`.
+`singleMorphismComparisonXi`.
 -/
 
 open CategoryTheory
@@ -36,58 +36,58 @@ noncomputable section
 -/
 
 /-- The canonical isomorphism `diag^*(π₁^* a) ≅ a`. -/
-def diag_iso_p1 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
+def diagIsoP1 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
     (reindex F (Limits.pullback.diagonal p)).obj ((reindex F (p1 p)).obj a) ≅ a := by
   refine
-    (reindex_comp_iso_obj (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫
-      (reindex_objIsoOfEq (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
+    (reindexCompIsoObj F (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫
+      (reindexObjIsoOfEq F (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
         (by simp) a) ≪≫
-        reindex_id_isoObj a
+        reindexIdIsoObj F a
 
 /-- The canonical isomorphism `diag^*(π₂^* a) ≅ a`. -/
-def diag_iso_p2 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
+def diagIsoP2 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
     (reindex F (Limits.pullback.diagonal p)).obj ((reindex F (p2 p)).obj a) ≅ a := by
   refine
-    (reindex_comp_iso_obj (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫
-      (reindex_objIsoOfEq (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
+    (reindexCompIsoObj F (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫
+      (reindexObjIsoOfEq F (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
         (by simp) a) ≪≫
-        reindex_id_isoObj a
+        reindexIdIsoObj F a
 
 /-!
 ## Descent data for a single morphism
 -/
 
 /-- The morphism on the `(1,2)`-overlap induced from `ξ`. -/
-def xi_12 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
+def xi12 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
     (ξ : (reindex F (p2 p)).obj C₀ ≅ (reindex F (p1 p)).obj C₀) :
     (reindex F (p12 p ≫ p2 p)).obj C₀ ⟶ (reindex F (p12 p ≫ p1 p)).obj C₀ := by
   refine
-    (reindex_comp_iso_obj (g := p12 p) (f := p2 p) C₀).hom ≫
+    (reindexCompIsoObj F (g := p12 p) (f := p2 p) C₀).hom ≫
       (reindex F (p12 p)).map ξ.hom ≫
-      (reindex_comp_iso_obj (g := p12 p) (f := p1 p) C₀).inv
+      (reindexCompIsoObj F (g := p12 p) (f := p1 p) C₀).inv
 
 /-- The morphism on the `(2,3)`-overlap induced from `ξ`, transported so that its codomain
 is the `(1,2)`-pullback. -/
-def xi_23 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
+def xi23 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
     (ξ : (reindex F (p2 p)).obj C₀ ≅ (reindex F (p1 p)).obj C₀) :
     (reindex F (p23 p ≫ p2 p)).obj C₀ ⟶ (reindex F (p12 p ≫ p2 p)).obj C₀ := by
   refine
-    (reindex_comp_iso_obj (g := p23 p) (f := p2 p) C₀).hom ≫
+    (reindexCompIsoObj F (g := p23 p) (f := p2 p) C₀).hom ≫
       (reindex F (p23 p)).map ξ.hom ≫
-      (reindex_comp_iso_obj (g := p23 p) (f := p1 p) C₀).inv ≫
-        (reindex_objIsoOfEq (a := C₀) (by simp)).hom
+      (reindexCompIsoObj F (g := p23 p) (f := p1 p) C₀).inv ≫
+        (reindexObjIsoOfEq (F := F) (a := C₀) (by simp)).hom
 
 /-- The morphism on the `(1,3)`-overlap induced from `ξ`, transported so that its domain and
-codomain match those of `xi_23` and `xi_12`. -/
-def xi_13 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
+codomain match those of `xi23` and `xi12`. -/
+def xi13 {E B : C} (p : E ⟶ B) {C₀ : F.obj (.mk (op E))}
     (ξ : (reindex F (p2 p)).obj C₀ ≅ (reindex F (p1 p)).obj C₀) :
     (reindex F (p23 p ≫ p2 p)).obj C₀ ⟶ (reindex F (p12 p ≫ p1 p)).obj C₀ := by
   refine
-    (reindex_objIsoOfEq (a := C₀) (by simp)).hom ≫
-      (reindex_comp_iso_obj (g := p13 p) (f := p2 p) C₀).hom ≫
+    (reindexObjIsoOfEq (F := F) (a := C₀) (by simp)).hom ≫
+      (reindexCompIsoObj F (g := p13 p) (f := p2 p) C₀).hom ≫
         (reindex F (p13 p)).map ξ.hom ≫
-          (reindex_comp_iso_obj (g := p13 p) (f := p1 p) C₀).inv ≫
-            (reindex_objIsoOfEq (a := C₀) (by simp)).hom
+          (reindexCompIsoObj F (g := p13 p) (f := p1 p) C₀).inv ≫
+            (reindexObjIsoOfEq (F := F) (a := C₀) (by simp)).hom
 
 /-- Descent data for `F` relative to `p : E ⟶ B` using the Čech kernel pair. -/
 structure SingleMorphismDescentDatum {E B : C} (p : E ⟶ B) where
@@ -97,12 +97,13 @@ structure SingleMorphismDescentDatum {E B : C} (p : E ⟶ B) where
   ξ : (reindex F (p2 p)).obj obj ≅ (reindex F (p1 p)).obj obj
   /-- Unit condition: restricting along the diagonal yields the identity. -/
   unit :
-    (diag_iso_p2 p obj).inv ≫
+    (diagIsoP2 (F := F) p obj).inv ≫
         (reindex F (Limits.pullback.diagonal p)).map ξ.hom ≫
-          (diag_iso_p1 p obj).hom =
+          (diagIsoP1 (F := F) p obj).hom =
       𝟙 obj
   /-- Cocycle condition on triple overlaps. -/
-  cocycle : xi_23 p ξ ≫ xi_12 p ξ = xi_13 p ξ
+  cocycle :
+    xi23 (F := F) p ξ ≫ xi12 (F := F) p ξ = xi13 (F := F) p ξ
 
 namespace SingleMorphismDescentDatum
 
@@ -164,14 +165,14 @@ abbrev SingleMorphismDescentData {E B : C} (p : E ⟶ B) : Type _ :=
   SingleMorphismDescentDatum (F := F) p
 
 /-- The canonical descent isomorphism on `p^* a`. -/
-def single_morphism_comparison_xi {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op B))) :
+def singleMorphismComparisonXi {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op B))) :
     (reindex F (p2 p)).obj ((reindex F p).obj a) ≅
       (reindex F (p1 p)).obj ((reindex F p).obj a) := by
   refine
-    (reindex_comp_iso_obj (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
-      (reindex_comp_iso_obj (g := p1 p) (f := p) a)
+    (reindexCompIsoObj F (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
+      (reindexCompIsoObj F (g := p1 p) (f := p) a)
   exact
-    reindex_objIsoOfEq (f := p2 p ≫ p) (g := p1 p ≫ p) (a := a) (by
+    reindexObjIsoOfEq F (f := p2 p ≫ p) (g := p1 p ≫ p) (a := a) (by
       simpa using (p1_comp_p_eq_p2_comp_p p).symm)
 
 end
