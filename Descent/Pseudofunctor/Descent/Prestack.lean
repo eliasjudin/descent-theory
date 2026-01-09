@@ -43,9 +43,10 @@ private lemma overEquiv_symm_ofArrows :
       Sieve.ofArrows (Y := fun i => overObj (f := f) i) (overMap (f := f)) := by
   ext Z g
   refine ⟨fun hg ↦ ?_, fun hg ↦ ?_⟩
-  · have hg' : Sieve.ofArrows X f g.left :=
-      (Sieve.overEquiv_symm_iff (Y := Over.mk (𝟙 S)) (S := Sieve.ofArrows X f) (f := g)).1 hg
-    rcases (Sieve.mem_ofArrows_iff (Y := X) (f := f) (g := g.left)).1 hg' with ⟨i, a, ha⟩
+  · obtain ⟨i, a, ha⟩ :=
+      (Sieve.mem_ofArrows_iff (Y := X) (f := f) (g := g.left)).1
+        ((Sieve.overEquiv_symm_iff (Y := Over.mk (𝟙 S)) (S := Sieve.ofArrows X f)
+          (f := g)).1 hg)
     refine (Sieve.mem_ofArrows_iff (Y := fun i => overObj (f := f) i) (f := overMap (f := f))
       (g := g)).2 ?_
     refine ⟨i, Over.homMk a ?_, ?_⟩
@@ -57,8 +58,9 @@ private lemma overEquiv_symm_ofArrows :
     · ext
       change g.left = a ≫ (overMap (f := f) i).left
       simp [ha, overMap]
-  · rcases (Sieve.mem_ofArrows_iff (Y := fun i => overObj (f := f) i) (f := overMap (f := f))
-      (g := g)).1 hg with ⟨i, a, ha⟩
+  · obtain ⟨i, a, ha⟩ :=
+      (Sieve.mem_ofArrows_iff (Y := fun i => overObj (f := f) i) (f := overMap (f := f))
+        (g := g)).1 hg
     have hleft : g.left = a.left ≫ f i := by
       simpa using congrArg (·.left) ha
     refine (Sieve.overEquiv_symm_iff (Y := Over.mk (𝟙 S)) (S := Sieve.ofArrows X f) (f := g)).2 ?_
@@ -94,7 +96,7 @@ private lemma presheafHom_isSheafFor_over
         (Sieve.ofArrows (Y := fun i => overObj (f := f) i) (overMap (f := f)) :
           Presieve (Over.mk (𝟙 S))) := by
     simpa using
-      (Presheaf.IsSheaf.isSheafFor (hP := (Pseudofunctor.IsPrestack.isSheaf (F := F) (J := J) M N))
+      (Presheaf.IsSheaf.isSheafFor (hP := (Pseudofunctor.IsPrestack.isSheaf (J := J) M N))
         (S := Sieve.ofArrows (Y := fun i => overObj (f := f) i) (overMap (f := f)))
         hcover)
   refine (Presieve.isSheafFor_iff_generate
@@ -130,15 +132,15 @@ noncomputable def toDescentData_fullyFaithful
     { preimage := ?preimage
       map_preimage := ?map_preimage
       preimage_map := ?preimage_map }
-  · intro M N φ
+  · exact fun M N φ ↦ by
     -- Use the sheaf condition on `F.presheafHom M N` over the over-category.
     have hSheaf :=
-      presheafHom_isSheafFor_over (F := F) (f := f) (J := J) (hf := hf) M N
+      presheafHom_isSheafFor_over (f := f) (J := J) (hf := hf) M N
     -- The family given by the components of `φ` is compatible.
     have hcompat :
         Presieve.Arrows.Compatible (P := F.presheafHom M N)
-          (π := overMap (f := f)) (fun i => φ.hom i) := by
-      intro i j Z gi gj _
+          (π := overMap (f := f)) (fun i => φ.hom i) :=
+      fun i j Z gi gj _ ↦ by
       -- Expand the presheaf map; the descent data compatibility gives the equality.
       -- `Z` is an object of `Over S`, so `Z.hom` is the common composite to `S`.
       have hgi : gi.left ≫ f i = Z.hom := by
@@ -181,15 +183,15 @@ noncomputable def toDescentData_fullyFaithful
     let ηM := (F.mapId (.mk (op S))).app M
     let ηN := (F.mapId (.mk (op S))).app N
     exact ηM.inv ≫ hex.choose ≫ ηN.hom
-  · intro M N φ
+  · exact fun M N φ ↦ by
     -- The image of the chosen amalgamation is the original morphism.
     ext i
     have hSheaf :=
-      presheafHom_isSheafFor_over (F := F) (f := f) (J := J) (hf := hf) M N
+      presheafHom_isSheafFor_over (f := f) (J := J) (hf := hf) M N
     have hcompat :
         Presieve.Arrows.Compatible (P := F.presheafHom M N)
-          (π := overMap (f := f)) (fun i => φ.hom i) := by
-      intro i j Z gi gj _
+          (π := overMap (f := f)) (fun i => φ.hom i) :=
+      fun i j Z gi gj _ ↦ by
       have hgi : gi.left ≫ f i = Z.hom := by
         simpa [overObj] using (Over.w gi)
       have hgj : gj.left ≫ f j = Z.hom := by
@@ -226,14 +228,14 @@ noncomputable def toDescentData_fullyFaithful
     let ηN := (F.mapId (.mk (op S))).app N
     simpa [ηM, ηN, pullHom_overMap_eq (f := f) (M := M) (N := N) (i := i)]
       using (hex.choose_spec.1 i)
-  · intro M N φ
+  · exact fun M N φ ↦ by
     -- The amalgamation of the family coming from a morphism is the morphism itself.
     have hSheaf :=
-      presheafHom_isSheafFor_over (F := F) (f := f) (J := J) (hf := hf) M N
+      presheafHom_isSheafFor_over (f := f) (J := J) (hf := hf) M N
     have hcompat :
         Presieve.Arrows.Compatible (P := F.presheafHom M N)
-          (π := overMap (f := f)) (fun i => (F.map (f i).op.toLoc).map φ) := by
-      intro i j Z gi gj _
+          (π := overMap (f := f)) (fun i => (F.map (f i).op.toLoc).map φ) :=
+      fun i j Z gi gj _ ↦ by
       have hgi : gi.left ≫ f i = Z.hom := by
         simpa [overObj] using (Over.w gi)
       have hgj : gj.left ≫ f j = Z.hom := by
@@ -274,8 +276,8 @@ noncomputable def toDescentData_fullyFaithful
     have hφ :
         ∀ i, (F.presheafHom M N).map (overMap (f := f) i).op
           (ηM.hom ≫ φ ≫ ηN.inv) =
-          (F.map (f i).op.toLoc).map φ := by
-      intro i
+          (F.map (f i).op.toLoc).map φ :=
+      fun i ↦ by
       simp [ηM, ηN, Category.assoc,
         pullHom_overMap_eq (f := f) (M := M) (N := N) (i := i)]
     have ht : hex.choose = ηM.hom ≫ φ ≫ ηN.inv :=

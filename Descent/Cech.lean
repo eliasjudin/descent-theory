@@ -7,57 +7,12 @@ Authors: Elias Judin
 import Mathlib.CategoryTheory.Limits.Shapes.Diagonal
 
 /-!
-# Čech Kernel Pair Conventions
+# Čech kernel pair conventions
 
-This file defines the Čech objects and projections associated to a morphism `p : E ⟶ B`
-in a category with pullbacks. These are the basic building blocks for descent data.
-
-## Mathematical Background
-
-For a morphism `p : E ⟶ B`, the **Čech nerve** is a simplicial object encoding the
-"overlap structure" of `p`. The first few levels are:
-- `E` (0-simplices): the "points"
-- `E ×_B E` (1-simplices): pairs of points with same image under `p`
-- `E ×_B E ×_B E` (2-simplices): triples of points with same image
-
-### Choice of Triple Overlap
-
-**Important convention:** We define `cechThree p := pullback (p2 p) (p1 p)`, which models
-*composable pairs* in the Čech groupoid. This is canonically isomorphic to, but not
-definitionally equal to, the more symmetric `E ×_B E ×_B E` obtained as an iterated
-pullback with different bracketing.
-
-Concretely, an element of `cechThree p` can be thought of as a pair `((e₁, e₂), (e₂', e₃))`
-where `e₂ = e₂'`. The projections are:
-- `p12`: projects to `(e₁, e₂)`
-- `p23`: projects to `(e₂, e₃)`
-- `p13`: projects to `(e₁, e₃)` (the composite)
-
-The cocycle condition `π₁₃*(ξ) = π₂₃*(ξ) ∘ π₁₂*(ξ)` on descent data corresponds to
-`ξ(e₁, e₃) = ξ(e₂, e₃) ∘ ξ(e₁, e₂)`, which is the standard groupoid composition law.
-
-## Main definitions
-
-Given a morphism `p : E ⟶ B`:
-
-* `cechTwo p`: The 2-fold overlap `E ×_B E` (the kernel pair of `p`)
-* `p1 p`, `p2 p`: The two projections `E ×_B E ⟶ E`
-* `diag p`: The diagonal `E ⟶ E ×_B E`
-* `cechThree p`: The 3-fold overlap `E ×_B E ×_B E` (as composable pairs)
-* `p12 p`, `p23 p`, `p13 p`: The projections from the 3-fold to 2-fold overlap
-
-## Key Lemmas
-
-* `diag_p1`, `diag_p2`: The diagonal followed by either projection is the identity
-* `p1_comp_p_eq_p2_comp_p`: Both projections compose with `p` to give the same map
-* `p12_p2_eq_p23_p1`: The middle coordinate is shared: `p12 ≫ p2 = p23 ≫ p1`
-* `p13_p1`, `p13_p2`: The outer coordinates: `p13 ≫ p1 = p12 ≫ p1`, `p13 ≫ p2 = p23 ≫ p2`
-
-## References
-
-* [Janelidze, Tholen, "Facets of Descent II"]
-* [Vistoli, "Notes on Grothendieck Topologies, Fibered Categories and Descent Theory"]
-* [Stacks Project, Tag 00WV](https://stacks.math.columbia.edu/tag/00WV)
+Defines the Čech overlaps for a morphism `p : E ⟶ B` in a category with pullbacks.
+We set `cechThree p := pullback (p2 p) (p1 p)` so the cocycle reads
+`ξ₂₃ ≫ ξ₁₂ = ξ₁₃`. Main definitions are `cechTwo`, `cechThree` and the projections
+`p1`, `p2`, `p12`, `p23`, `p13`, with basic lemmas about diagonals and projections.
 -/
 
 open CategoryTheory

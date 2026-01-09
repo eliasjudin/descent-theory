@@ -7,47 +7,11 @@ Authors: Elias Judin
 import Mathlib.CategoryTheory.Sites.Descent.DescentData
 
 /-!
-# Reindexing for Pseudofunctors
+# Reindexing for pseudofunctors
 
-This file defines the reindexing functors and coherence isomorphisms for
-pseudofunctors `F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`.
-
-## Mathematical Background
-
-A pseudofunctor `F : Cᵒᵖ ⥤ Cat` assigns to each object `S` a category `F(S)` and to each
-morphism `f : R ⟶ S` a "reindexing" functor `f^* : F(S) ⥤ F(R)`. The key difference from
-a strict functor is that the composition law `(g ≫ f)^* = g^* ∘ f^*` and identity law
-`(𝟙 S)^* = 𝟭` hold only up to coherent natural isomorphism, not definitionally.
-
-### Convention for `reindex_comp_iso_obj`
-
-**This is the most convention-sensitive definition in the library.**
-
-We define `reindex F f := F.map f.op.toLoc`, so for composable morphisms `g : T ⟶ R` and
-`f : R ⟶ S`, we have:
-- `reindex F (g ≫ f)` corresponds to `F.map (g ≫ f).op.toLoc = F.map (f.op ≫ g.op).toLoc`
-- `reindex F g ⋙ reindex F f` would be `F.map g.op.toLoc ⋙ F.map f.op.toLoc`
-
-The coherence isomorphism `reindex_comp_iso_obj g f a : (g ≫ f)^* a ≅ g^*(f^* a)` is defined
-using `F.mapComp f.op.toLoc g.op.toLoc`, which has type:
-```
-F.mapComp f.op.toLoc g.op.toLoc : F.map (f.op.toLoc ≫ g.op.toLoc) ≅ F.map f.op.toLoc ⋙ F.map g.op.toLoc
-```
-
-Since `(g ≫ f).op = f.op ≫ g.op`, this gives us the correct direction.
-
-## Main definitions
-
-* `reindex F f`: Reindexing along a morphism `f : R ⟶ S` for a pseudofunctor
-* `reindex_objIsoOfEq`: If `f = g`, then `f^* a ≅ g^* a`
-* `reindex_comp_iso_obj`: The canonical isomorphism `(g ≫ f)^* a ≅ g^* (f^* a)`
-* `reindex_id_isoObj`: The canonical isomorphism `(𝟙 S)^* a ≅ a`
-
-## Coherence Laws
-
-The coherence isomorphisms satisfy the standard pentagon and triangle axioms, which we
-prove explicitly in `reindex_pentagon` and `reindex_triangle`. These ensure that any
-two ways of re-associating iterated pullbacks yield the same result.
+Defines `reindex` and the basic coherence isomorphisms for a pseudofunctor
+`F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`, plus the explicit pentagon and triangle
+coherence statements specialized to reindexing.
 -/
 
 open CategoryTheory
@@ -120,37 +84,10 @@ def reindex_comp_iso_comp_reindex {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
   fun a => reindex_comp_iso_obj F g f a
 
 /-!
-## Coherence Laws (Pentagon and Triangle)
+## Coherence laws
 
-These are the standard coherence axioms for pseudofunctors. They ensure that any two
-ways of re-associating iterated pullbacks yield canonically isomorphic results.
-
-The underlying pseudofunctor `F` satisfies these axioms by construction (via `F.mapComp_assoc`
-and `F.mapComp_id`). We provide explicit statements specialized to reindexing for clarity.
-
-### Pentagon Axiom
-
-For morphisms `h : U ⟶ T`, `g : T ⟶ R`, `f : R ⟶ S` and object `a : F(S)`, the pentagon
-identity states that the following diagram commutes:
-
-```
-                        ((h ≫ g) ≫ f)^* a
-                       /                 \
-        assoc_comp    /                   \   comp_assoc
-                     v                     v
-        (h ≫ g)^*(f^* a)                 (h ≫ (g ≫ f))^* a
-             |                                  |
-   comp_left |                                  | comp_right
-             v                                  v
-      h^*(g^*(f^* a))  ←————————————————  h^*((g ≫ f)^* a)
-                           h^*(comp)
-```
-
-### Triangle Axiom
-
-For a morphism `f : R ⟶ S` and object `a : F(S)`, composing the identity coherence
-`(𝟙 S)^* a ≅ a` with the composition coherence `(f ≫ 𝟙 S)^* a ≅ f^*((𝟙 S)^* a)` yields
-the isomorphism induced by `f ≫ 𝟙 S = f`.
+Pentagon and triangle axioms for the reindexing isomorphisms, stated using our
+`reindex` conventions.
 -/
 
 /-- The pentagon coherence axiom for reindexing, stated via the underlying pseudofunctor.

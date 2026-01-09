@@ -8,46 +8,12 @@ import Descent.Cech
 import Descent.FiberedCategory.Reindexing
 
 /-!
-# Descent Data for a Single Morphism
+# Descent data for a single morphism (fibered category)
 
-This file defines descent data for a fibered category relative to a morphism
-`p : E ⟶ B`, following the approach of Janelidze-Tholen "Facets of Descent II".
-
-## Main definitions
-
-Given a fibered category `pA : 𝒜 ⥤ C` and a morphism `p : E ⟶ B` in `C`:
-
-* `SingleMorphismDescentDatum pA p`: An object in the fiber over `E` together with
-  an isomorphism over the kernel pair `E ×_B E` satisfying unit and cocycle
-  conditions.
-
-* `SingleMorphismDescentData pA p`: The category of descent data for `pA` relative to `p`.
-
-* `single_morphism_comparison_xi pA p a`: The canonical descent isomorphism on
-  `p^* a`, induced from the equality `π₁ ≫ p = π₂ ≫ p` of the two maps
-  `E ×_B E ⟶ B`.
-
-## Mathematical Background
-
-For a morphism `p : E ⟶ B`, the kernel pair gives rise to the Čech groupoid:
-- Objects: `E`
-- Morphisms: `E ×_B E` (the 2-fold overlap)
-- Triple overlaps: `E ×_B E ×_B E` (for the cocycle condition)
-
-A descent datum consists of:
-- An object `x` in the fiber `Fib pA E`
-- An isomorphism `ξ : π₂*(x) ≅ π₁*(x)` in the fiber over `E ×_B E`
-- Unit condition: `diag*(ξ) = id` (restriction along diagonal)
-- Cocycle condition: `π₁₃*(ξ) = π₂₃*(ξ) ∘ π₁₂*(ξ)` (on triple overlaps)
-
-The canonical isomorphism `single_morphism_comparison_xi` is the usual gluing
-isomorphism on `p^* a` coming from the equality `π₁ ≫ p = π₂ ≫ p`.
-
-## References
-
-* [Janelidze, Tholen, "Facets of Descent II"]
-* [Vistoli, "Notes on Grothendieck Topologies, Fibered Categories and Descent Theory"]
-
+Defines Čech-style descent data for a fibered category `pA : 𝒜 ⥤ C` along
+`p : E ⟶ B`, with unit and cocycle conditions on overlaps. Main definitions
+are `SingleMorphismDescentDatum`, `SingleMorphismDescentData`, and
+`single_morphism_comparison_xi`.
 -/
 
 open CategoryTheory Functor Category
@@ -106,30 +72,8 @@ noncomputable def diag_iso_p2 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
 /-!
 ## Descent data for a single morphism
 
-Let `p : E ⟶ B` be a morphism in the base category.
-
-Following Janelidze–Tholen (Facets of Descent II), a descent datum for a fibered category
-`pA : 𝒜 ⥤ C` relative to `p` can be described as:
-
-* an object `C ∈ Fiber pA E`,
-* an isomorphism `ξ : π₂^* C ≅ π₁^* C` over the kernel pair `E ×_B E`,
-* satisfying the usual unit and cocycle conditions.
-
-### Cocycle Convention
-
-**Important:** The cocycle condition is formulated as `ξ₂₃ ≫ ξ₁₂ = ξ₁₃`, which corresponds
-to the groupoid composition law. Thinking of `ξ` as a "transition function" on overlaps:
-
-- `ξ : π₂^* C → π₁^* C` assigns to each pair `(e₁, e₂)` an isomorphism from the
-  fiber over `e₂` to the fiber over `e₁`
-- `ξ₁₂` is this isomorphism on the `(e₁, e₂)` component of a triple `(e₁, e₂, e₃)`
-- `ξ₂₃` is this isomorphism on the `(e₂, e₃)` component
-- `ξ₁₃` is this isomorphism on the `(e₁, e₃)` component
-
-The cocycle `ξ₂₃ ≫ ξ₁₂ = ξ₁₃` then says: "transitioning from `e₃` to `e₂` to `e₁`
-equals transitioning directly from `e₃` to `e₁`".
-
-This is consistent with the direction of `ξ` (from `π₂^*` to `π₁^*`).
+We use the Čech overlaps of `p : E ⟶ B` and the cocycle convention
+`ξ₂₃ ≫ ξ₁₂ = ξ₁₃`.
 -/
 
 section
@@ -137,14 +81,10 @@ section
 variable {pA}
 
 /-!
-### The induced morphisms on triple overlaps
+### Induced morphisms on triple overlaps
 
-Given `ξ : π₂^* C ≅ π₁^* C` on `E ×_B E`, we obtain morphisms on the triple overlap
-`E ×_B E ×_B E` (with projections `π₁₂, π₂₃, π₁₃`) by pulling back and re-associating via the
-canonical isomorphisms `reindex_comp_iso_obj` and the equalities from `Cech.lean`.
-
-The morphisms `ξ₁₂`, `ξ₂₃`, `ξ₁₃` are defined with domains and codomains chosen to make
-the cocycle condition `ξ₂₃ ≫ ξ₁₂ = ξ₁₃` an equality of morphisms with the same source and target.
+We define `ξ₁₂`, `ξ₂₃`, `ξ₁₃` on `E ×_B E ×_B E` using pullback/reindexing isomorphisms
+so the cocycle `ξ₂₃ ≫ ξ₁₂ = ξ₁₃` is well-typed.
 -/
 
 /-- The morphism on the `(1,2)`-overlap induced from `ξ`. -/

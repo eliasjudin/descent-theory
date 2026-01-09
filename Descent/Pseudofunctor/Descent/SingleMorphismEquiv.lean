@@ -8,25 +8,10 @@ import Descent.Pseudofunctor.Descent.SingleMorphism
 /-!
 # Equivalence with mathlib's descent data
 
-We prove that `SingleMorphismDescentDatum` for a morphism `p : E ⟶ B` is equivalent
-to mathlib's `Pseudofunctor.DescentData` for the singleton family `fun _ : PUnit => p`.
-
-## Main definitions
-
-* `singleToMathlibDescentDatum` - convert single-morphism descent data to mathlib format
-* `mathlibToSingleDescentDatum` - convert mathlib descent data to single-morphism format
-* `singleToMathlibFunctor` - the forward functor
-* `mathlibToSingleFunctor` - the inverse functor
-* `singleMathlibDescentDataEquiv` - the categorical equivalence
-
-## Implementation notes
-
-For the singleton family `f : PUnit → C` with `f () = p`, mathlib's `DescentData f` has:
-- `obj : PUnit → F.obj (op E)` — effectively just one object `obj ()`
-- `hom Y q () () f₁ f₂` — morphisms between pullbacks, where both indices are `()`
-
-The pullback of `p` with itself at indices `((), ())` corresponds to `cechTwo p = E ×_B E`.
-The `hom` field at this pullback gives exactly the gluing isomorphism `ξ`.
+Relates `SingleMorphismDescentDatum` for `p : E ⟶ B` to mathlib's
+`Pseudofunctor.DescentData` for the singleton family `fun _ : PUnit => p`.
+Main definitions: `singleToMathlibDescentDatum`, `mathlibToSingleDescentDatum`,
+`singleToMathlibFunctor`, `mathlibToSingleFunctor`, `singleMathlibDescentDataEquiv`.
 -/
 
 open CategoryTheory
@@ -134,7 +119,14 @@ def mathlibToSingleHom
   ⟨f.hom PUnit.unit, by
     simp only [mathlibToSingleDescentDatum]
     -- The compatibility condition follows from f.hom_hom at π₁, π₂
-    sorry⟩
+    have hf₁ : p2 p ≫ p = p1 p ≫ p := by
+      simpa using (p1_comp_p_eq_p2_comp_p p).symm
+    have hf₂ : p1 p ≫ p = p1 p ≫ p := rfl
+    -- `f.comm` gives the compatibility for `D₁.hom`/`D₂.hom`; our glueing map is the
+    -- corresponding `iso` reversed, hence we take `.symm`.
+    simpa [CategoryTheory.Pseudofunctor.DescentData.iso] using
+      (f.comm (q := (p1 p ≫ p)) (i₁ := PUnit.unit) (i₂ := PUnit.unit)
+        (f₁ := p2 p) (f₂ := p1 p) hf₁ hf₂).symm⟩
 
 /-!
 ## Functors
@@ -234,7 +226,7 @@ def singleMathlibDescentDataEquiv :
   functor := singleToMathlibFunctor F p
   inverse := mathlibToSingleFunctor F p
   unitIso := NatIso.ofComponents (singleMathlibUnit F p) (by
-    intro D₁ D₂ f
+    exact fun D₁ D₂ f ↦ by
     apply SingleMorphismDescentDatum.Hom.ext
     simp only [SingleMorphismDescentDatum.instCategory, singleToMathlibFunctor,
           mathlibToSingleFunctor, singleMathlibUnit, singleToMathlibHom, mathlibToSingleHom,
@@ -242,7 +234,7 @@ def singleMathlibDescentDataEquiv :
           Functor.id_obj, Functor.comp_map, Functor.id_map,
           SingleMorphismDescentDatum.Hom.comp_hom, Category.id_comp, Category.comp_id])
   counitIso := NatIso.ofComponents (singleMathlibCounit F p) (by
-    intro D₁ D₂ f
+    exact fun D₁ D₂ f ↦ by
     apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
     funext i; cases i
     simp only [singleToMathlibFunctor, mathlibToSingleFunctor, singleMathlibCounit,

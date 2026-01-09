@@ -10,46 +10,8 @@ import Mathlib.CategoryTheory.FiberedCategory.Fibered
 /-!
 # Reindexing on fibers of a fibered category
 
-This file packages the pullback/reindexing functors on the standard fibers `Fiber pA S`
-of a fibered category `pA : 𝒜 ⥤ C`, together with the usual coherence isomorphisms.
-
-## Mathematical Background
-
-### Fibered Categories vs Cleavages
-
-A **fibered category** (or Grothendieck fibration) over `C` is a functor `pA : 𝒜 ⥤ C` such
-that for every morphism `f : R ⟶ S` in `C` and object `a` over `S`, there exists a
-Cartesian (or strongly Cartesian) lift of `f` with target `a`.
-
-This library works with **cloven fibrations**: fibered categories equipped with a choice
-of Cartesian lift for each morphism/object pair. Concretely:
-- `IsPreFibered.pullbackObj a.2 f` is the chosen domain of the Cartesian lift
-- `IsPreFibered.pullbackMap a.2 f` is the chosen Cartesian morphism
-
-This is mathematically equivalent to the choice-free definition but provides explicit
-functors `f^* : Fiber pA S ⥤ Fiber pA R` (reindexing/pullback functors).
-
-### Coherence
-
-The reindexing functors satisfy the expected relations up to canonical isomorphism:
-- **Composition**: `(g ≫ f)^* ≅ g^* ∘ f^*` via `reindex_comp_iso_obj`
-- **Identity**: `(𝟙 S)^* ≅ 𝟭` via `reindex_id_iso`
-
-These coherence isomorphisms satisfy the pentagon and triangle axioms (proved explicitly
-in `reindex_pentagon` and `reindex_triangle`), making the assignment `S ↦ Fiber pA S`,
-`f ↦ f^*` into a pseudofunctor `Cᵒᵖ ⥤ Cat`.
-
-## Main definitions
-
-* `reindex f`: The reindexing functor `Fiber pA S ⥤ Fiber pA R` for `f : R ⟶ S`
-* `reindex_comp_iso_obj g f a`: The isomorphism `(g ≫ f)^* a ≅ g^*(f^* a)`
-* `reindex_id_iso a`: The isomorphism `(𝟙 S)^* a ≅ a`
-* `reindex_comp_iso g f`: The natural isomorphism `(g ≫ f)^* ≅ f^* ⋙ g^*`
-
-## References
-
-* [Vistoli, "Notes on Grothendieck Topologies, Fibered Categories and Descent Theory"]
-* [SGA1, Exposé VI: "Catégories fibrées et descente"]
+Defines reindexing functors `f^* : Fiber pA S ⥤ Fiber pA R` for a fibered category
+`pA : 𝒜 ⥤ C`, together with the basic coherence isomorphisms for composition and identity.
 -/
 
 open CategoryTheory Functor Category
@@ -326,22 +288,10 @@ lemma reindex_comp_iso_inv_app {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fibe
       (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).inv := rfl
 
 /-!
-## Coherence Laws (Pentagon and Triangle)
+## Coherence laws
 
-The coherence isomorphisms satisfy the standard Mac Lane axioms, ensuring that
-any two ways of re-associating iterated pullbacks yield canonically isomorphic results.
-
-### Convention note
-
-The isomorphism `reindex_comp_iso_obj g f a` has type `(g ≫ f)^* a ≅ g^*(f^* a)`.
-This matches the mathematical convention: pulling back along a composition
-equals iterated pullback *in the opposite order* (first `f^*`, then `g^*`).
-
-### Implementation note
-
-The coherence laws hold because all our coherence isomorphisms are built from
-the universal property of Cartesian morphisms. The key lemmas below characterize
-the behavior of the coherence isomorphisms when composed with the Cartesian lifts.
+We record the standard coherence conventions for reindexing on fibers and
+their interaction with the chosen Cartesian lifts.
 -/
 
 /-- Explicit statement of the reindexing convention: `(g ≫ f)^*` is naturally isomorphic
