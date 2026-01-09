@@ -18,8 +18,9 @@ import Descent.FiberedCategory.Reindexing
 import Descent.FiberedCategory.Descent.SingleMorphism
 
 -- Pseudofunctor approach
+import Mathlib.CategoryTheory.Sites.Descent.IsStack
+import Mathlib.CategoryTheory.Sites.Descent.IsPrestack
 import Descent.Pseudofunctor.Reindexing
 import Descent.Pseudofunctor.Descent.SingleMorphism
-import Descent.Pseudofunctor.Descent.SingleMorphismEquiv
-import Descent.Pseudofunctor.Descent.Prestack
-import Descent.Pseudofunctor.Descent.Stack
+-- NOTE: The singleton-cover equivalence to Mathlib descent data is WIP and
+-- currently contains `sorry`s; import it explicitly when needed.
