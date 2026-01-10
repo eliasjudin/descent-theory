@@ -39,8 +39,23 @@ abbrev reindex {R S : C} (f : R ⟶ S) :
 def reindexObjIsoOfEq {R S : C} {f g : R ⟶ S} (h : f = g)
     (a : F.obj (.mk (op S))) :
     (reindex F f).obj a ≅ (reindex F g).obj a := by
-  subst h
-  exact Iso.refl _
+  refine eqToIso ?_
+  simpa using congrArg (fun k => (reindex F k).obj a) h
+
+@[simp]
+lemma reindexObjIsoOfEq_hom {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
+    (reindexObjIsoOfEq (F := F) (f := f) (g := g) h a).hom =
+      eqToHom (by simpa using congrArg (fun k => (reindex F k).obj a) h) := by
+  cases h
+  simp [reindexObjIsoOfEq]
+
+@[simp]
+lemma reindexObjIsoOfEq_inv {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
+    (reindexObjIsoOfEq (F := F) (f := f) (g := g) h a).inv =
+      eqToHom (by
+        simpa using (congrArg (fun k => (reindex F k).obj a) h).symm) := by
+  cases h
+  simp [reindexObjIsoOfEq]
 
 /-- The canonical isomorphism `(g ≫ f)^* a ≅ g^* (f^* a)`. -/
 def reindexCompIsoObj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : F.obj (.mk (op S))) :

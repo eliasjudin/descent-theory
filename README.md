@@ -1,9 +1,42 @@
-Čech-style descent theory in Lean 4/Mathlib [WIP].
+# Descent theory in Lean 4
 
-Descent along a single morphism `p : E ⟶ B` in a base category with pullbacks, using the overlaps `E ×_B E` and triple overlaps, with unit and cocycle conditions.
+[![CI](https://github.com/eliasjudin/descent-theory/actions/workflows/ci.yml/badge.svg)](https://github.com/eliasjudin/descent-theory/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-Includes parallel development for (1) fibered categories (Grothendieck fibrations) and (2) pseudofunctors `Cᵒᵖ ⥤ᵖ Cat`. The prestack/stack typeclasses are taken directly from Mathlib.
+A Lean 4/Mathlib library formalizing **Čech-style descent theory along a single morphism**
+`p : E ⟶ B` in a base category with pullbacks.
 
-The singleton-cover equivalence file (`Descent/Pseudofunctor/Descent/SingleMorphismEquiv.lean`) is currently WIP and still contains `sorry`.
+The development uses the Čech overlaps `E ×_B E` and `E ×_B E ×_B E`, together with a
+unit condition (along the diagonal) and a cocycle condition (on triple overlaps).
 
-https://github.com/Paul-Lez/Stacks-project.
+Two equivalent viewpoints are developed in parallel:
+
+- **Fibered categories** (`pA : 𝒜 ⥤ C` with `pA.IsFibered`)
+- **Pseudofunctors** (`F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`)
+
+In addition, the project relates the single-morphism formulation to Mathlib’s
+`CategoryTheory.Pseudofunctor.DescentData` for the **singleton cover**.
+
+## Status
+
+This is an active research-style project: APIs and file organization may change.
+
+If you are looking for the main entry point, start with `Descent.lean` and then
+follow imports into `Descent/`.
+
+## Project layout
+
+- `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.
+- `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.
+- `Descent/Pseudofunctor/`: reindexing for pseudofunctors and single-morphism descent data.
+- `Descent/Pseudofunctor/Descent/SingleMorphismEquiv.lean`: comparison with Mathlib’s
+  singleton-cover descent data.
+
+## Related references
+
+- Stacks Project (algebraic geometry): https://stacks.math.columbia.edu/
+- Lean “Stacks project” effort (informal): https://github.com/Paul-Lez/Stacks-project
+
+## License
+
+Apache 2.0. See `LICENSE`.

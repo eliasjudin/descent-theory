@@ -22,5 +22,5 @@ import Mathlib.CategoryTheory.Sites.Descent.IsStack
 import Mathlib.CategoryTheory.Sites.Descent.IsPrestack
 import Descent.Pseudofunctor.Reindexing
 import Descent.Pseudofunctor.Descent.SingleMorphism
--- NOTE: The singleton-cover equivalence to Mathlib descent data is WIP and
--- currently contains `sorry`s; import it explicitly when needed.
+-- NOTE: The singleton-cover equivalence to Mathlib descent data is not imported by default
+-- (it is heavier and more experimental); import it explicitly when needed.
