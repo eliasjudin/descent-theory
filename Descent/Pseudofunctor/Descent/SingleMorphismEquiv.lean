@@ -73,6 +73,10 @@ private lemma singleToSingletonHomAux_comp
   let v : Y ⟶ cechThree p := Limits.pullback.lift u12 u23 h_u12_u23
   have hv12 : v ≫ p12 p = u12 := Limits.pullback.lift_fst _ _ _
   have hv23 : v ≫ p23 p = u23 := Limits.pullback.lift_snd _ _ _
+  have hv12_p1 : v ≫ (p12 p ≫ p1 p) = f₁ := by simpa [Category.assoc, hv12] using hu12_1
+  have hv12_p2 : v ≫ (p12 p ≫ p2 p) = f₂ := by simpa [Category.assoc, hv12] using hu12_2
+  have hv23_p1 : v ≫ (p23 p ≫ p1 p) = f₂ := by simpa [Category.assoc, hv23] using hu23_1
+  have hv23_p2 : v ≫ (p23 p ≫ p2 p) = f₃ := by simpa [Category.assoc, hv23] using hu23_2
   have hv13 : v ≫ p13 p = u13 := by
     apply Limits.pullback.hom_ext
     · -- Compare the first projections.
@@ -158,130 +162,49 @@ private lemma singleToSingletonHomAux_comp
       singleToSingletonHomAux F p D f₁ f₂ h12 =
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi12 (F := F) p D.ξ)) (g := v) (gf₁ := f₁) (gf₂ := f₂)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-              _ = u12 ≫ p1 p := by simp [hv12]
-              _ = f₁ := hu12_1)
-          (hgf₂ := by
-            calc
-              v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u12 ≫ p2 p := by simp [hv12]
-              _ = f₂ := hu12_2) := by
+          (hgf₁ := hv12_p1) (hgf₂ := hv12_p2) := by
     -- Pull back along `v ≫ p12 = u12`.
     have h := (CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom_pullHom (F := F)
       (φ := D.ξ.inv) (g := p12 p) (gf₁ := p12 p ≫ p1 p) (gf₂ := p12 p ≫ p2 p)
       (g' := v) (g'f₁ := f₁) (g'f₂ := f₂)
       (hgf₁ := by simp) (hgf₂ := by simp)
-      (hg'f₁ := by
-        calc
-          v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-          _ = u12 ≫ p1 p := by simp [hv12]
-          _ = f₁ := hu12_1)
-      (hg'f₂ := by
-        calc
-          v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-          _ = u12 ≫ p2 p := by simp [hv12]
-          _ = f₂ := hu12_2))
+      (hg'f₁ := hv12_p1) (hg'f₂ := hv12_p2))
     -- Use `hphi12` to identify the inner pullback.
     simpa [singleToSingletonHomAux, u12, hv12, hphi12] using h.symm
   have haux23 :
       singleToSingletonHomAux F p D f₂ f₃ h23 =
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi23 (F := F) p D.ξ)) (g := v) (gf₁ := f₂) (gf₂ := f₃)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u12 ≫ p2 p := by simp [hv12]
-              _ = f₂ := hu12_2)
-          (hgf₂ := by
-            calc
-              v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u23 ≫ p2 p := by simp [hv23]
-              _ = f₃ := hu23_2) := by
+          (hgf₁ := hv12_p2) (hgf₂ := hv23_p2) := by
     have h := (CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom_pullHom (F := F)
       (φ := D.ξ.inv) (g := p23 p) (gf₁ := p12 p ≫ p2 p) (gf₂ := p23 p ≫ p2 p)
       (g' := v) (g'f₁ := f₂) (g'f₂ := f₃)
       (hgf₁ := by simp) (hgf₂ := by simp)
-      (hg'f₁ := by
-        calc
-          v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-          _ = u12 ≫ p2 p := by simp [hv12]
-          _ = f₂ := hu12_2)
-      (hg'f₂ := by
-        calc
-          v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-          _ = u23 ≫ p2 p := by simp [hv23]
-          _ = f₃ := hu23_2))
+      (hg'f₁ := hv12_p2) (hg'f₂ := hv23_p2))
     simpa [singleToSingletonHomAux, u23, hv23, hphi23] using h.symm
   have haux13 :
       singleToSingletonHomAux F p D f₁ f₃ h13 =
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi13 (F := F) p D.ξ)) (g := v) (gf₁ := f₁) (gf₂ := f₃)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-              _ = u12 ≫ p1 p := by simp [hv12]
-              _ = f₁ := hu12_1)
-          (hgf₂ := by
-            calc
-              v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u23 ≫ p2 p := by simp [hv23]
-              _ = f₃ := hu23_2) := by
+          (hgf₁ := hv12_p1) (hgf₂ := hv23_p2) := by
     have h := (CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom_pullHom (F := F)
       (φ := D.ξ.inv) (g := p13 p) (gf₁ := p12 p ≫ p1 p) (gf₂ := p23 p ≫ p2 p)
       (g' := v) (g'f₁ := f₁) (g'f₂ := f₃)
       (hgf₁ := by simp) (hgf₂ := by simp)
-      (hg'f₁ := by
-        calc
-          v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-          _ = u12 ≫ p1 p := by simp [hv12]
-          _ = f₁ := hu12_1)
-      (hg'f₂ := by
-        calc
-          v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-          _ = u23 ≫ p2 p := by simp [hv23]
-          _ = f₃ := hu23_2))
+      (hg'f₁ := hv12_p1) (hg'f₂ := hv23_p2))
     simpa [singleToSingletonHomAux, u13, hv13, hphi13] using h.symm
   -- Composition of pullbacks along `v`.
   have hcomp_pull :
       CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi12 (F := F) p D.ξ)) (g := v) (gf₁ := f₁) (gf₂ := f₂)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-              _ = u12 ≫ p1 p := by simp [hv12]
-              _ = f₁ := hu12_1)
-          (hgf₂ := by
-            calc
-              v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u12 ≫ p2 p := by simp [hv12]
-              _ = f₂ := hu12_2) ≫
+          (hgf₁ := hv12_p1) (hgf₂ := hv12_p2) ≫
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi23 (F := F) p D.ξ)) (g := v) (gf₁ := f₂) (gf₂ := f₃)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p2 p) = (v ≫ p12 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u12 ≫ p2 p := by simp [hv12]
-              _ = f₂ := hu12_2)
-          (hgf₂ := by
-            calc
-              v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u23 ≫ p2 p := by simp [hv23]
-              _ = f₃ := hu23_2) =
+          (hgf₁ := hv12_p2) (hgf₂ := hv23_p2) =
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi12 (F := F) p D.ξ) ≫ inv (xi23 (F := F) p D.ξ)) (g := v)
           (gf₁ := f₁) (gf₂ := f₃)
-          (hgf₁ := by
-            calc
-              v ≫ (p12 p ≫ p1 p) = (v ≫ p12 p) ≫ p1 p := by simp [Category.assoc]
-              _ = u12 ≫ p1 p := by simp [hv12]
-              _ = f₁ := hu12_1)
-          (hgf₂ := by
-            calc
-              v ≫ (p23 p ≫ p2 p) = (v ≫ p23 p) ≫ p2 p := by simp [Category.assoc]
-              _ = u23 ≫ p2 p := by simp [hv23]
-              _ = f₃ := hu23_2) := by
+          (hgf₁ := hv12_p1) (hgf₂ := hv23_p2) := by
     simp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom, Functor.map_comp,
       Category.assoc]
   -- Invert the cocycle.
@@ -416,18 +339,8 @@ def singleToSingletonDescentDatum (D : SingleMorphismDescentDatum (F := F) p) :
     have hgf₁' : gf₁ ≫ p = gf₂ ≫ p := by
       -- both are equal to `q'`
       simp only [singletonMorphism] at hf₁ hf₂
-      have h₁ : gf₁ ≫ p = q' := by
-        calc
-          gf₁ ≫ p = (g ≫ f₁) ≫ p := by simp [hgf₁]
-          _ = g ≫ (f₁ ≫ p) := by simp [Category.assoc]
-          _ = g ≫ q := by simp [hf₁]
-          _ = q' := by simpa using hq
-      have h₂ : gf₂ ≫ p = q' := by
-        calc
-          gf₂ ≫ p = (g ≫ f₂) ≫ p := by simp [hgf₂]
-          _ = g ≫ (f₂ ≫ p) := by simp [Category.assoc]
-          _ = g ≫ q := by simp [hf₂]
-          _ = q' := by simpa using hq
+      have h₁ : gf₁ ≫ p = q' := by simpa [Category.assoc, hgf₁, hf₁] using hq
+      have h₂ : gf₂ ≫ p = q' := by simpa [Category.assoc, hgf₂, hf₂] using hq
       exact h₁.trans h₂.symm
     let u : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ hf₁'
     let u' : Y' ⟶ cechTwo p := Limits.pullback.lift gf₁ gf₂ hgf₁'
@@ -643,45 +556,39 @@ private lemma singletonToSingle_cocycle
   let q3 : cechThree p ⟶ B := p12 p ≫ q0
   have hq23 : p23 p ≫ q0 = q3 := by
     dsimp [q0, q3]
-    calc
-      p23 p ≫ (p1 p ≫ p) = (p23 p ≫ p1 p) ≫ p := by simp [Category.assoc]
-      _ = (p12 p ≫ p2 p) ≫ p := by
-        exact congrArg (fun k => k ≫ p) (p12_p2_eq_p23_p1 (p := p)).symm
-      _ = (p12 p ≫ p1 p) ≫ p := by
-        -- rewrite `p2 ≫ p` to `p1 ≫ p` using the kernel-pair condition
-        -- (avoid `simp` rewriting `p12 ≫ p2` back to `p23 ≫ p1`)
-        calc
-          (p12 p ≫ p2 p) ≫ p = p12 p ≫ (p2 p ≫ p) := by simp only [Category.assoc]
-          _ = p12 p ≫ (p1 p ≫ p) := by
-            simpa using congrArg (fun k => p12 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
-          _ = (p12 p ≫ p1 p) ≫ p := by simp only [Category.assoc]
-      _ = p12 p ≫ (p1 p ≫ p) := by simp [Category.assoc]
+    have h₁ : (p23 p ≫ p1 p) ≫ p = (p12 p ≫ p2 p) ≫ p := by
+      simpa using congrArg (fun k => k ≫ p) (p12_p2_eq_p23_p1 (p := p)).symm
+    have h₂ : (p12 p ≫ p2 p) ≫ p = (p12 p ≫ p1 p) ≫ p := by
+      -- rewrite `p2 ≫ p` to `p1 ≫ p` using the kernel-pair condition
+      have :
+          p12 p ≫ (p2 p ≫ p) = p12 p ≫ (p1 p ≫ p) := by
+        simpa using congrArg (fun k => p12 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
+      simpa [Category.assoc] using this
+    simpa [Category.assoc] using h₁.trans h₂
   have hq13 : p13 p ≫ q0 = q3 := by
     dsimp [q0, q3]
     simp [Category.assoc]
   have hf12_1 : (p12 p ≫ p2 p) ≫ p = q3 := by
     dsimp [q0, q3]
-    calc
-      (p12 p ≫ p2 p) ≫ p = p12 p ≫ (p2 p ≫ p) := by simp only [Category.assoc]
-      _ = p12 p ≫ (p1 p ≫ p) := by
-        simpa using congrArg (fun k => p12 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
+    simpa [Category.assoc] using
+      congrArg (fun k => p12 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
   have hf12_2 : (p12 p ≫ p1 p) ≫ p = q3 := by
     dsimp [q0, q3]
     simp [Category.assoc]
   have hf23_1 : (p23 p ≫ p2 p) ≫ p = q3 := by
-    calc
-      (p23 p ≫ p2 p) ≫ p = p23 p ≫ (p2 p ≫ p) := by simp [Category.assoc]
-      _ = p23 p ≫ (p1 p ≫ p) := by
-        simpa using congrArg (fun k => p23 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
-      _ = q3 := by simpa [q0, Category.assoc] using hq23
+    have hq23' : p23 p ≫ (p1 p ≫ p) = q3 := by simpa [q0, Category.assoc] using hq23
+    have h :
+        p23 p ≫ (p2 p ≫ p) = p23 p ≫ (p1 p ≫ p) := by
+      simpa using congrArg (fun k => p23 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
+    simpa [Category.assoc] using h.trans hq23'
   have hf23_2 : (p23 p ≫ p1 p) ≫ p = q3 := by
     simpa [q0, Category.assoc] using hq23
   have hf13_1 : (p13 p ≫ p2 p) ≫ p = q3 := by
-    calc
-      (p13 p ≫ p2 p) ≫ p = p13 p ≫ (p2 p ≫ p) := by simp [Category.assoc]
-      _ = p13 p ≫ (p1 p ≫ p) := by
-        simpa using congrArg (fun k => p13 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
-      _ = q3 := by simpa [q0, Category.assoc] using hq13
+    have hq13' : p13 p ≫ (p1 p ≫ p) = q3 := by simpa [q0, Category.assoc] using hq13
+    have h :
+        p13 p ≫ (p2 p ≫ p) = p13 p ≫ (p1 p ≫ p) := by
+      simpa using congrArg (fun k => p13 p ≫ k) (p1_comp_p_eq_p2_comp_p (p := p)).symm
+    simpa [Category.assoc] using h.trans hq13'
   have hf13_2 : (p13 p ≫ p1 p) ≫ p = q3 := by
     simpa [q0, Category.assoc] using hq13
   set φ :
@@ -975,16 +882,14 @@ def singleToSingletonFunctor :
   obj := singleToSingletonDescentDatum F p
   map := singleToSingletonHom F p
   map_id := fun D => by
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
-    simp only [singleToSingletonHom, singleToSingletonDescentDatum]
-    rfl
+    ext i
+    cases i
+    simp [singleToSingletonHom, singleToSingletonDescentDatum]
   map_comp := fun f g => by
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
-    simp only [singleToSingletonHom, singleToSingletonDescentDatum,
+    ext i
+    cases i
+    simp [singleToSingletonHom, singleToSingletonDescentDatum,
       CategoryTheory.Pseudofunctor.DescentData.comp_hom]
-    rfl
 
 /-- The functor from mathlib descent data to single-morphism descent data. -/
 def singletonToSingleFunctor :
@@ -993,14 +898,12 @@ def singletonToSingleFunctor :
   obj := singletonToSingleDescentDatum F p
   map := singletonToSingleHom F p
   map_id := fun D => by
-    apply SingleMorphismDescentDatum.Hom.ext
-    simp only [singletonToSingleHom, singletonToSingleDescentDatum]
-    rfl
+    ext
+    simp [singletonToSingleHom, singletonToSingleDescentDatum]
   map_comp := fun f g => by
-    apply SingleMorphismDescentDatum.Hom.ext
-    simp only [singletonToSingleHom, singletonToSingleDescentDatum,
+    ext
+    simp [singletonToSingleHom, singletonToSingleDescentDatum,
       CategoryTheory.Pseudofunctor.DescentData.comp_hom]
-    rfl
 
 /-!
 ## Equivalence
@@ -1019,11 +922,11 @@ def singleSingletonUnit (D : SingleMorphismDescentDatum (F := F) p) :
       singletonToSingleDescentDatum] using
         (singleToSingletonHomAux_swap (F := F) (p := p) D).symm⟩
   hom_inv_id := by
-    apply SingleMorphismDescentDatum.Hom.ext
+    ext
     dsimp only [SingleMorphismDescentDatum.instCategory]
     simp
   inv_hom_id := by
-    apply SingleMorphismDescentDatum.Hom.ext
+    ext
     simp only [SingleMorphismDescentDatum.instCategory, singleToSingletonFunctor,
       singletonToSingleFunctor, singleToSingletonDescentDatum, singletonToSingleDescentDatum,
       Functor.comp_obj, SingleMorphismDescentDatum.Hom.comp_hom,
@@ -1098,15 +1001,15 @@ def singleSingletonCounit
     simpa [singleToSingletonFunctor, singletonToSingleFunctor, singleToSingletonDescentDatum,
       singletonToSingleDescentDatum, singleToSingletonHomAux, g] using hpull⟩
   hom_inv_id := by
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
+    ext i
+    cases i
     simp only [CategoryTheory.Pseudofunctor.DescentData.comp_hom,
       CategoryTheory.Pseudofunctor.DescentData.id_hom, Functor.comp_obj,
       singleToSingletonFunctor, singletonToSingleFunctor, singleToSingletonDescentDatum,
       singletonToSingleDescentDatum, Category.comp_id]
   inv_hom_id := by
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
+    ext i
+    cases i
     simp
 
 /-- The equivalence between single-morphism descent data and mathlib's descent data
@@ -1118,24 +1021,24 @@ def singleSingletonDescentDataEquiv :
   inverse := singletonToSingleFunctor F p
   unitIso := NatIso.ofComponents (singleSingletonUnit F p) (by
     intro D₁ D₂ f
-    apply SingleMorphismDescentDatum.Hom.ext
-    simp only [SingleMorphismDescentDatum.instCategory, singleToSingletonFunctor,
+    ext
+    simp [SingleMorphismDescentDatum.instCategory, singleToSingletonFunctor,
       singletonToSingleFunctor, singleSingletonUnit, singleToSingletonHom, singletonToSingleHom,
       singleToSingletonDescentDatum, singletonToSingleDescentDatum, Functor.comp_obj,
       Functor.id_obj, Functor.comp_map, Functor.id_map,
       SingleMorphismDescentDatum.Hom.comp_hom, Category.id_comp, Category.comp_id])
   counitIso := NatIso.ofComponents (singleSingletonCounit F p) (by
     intro D₁ D₂ f
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
+    ext i
+    cases i
     simp only [singleToSingletonFunctor, singletonToSingleFunctor, singleSingletonCounit,
       singleToSingletonHom, singletonToSingleHom, singleToSingletonDescentDatum,
       singletonToSingleDescentDatum, Functor.comp_obj, Functor.id_obj, Functor.comp_map,
       Functor.id_map, CategoryTheory.Pseudofunctor.DescentData.comp_hom,
       Category.id_comp, Category.comp_id])
   functor_unitIso_comp X := by
-    apply CategoryTheory.Pseudofunctor.DescentData.Hom.ext
-    funext i; cases i
+    ext i
+    cases i
     simp only [singleToSingletonFunctor, singletonToSingleFunctor, singleSingletonUnit,
       singleSingletonCounit, singleToSingletonHom, singleToSingletonDescentDatum,
       singletonToSingleDescentDatum, Functor.comp_obj, Functor.id_obj,

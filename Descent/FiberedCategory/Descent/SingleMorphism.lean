@@ -159,7 +159,7 @@ structure Hom (D D' : SingleMorphismDescentDatum (pA := pA) p) where
       (reindex (pA := pA) (p2 p)).map hom ≫ D'.ξ.hom
 
 @[ext]
-lemma Hom.ext {D D' : SingleMorphismDescentDatum (pA := pA) p} (f g : Hom (pA := pA) D D')
+lemma Hom.ext {D D' : SingleMorphismDescentDatum (pA := pA) p} {f g : Hom (pA := pA) D D'}
     (h : f.hom = g.hom) : f = g := by
   cases f
   cases g

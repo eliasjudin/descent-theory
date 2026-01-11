@@ -95,11 +95,11 @@ For an element `((e₁, e₂), (e₂, e₃))`, this returns `(e₁, e₃)`. This
 abbrev p13 {E B : C} (p : E ⟶ B) : cechThree p ⟶ cechTwo p :=
   Limits.pullback.lift (p12 p ≫ p1 p) (p23 p ≫ p2 p) (by
     simp only [Category.assoc]
-    calc p12 p ≫ (p1 p ≫ p) = p12 p ≫ (p2 p ≫ p) := by rw [p1_comp_p_eq_p2_comp_p]
-      _ = (p12 p ≫ p2 p) ≫ p := by rw [Category.assoc]
-      _ = (p23 p ≫ p1 p) ≫ p := by rw [p12_p2_eq_p23_p1]
-      _ = p23 p ≫ (p1 p ≫ p) := by rw [← Category.assoc]
-      _ = p23 p ≫ (p2 p ≫ p) := by rw [p1_comp_p_eq_p2_comp_p])
+    calc
+      p12 p ≫ p1 p ≫ p = p12 p ≫ p2 p ≫ p := by simp [p1_comp_p_eq_p2_comp_p]
+      _ = p23 p ≫ p1 p ≫ p := by
+        simpa only [Category.assoc] using congrArg (fun k => k ≫ p) (p12_p2_eq_p23_p1 p)
+      _ = p23 p ≫ p2 p ≫ p := by simp [p1_comp_p_eq_p2_comp_p])
 
 @[simp] lemma p13_p1 {E B : C} (p : E ⟶ B) :
     p13 p ≫ p1 p = p12 p ≫ p1 p := by

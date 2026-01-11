@@ -120,8 +120,8 @@ structure Hom (D D' : SingleMorphismDescentDatum (F := F) p) where
       (reindex F (p2 p)).map hom ≫ D'.ξ.hom
 
 @[ext]
-lemma Hom.ext {D D' : SingleMorphismDescentDatum (F := F) p} (f g : Hom D D')
-    (h : f.hom = g.hom) : f = g := by
+lemma Hom.ext {D D' : SingleMorphismDescentDatum (F := F) p} {f g : Hom D D'} (h : f.hom = g.hom) :
+    f = g := by
   cases f
   cases g
   cases h
