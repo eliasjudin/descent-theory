@@ -12,8 +12,17 @@ import Descent.FiberedCategory.Reindexing
 
 Defines Čech-style descent data for a fibered category `pA : 𝒜 ⥤ C` along
 `p : E ⟶ B`, with unit and cocycle conditions on overlaps. Main definitions
-are `SingleMorphismDescentDatum`, `SingleMorphismDescentData`, and
-`singleMorphismComparisonXi`.
+are `SingleMorphismDescentData` and `singleMorphismComparisonXi`.
+
+## TODO (Facets of Descent, II)
+
+* [RESEARCH] Define the comparison functor `Φₚ : Fiber pA B ⥤ SingleMorphismDescentData p` (paper §3.2) and
+  the corresponding predicates “(effective) descent morphism for `pA`”.
+* [RESEARCH] Prove the fibered-category analogue of §3.3: for a cloven fibration inducing an indexed category
+  `A : Cᵒᵖ ⥤ CAT`, show that the fibered descent data here agrees with `DesA(p)` (up to the paper’s
+  `ξ`/`ξ⁻¹` convention).
+* [RESEARCH] Once the bridge to indexed categories is in place, transport Theorems 3.5, 4.5, and 5.2 to the
+  fibered category setting.
 -/
 
 open CategoryTheory Functor Category
@@ -130,7 +139,7 @@ noncomputable def xi13 {E B : C} (p : E ⟶ B) {C₀ : Fiber pA E}
 
 This is the usual Čech formulation: an object over `E` equipped with a gluing isomorphism on
 `E ×_B E` satisfying unit and cocycle conditions. -/
-structure SingleMorphismDescentDatum {E B : C} (p : E ⟶ B) where
+structure SingleMorphismDescentData {E B : C} (p : E ⟶ B) where
   /-- The object over `E`. -/
   obj : Fiber pA E
   /-- The gluing isomorphism `π₂^* obj ≅ π₁^* obj` over `E ×_B E`. -/
@@ -144,13 +153,13 @@ structure SingleMorphismDescentDatum {E B : C} (p : E ⟶ B) where
   /-- Cocycle condition on triple overlaps. -/
   cocycle : xi23 (pA := pA) p ξ ≫ xi12 (pA := pA) p ξ = xi13 (pA := pA) p ξ
 
-namespace SingleMorphismDescentDatum
+namespace SingleMorphismDescentData
 
 variable {E B : C} {p : E ⟶ B}
 
 /-- Morphisms of descent data are morphisms in the fiber over `E` compatible with the glueing
 isomorphisms. -/
-structure Hom (D D' : SingleMorphismDescentDatum (pA := pA) p) where
+structure Hom (D D' : SingleMorphismDescentData (pA := pA) p) where
   /-- The underlying morphism in the fiber over `E`. -/
   hom : D.obj ⟶ D'.obj
   /-- Compatibility with the gluing isomorphisms. -/
@@ -159,7 +168,7 @@ structure Hom (D D' : SingleMorphismDescentDatum (pA := pA) p) where
       (reindex (pA := pA) (p2 p)).map hom ≫ D'.ξ.hom
 
 @[ext]
-lemma Hom.ext {D D' : SingleMorphismDescentDatum (pA := pA) p} {f g : Hom (pA := pA) D D'}
+lemma Hom.ext {D D' : SingleMorphismDescentData (pA := pA) p} {f g : Hom (pA := pA) D D'}
     (h : f.hom = g.hom) : f = g := by
   cases f
   cases g
@@ -168,13 +177,13 @@ lemma Hom.ext {D D' : SingleMorphismDescentDatum (pA := pA) p} {f g : Hom (pA :=
 
 /-- Identity morphism of descent data. -/
 @[simps]
-def Hom.id (D : SingleMorphismDescentDatum (pA := pA) p) : Hom (pA := pA) D D where
+def Hom.id (D : SingleMorphismDescentData (pA := pA) p) : Hom (pA := pA) D D where
   hom := 𝟙 D.obj
   comm := by simp
 
 /-- Composition of morphisms of descent data. -/
 @[simps]
-def Hom.comp {D₁ D₂ D₃ : SingleMorphismDescentDatum (pA := pA) p} (f : Hom (pA := pA) D₁ D₂)
+def Hom.comp {D₁ D₂ D₃ : SingleMorphismDescentData (pA := pA) p} (f : Hom (pA := pA) D₁ D₂)
     (g : Hom (pA := pA) D₂ D₃) : Hom (pA := pA) D₁ D₃ where
   hom := f.hom ≫ g.hom
   comm := by
@@ -191,7 +200,7 @@ def Hom.comp {D₁ D₂ D₃ : SingleMorphismDescentDatum (pA := pA) p} (f : Hom
             D₃.ξ.hom := by
         simpa [Category.assoc] using congrArg ((reindex (pA := pA) (p2 p)).map f.hom ≫ ·) g.comm
 
-instance instCategory : Category (SingleMorphismDescentDatum (pA := pA) p) where
+instance instCategory : Category (SingleMorphismDescentData (pA := pA) p) where
   Hom D D' := Hom (pA := pA) D D'
   id := Hom.id (pA := pA)
   comp f g := Hom.comp (pA := pA) f g
@@ -199,11 +208,7 @@ instance instCategory : Category (SingleMorphismDescentDatum (pA := pA) p) where
   comp_id f := by ext; simp
   assoc f g h := by ext; simp [Category.assoc]
 
-end SingleMorphismDescentDatum
-
-/-- The category of descent data for `pA` relative to `p`. -/
-abbrev SingleMorphismDescentData {E B : C} (p : E ⟶ B) : Type _ :=
-  SingleMorphismDescentDatum (pA := pA) p
+end SingleMorphismDescentData
 
 /-- The canonical descent isomorphism on `p^* a`.
 
