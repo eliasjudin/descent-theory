@@ -8,10 +8,29 @@ import Descent.Pseudofunctor.Descent.SingleMorphism
 /-!
 # Equivalence with mathlib's descent data
 
-Relates `SingleMorphismDescentDatum` for `p : E ⟶ B` to mathlib's
+Relates `SingleMorphismDescentData` for `p : E ⟶ B` to mathlib's
 `Pseudofunctor.DescentData` for the singleton family `fun _ : PUnit => p`.
 Main definitions: `singleToSingletonDescentDatum`, `singletonToSingleDescentDatum`,
 `singleToSingletonFunctor`, `singletonToSingleFunctor`, `singleSingletonDescentDataEquiv`.
+
+## TODO (Facets of Descent, II)
+
+* [RESEARCH] Define “absolutely effective descent” as in §3.2: `p` is an effective descent morphism
+  for every `C`-indexed category (pseudofunctor) `A : Cᵒᵖ ⥤ CAT`, and connect this to the
+  fibered-category formulation via Grothendieck fibrations (cf. §3.3).
+* [RESEARCH] Prove Theorem 3.5 (split epis ↔ absolutely effective descent):
+  - “if”: for a section `s : B ⟶ E` of `p`, show the comparison functor `Φₚ` is an equivalence for all
+    indexed categories (following the paper via the internal-category equivalence `p̄ : Eq(p) ≃ B`,
+    or by a direct construction avoiding `cat(C)`).
+  - “only if”: formalize the indexed category `A_p` from the proof (objects `C(X,E)` with morphisms
+    given by the relation `p u = p v`) and use essential surjectivity/full faithfulness of `Φₚ` to
+    extract a section of `p`.
+* [RESEARCH] Implement the basic equivalence diagram (BED) from §4.1–§4.2 for a commutative square (20), and
+  define what it means for an indexed category to respect a BED (§4.4). Use this to prove the
+  composition-cancellation theorem (Theorem 4.5) for effective descent morphisms.
+* [RESEARCH] Define `A`-locally-split epimorphisms (§5.1) and prove Theorem 5.2 using composition-cancellation.
+  Connect §5.3 to Mathlib’s `IsStack`/`IsPrestack` API on sites by expressing the paper’s “stack”
+  hypothesis in those terms.
 -/
 
 open CategoryTheory
@@ -32,7 +51,7 @@ noncomputable section
 variable {E B : C} (p : E ⟶ B)
 
 /-- The singleton morphism family `∀ i, E ⟶ B` mapping everything to `p`. -/
-abbrev singletonMorphism : ∀ (_ : PUnit), E ⟶ B := fun _ => p
+abbrev singletonMorphism : ∀ (_ : PUnit.{1}), E ⟶ B := fun _ => p
 
 /-!
 ## Helper: pulling back the Čech glueing isomorphism
@@ -43,26 +62,26 @@ abbrev singletonMorphism : ∀ (_ : PUnit), E ⟶ B := fun _ => p
 
 We define it by pulling back `D.ξ.inv : π₁^* D.obj ⟶ π₂^* D.obj` along the canonical
 map `Y ⟶ E ×_B E`. -/
-def singleToSingletonHomAux (D : SingleMorphismDescentDatum (F := F) p) {Y : C} (f₁ f₂ : Y ⟶ E)
+def singleToSingletonHomAux (D : SingleMorphismDescentData (F := F) p) {Y : C} (f₁ f₂ : Y ⟶ E)
     (h : f₁ ≫ p = f₂ ≫ p) :
     (F.map f₁.op.toLoc).toFunctor.obj D.obj ⟶ (F.map f₂.op.toLoc).toFunctor.obj D.obj := by
-  let u : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ h
+  let u : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ h
   have hu1 : u ≫ p1 p = f₁ := Limits.pullback.lift_fst _ _ _
   have hu2 : u ≫ p2 p = f₂ := Limits.pullback.lift_snd _ _ _
   exact CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
     (φ := D.ξ.inv) u f₁ f₂ hu1 hu2
 
 private lemma singleToSingletonHomAux_comp
-    (D : SingleMorphismDescentDatum (F := F) p) {Y : C} (f₁ f₂ f₃ : Y ⟶ E)
+    (D : SingleMorphismDescentData (F := F) p) {Y : C} (f₁ f₂ f₃ : Y ⟶ E)
     (h12 : f₁ ≫ p = f₂ ≫ p) (h23 : f₂ ≫ p = f₃ ≫ p) (h13 : f₁ ≫ p = f₃ ≫ p) :
     singleToSingletonHomAux F p D f₁ f₂ h12 ≫
         singleToSingletonHomAux F p D f₂ f₃ h23 =
       singleToSingletonHomAux F p D f₁ f₃ h13 := by
   classical
   -- Build the Čech 3-fold overlap map induced by (f₁,f₂,f₃).
-  let u12 : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ h12
-  let u23 : Y ⟶ cechTwo p := Limits.pullback.lift f₂ f₃ h23
-  let u13 : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₃ h13
+  let u12 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ h12
+  let u23 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₂ f₃ h23
+  let u13 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₃ h13
   have hu12_1 : u12 ≫ p1 p = f₁ := Limits.pullback.lift_fst _ _ _
   have hu12_2 : u12 ≫ p2 p = f₂ := Limits.pullback.lift_snd _ _ _
   have hu23_1 : u23 ≫ p1 p = f₂ := Limits.pullback.lift_fst _ _ _
@@ -70,7 +89,7 @@ private lemma singleToSingletonHomAux_comp
   have hu13_1 : u13 ≫ p1 p = f₁ := Limits.pullback.lift_fst _ _ _
   have hu13_2 : u13 ≫ p2 p = f₃ := Limits.pullback.lift_snd _ _ _
   have h_u12_u23 : u12 ≫ p2 p = u23 ≫ p1 p := by simp [hu12_2, hu23_1]
-  let v : Y ⟶ cechThree p := Limits.pullback.lift u12 u23 h_u12_u23
+  let v : Y ⟶ cechTripleOverlap p := Limits.pullback.lift u12 u23 h_u12_u23
   have hv12 : v ≫ p12 p = u12 := Limits.pullback.lift_fst _ _ _
   have hv23 : v ≫ p23 p = u23 := Limits.pullback.lift_snd _ _ _
   have hv12_p1 : v ≫ (p12 p ≫ p1 p) = f₁ := by simpa [Category.assoc, hv12] using hu12_1
@@ -78,21 +97,8 @@ private lemma singleToSingletonHomAux_comp
   have hv23_p1 : v ≫ (p23 p ≫ p1 p) = f₂ := by simpa [Category.assoc, hv23] using hu23_1
   have hv23_p2 : v ≫ (p23 p ≫ p2 p) = f₃ := by simpa [Category.assoc, hv23] using hu23_2
   have hv13 : v ≫ p13 p = u13 := by
-    apply Limits.pullback.hom_ext
-    · -- Compare the first projections.
-      calc
-        (v ≫ p13 p) ≫ p1 p = (v ≫ p12 p) ≫ p1 p := by
-          simp [Category.assoc]
-        _ = u12 ≫ p1 p := by simp [hv12]
-        _ = f₁ := hu12_1
-        _ = u13 ≫ p1 p := by simp [hu13_1]
-    · -- Compare the second projections.
-      calc
-        (v ≫ p13 p) ≫ p2 p = (v ≫ p23 p) ≫ p2 p := by
-          simp [Category.assoc]
-        _ = u23 ≫ p2 p := by simp [hv23]
-        _ = f₃ := hu23_2
-        _ = u13 ≫ p2 p := by simp [hu13_2]
+    apply Limits.pullback.hom_ext <;>
+      simp [Category.assoc, hv12, hv23, hu12_1, hu23_2, hu13_1, hu13_2]
   -- Provide `IsIso` instances for the Čech morphisms.
   letI : IsIso (xi12 (F := F) p D.ξ) := by
     dsimp [xi12]
@@ -104,7 +110,7 @@ private lemma singleToSingletonHomAux_comp
     dsimp [xi13]
     infer_instance
   -- Identify the pullbacks of the Čech morphisms.
-  have hmapInv {Y : C} (g : Y ⟶ cechTwo p) :
+  have hmapInv {Y : C} (g : Y ⟶ cechKernelPair p) :
       (F.map g.op.toLoc).toFunctor.map D.ξ.inv =
         inv ((F.map g.op.toLoc).toFunctor.map D.ξ.hom) := by
     simpa using
@@ -211,17 +217,12 @@ private lemma singleToSingletonHomAux_comp
   have h_cocycle_inv :
       inv (xi12 (F := F) p D.ξ) ≫ inv (xi23 (F := F) p D.ξ) =
         inv (xi13 (F := F) p D.ξ) := by
-    calc
-      inv (xi12 (F := F) p D.ξ) ≫ inv (xi23 (F := F) p D.ξ)
-          = inv (xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) := by
-              simp [IsIso.inv_comp]
-      _ = inv (xi13 (F := F) p D.ξ) := by
-            simp [D.cocycle]
+    simpa [IsIso.inv_comp] using congrArg (fun t => inv t) D.cocycle
   -- Assemble.
   simp [haux12, haux23, haux13, hcomp_pull, h_cocycle_inv]
 
 private lemma singleToSingletonHomAux_self
-    (D : SingleMorphismDescentDatum (F := F) p) {Y : C} (g : Y ⟶ E) :
+    (D : SingleMorphismDescentData (F := F) p) {Y : C} (g : Y ⟶ E) :
     singleToSingletonHomAux F p D g g (by rfl) = 𝟙 _ := by
   -- Use idempotence + isomorphism to deduce identity.
   let f := singleToSingletonHomAux F p D g g (by rfl)
@@ -236,17 +237,17 @@ private lemma singleToSingletonHomAux_self
   simpa [Category.assoc] using h'
 
 private lemma singleToSingletonHomAux_p1_p2
-    (D : SingleMorphismDescentDatum (F := F) p) :
+    (D : SingleMorphismDescentData (F := F) p) :
     singleToSingletonHomAux F p D (p1 p) (p2 p) (p1_comp_p_eq_p2_comp_p p) = D.ξ.inv := by
   classical
-  let u : cechTwo p ⟶ cechTwo p :=
+  let u : cechKernelPair p ⟶ cechKernelPair p :=
     Limits.pullback.lift (p1 p) (p2 p) (p1_comp_p_eq_p2_comp_p p)
   have hu : u = 𝟙 _ := by
     apply Limits.pullback.hom_ext <;> simp [u]
   simp [singleToSingletonHomAux, u, hu]
 
 private lemma singleToSingletonHomAux_swap
-    (D : SingleMorphismDescentDatum (F := F) p) :
+    (D : SingleMorphismDescentData (F := F) p) :
     D.ξ.hom =
       singleToSingletonHomAux F p D (p2 p) (p1 p)
         (by simpa using (p1_comp_p_eq_p2_comp_p p).symm) := by
@@ -272,7 +273,7 @@ private lemma singleToSingletonHomAux_swap
       hcomp')
   simpa using hinv
 
-private lemma singleToSingletonHomAux_comm {D₁ D₂ : SingleMorphismDescentDatum (F := F) p}
+private lemma singleToSingletonHomAux_comm {D₁ D₂ : SingleMorphismDescentData (F := F) p}
     (f : D₁ ⟶ D₂) {Y : C} (g₁ g₂ : Y ⟶ E) (h : g₁ ≫ p = g₂ ≫ p) :
     (F.map g₁.op.toLoc).toFunctor.map f.hom ≫ singleToSingletonHomAux F p D₂ g₁ g₂ h =
       singleToSingletonHomAux F p D₁ g₁ g₂ h ≫
@@ -319,7 +320,7 @@ private lemma singleToSingletonHomAux_comm {D₁ D₂ : SingleMorphismDescentDat
 The key mapping:
 - `obj ()` := `D.obj`
 - `hom q f₁ f₂` at Y mapping to E comes from `D.ξ` transported appropriately -/
-def singleToSingletonDescentDatum (D : SingleMorphismDescentDatum (F := F) p) :
+def singleToSingletonDescentDatum (D : SingleMorphismDescentData (F := F) p) :
     CategoryTheory.Pseudofunctor.DescentData (F := F) (f := singletonMorphism p) where
   obj := fun _ => D.obj
   hom := fun {Y} q {i₁ i₂} f₁ f₂ hf₁ hf₂ => by
@@ -332,7 +333,7 @@ def singleToSingletonDescentDatum (D : SingleMorphismDescentDatum (F := F) p) :
     intro Y' Y g q q' hq i₁ i₂ f₁ f₂ hf₁ hf₂ gf₁ gf₂ hgf₁ hgf₂
     cases i₁; cases i₂
     -- Expand the definition of `hom` on both sides.
-    -- Both sides are pullbacks of `D.ξ.inv` along the corresponding maps into `cechTwo p`.
+    -- Both sides are pullbacks of `D.ξ.inv` along the corresponding maps into `cechKernelPair p`.
     have hf₁' : f₁ ≫ p = f₂ ≫ p := by
       simp only [singletonMorphism] at hf₁ hf₂
       rw [hf₁, hf₂]
@@ -342,16 +343,15 @@ def singleToSingletonDescentDatum (D : SingleMorphismDescentDatum (F := F) p) :
       have h₁ : gf₁ ≫ p = q' := by simpa [Category.assoc, hgf₁, hf₁] using hq
       have h₂ : gf₂ ≫ p = q' := by simpa [Category.assoc, hgf₂, hf₂] using hq
       exact h₁.trans h₂.symm
-    let u : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ hf₁'
-    let u' : Y' ⟶ cechTwo p := Limits.pullback.lift gf₁ gf₂ hgf₁'
+    let u : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ hf₁'
+    let u' : Y' ⟶ cechKernelPair p := Limits.pullback.lift gf₁ gf₂ hgf₁'
     have hu1 : u ≫ p1 p = f₁ := Limits.pullback.lift_fst _ _ _
     have hu2 : u ≫ p2 p = f₂ := Limits.pullback.lift_snd _ _ _
     have hu1' : u' ≫ p1 p = gf₁ := Limits.pullback.lift_fst _ _ _
     have hu2' : u' ≫ p2 p = gf₂ := Limits.pullback.lift_snd _ _ _
     have hg_u : g ≫ u = u' := by
-      apply Limits.pullback.hom_ext
-      · simp [u, u', hu1, hu1', hgf₁, Category.assoc]
-      · simp [u, u', hu2, hu2', hgf₂, Category.assoc]
+      apply Limits.pullback.hom_ext <;>
+        simp [u, u', hu1, hu2, hu1', hu2', hgf₁, hgf₂, Category.assoc]
     -- Use functoriality of `pullHom` and the equality `g ≫ u = u'`.
     -- `pullHom_pullHom` rewrites the double pullback as a single pullback along `g ≫ u`.
     -- Then we rewrite by `hg_u` to match the definition of `hom` for `q'`.
@@ -552,8 +552,8 @@ private lemma singletonToSingle_cocycle
           (by
             simpa [singletonMorphism] using (p1_comp_p_eq_p2_comp_p p).symm)).symm := by
   classical
-  let q0 : cechTwo p ⟶ B := p1 p ≫ p
-  let q3 : cechThree p ⟶ B := p12 p ≫ q0
+  let q0 : cechKernelPair p ⟶ B := p1 p ≫ p
+  let q3 : cechTripleOverlap p ⟶ B := p12 p ≫ q0
   have hq23 : p23 p ≫ q0 = q3 := by
     dsimp [q0, q3]
     have h₁ : (p23 p ≫ p1 p) ≫ p = (p12 p ≫ p2 p) ≫ p := by
@@ -821,13 +821,13 @@ private lemma singletonToSingle_cocycle
 /-- Convert mathlib's descent data for the singleton family to a single morphism descent datum. -/
 def singletonToSingleDescentDatum
     (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := singletonMorphism p)) :
-    SingleMorphismDescentDatum (F := F) p where
+    SingleMorphismDescentData (F := F) p where
   obj := D.obj PUnit.unit
   ξ := by
     -- We need: π₂^* (D.obj ()) ≅ π₁^* (D.obj ())
     -- D.iso gives us: for f₁ f₂ : Y ⟶ E with f₁ ≫ p = f₂ ≫ p,
     --   f₁^* (D.obj ()) ≅ f₂^* (D.obj ())
-    -- Take f₁ = π₁, f₂ = π₂ at Y = cechTwo p
+    -- Take f₁ = π₁, f₂ = π₂ at Y = cechKernelPair p
     -- Then D.iso gives π₁^* (D.obj ()) ≅ π₂^* (D.obj ())
     -- We need the inverse direction for our ξ : π₂^* → π₁^*
     have h : p1 p ≫ p = p2 p ≫ p := p1_comp_p_eq_p2_comp_p p
@@ -842,10 +842,10 @@ def singletonToSingleDescentDatum
 -/
 
 /-- Convert a morphism of single-morphism descent data to a morphism of mathlib descent data. -/
-def singleToSingletonHom {D₁ D₂ : SingleMorphismDescentDatum (F := F) p}
+def singleToSingletonHom {D₁ D₂ : SingleMorphismDescentData (F := F) p}
     (f : D₁ ⟶ D₂) :
     singleToSingletonDescentDatum F p D₁ ⟶ singleToSingletonDescentDatum F p D₂ where
-  hom := fun _ => (f : SingleMorphismDescentDatum.Hom D₁ D₂).hom
+  hom := fun _ => (f : SingleMorphismDescentData.Hom D₁ D₂).hom
   comm := by
     intro Y q i₁ i₂ g₁ g₂ hg₁ hg₂
     cases i₁; cases i₂
@@ -877,7 +877,7 @@ def singletonToSingleHom
 
 /-- The functor from single-morphism descent data to mathlib descent data. -/
 def singleToSingletonFunctor :
-    SingleMorphismDescentDatum (F := F) p ⥤
+    SingleMorphismDescentData (F := F) p ⥤
       CategoryTheory.Pseudofunctor.DescentData (F := F) (f := singletonMorphism p) where
   obj := singleToSingletonDescentDatum F p
   map := singleToSingletonHom F p
@@ -894,7 +894,7 @@ def singleToSingletonFunctor :
 /-- The functor from mathlib descent data to single-morphism descent data. -/
 def singletonToSingleFunctor :
     CategoryTheory.Pseudofunctor.DescentData (F := F) (f := singletonMorphism p) ⥤
-      SingleMorphismDescentDatum (F := F) p where
+      SingleMorphismDescentData (F := F) p where
   obj := singletonToSingleDescentDatum F p
   map := singletonToSingleHom F p
   map_id := fun D => by
@@ -910,7 +910,7 @@ def singletonToSingleFunctor :
 -/
 
 /-- The unit of the equivalence: `D ≅ singletonToSingle (singleToSingleton D)`. -/
-def singleSingletonUnit (D : SingleMorphismDescentDatum (F := F) p) :
+def singleSingletonUnit (D : SingleMorphismDescentData (F := F) p) :
     D ≅ (singleToSingletonFunctor F p ⋙ singletonToSingleFunctor F p).obj D where
   hom := ⟨𝟙 D.obj, by
     -- The ξ's should match up to coherence
@@ -923,14 +923,14 @@ def singleSingletonUnit (D : SingleMorphismDescentDatum (F := F) p) :
         (singleToSingletonHomAux_swap (F := F) (p := p) D).symm⟩
   hom_inv_id := by
     ext
-    dsimp only [SingleMorphismDescentDatum.instCategory]
+    dsimp only [SingleMorphismDescentData.instCategory]
     simp
   inv_hom_id := by
     ext
-    simp only [SingleMorphismDescentDatum.instCategory, singleToSingletonFunctor,
+    simp only [SingleMorphismDescentData.instCategory, singleToSingletonFunctor,
       singletonToSingleFunctor, singleToSingletonDescentDatum, singletonToSingleDescentDatum,
-      Functor.comp_obj, SingleMorphismDescentDatum.Hom.comp_hom,
-      SingleMorphismDescentDatum.Hom.id_hom, Category.comp_id]
+      Functor.comp_obj, SingleMorphismDescentData.Hom.comp_hom,
+      SingleMorphismDescentData.Hom.id_hom, Category.comp_id]
 
 /-- The counit of the equivalence: `singleToSingleton (singletonToSingle D) ≅ D`. -/
 def singleSingletonCounit
@@ -942,7 +942,7 @@ def singleSingletonCounit
     have hf₁' : f₁ ≫ p = q := by simpa [singletonMorphism] using hf₁
     have hf₂' : f₂ ≫ p = q := by simpa [singletonMorphism] using hf₂
     have h : f₁ ≫ p = f₂ ≫ p := by rw [hf₁', hf₂']
-    let g : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ h
+    let g : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ h
     have hq : g ≫ (p1 p ≫ p) = q := by
       simpa [g, Category.assoc] using hf₁'
     have hpull :
@@ -974,7 +974,7 @@ def singleSingletonCounit
     have hf₁' : f₁ ≫ p = q := by simpa [singletonMorphism] using hf₁
     have hf₂' : f₂ ≫ p = q := by simpa [singletonMorphism] using hf₂
     have h : f₁ ≫ p = f₂ ≫ p := by rw [hf₁', hf₂']
-    let g : Y ⟶ cechTwo p := Limits.pullback.lift f₁ f₂ h
+    let g : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ h
     have hq : g ≫ (p1 p ≫ p) = q := by
       simpa [g, Category.assoc] using hf₁'
     have hpull :
@@ -1015,18 +1015,18 @@ def singleSingletonCounit
 /-- The equivalence between single-morphism descent data and mathlib's descent data
 for the singleton family. -/
 def singleSingletonDescentDataEquiv :
-    SingleMorphismDescentDatum (F := F) p ≌
+    SingleMorphismDescentData (F := F) p ≌
       CategoryTheory.Pseudofunctor.DescentData (F := F) (f := singletonMorphism p) where
   functor := singleToSingletonFunctor F p
   inverse := singletonToSingleFunctor F p
   unitIso := NatIso.ofComponents (singleSingletonUnit F p) (by
     intro D₁ D₂ f
     ext
-    simp [SingleMorphismDescentDatum.instCategory, singleToSingletonFunctor,
+    simp [SingleMorphismDescentData.instCategory, singleToSingletonFunctor,
       singletonToSingleFunctor, singleSingletonUnit, singleToSingletonHom, singletonToSingleHom,
       singleToSingletonDescentDatum, singletonToSingleDescentDatum, Functor.comp_obj,
       Functor.id_obj, Functor.comp_map, Functor.id_map,
-      SingleMorphismDescentDatum.Hom.comp_hom, Category.id_comp, Category.comp_id])
+      SingleMorphismDescentData.Hom.comp_hom, Category.id_comp, Category.comp_id])
   counitIso := NatIso.ofComponents (singleSingletonCounit F p) (by
     intro D₁ D₂ f
     ext i
@@ -1045,6 +1045,107 @@ def singleSingletonDescentDataEquiv :
       NatIso.ofComponents_hom_app, Category.comp_id,
       CategoryTheory.Pseudofunctor.DescentData.comp_hom,
       CategoryTheory.Pseudofunctor.DescentData.id_hom]
+
+/-- The comparison functor `Φₚ : F(B) ⥤ Des_F(p)` from the paper (Facets of Descent II, §3.2),
+landing in the Čech-style descent data defined in `SingleMorphism.lean`.
+
+It is defined as `F.toDescentData` for the singleton family, followed by the (inverse) functor
+from mathlib's descent data to our Čech-style descent data. -/
+noncomputable def singleMorphismComparisonFunctor :
+    F.obj (.mk (op B)) ⥤ SingleMorphismDescentData (F := F) p :=
+  (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)) ⋙
+    singletonToSingleFunctor (F := F) p
+
+/-- `p` is a descent morphism for `F` if the comparison functor `Φₚ` is fully faithful
+(Facets of Descent II, §3.2). -/
+abbrev IsDescentMorphism : Prop :=
+  Nonempty (singleMorphismComparisonFunctor (F := F) p).FullyFaithful
+
+/-- `p` is an effective descent morphism for `F` if the comparison functor `Φₚ` is an equivalence
+of categories (Facets of Descent II, §3.2). -/
+abbrev IsEffectiveDescentMorphism : Prop :=
+  (singleMorphismComparisonFunctor (F := F) p).IsEquivalence
+
+/-!
+## Relation with Mathlib's `IsPrestackFor`/`IsStackFor` for `Presieve.singleton p`
+
+Mathlib’s descent theory is formulated for arbitrary presieves `R` via the functor
+`F.toDescentData (fun (f : R.category) ↦ f.obj.hom)`. In the singleton case, the presieve
+`Presieve.singleton p` is (definitionally) the same as `Presieve.ofArrows _ (fun _ : PUnit => p)`,
+see `CategoryTheory.Presieve.ofArrows_pUnit`.
+
+The functor `singleMorphismComparisonFunctor` differs from `F.toDescentData` only by postcomposition
+with the (inverse) equivalence `singletonToSingleFunctor`, so it has the same “fully faithful” and
+“is equivalence” properties.
+-/
+
+theorem isDescentMorphism_iff_nonempty_toDescentData_fullyFaithful :
+    IsDescentMorphism (F := F) p ↔
+      Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)).FullyFaithful := by
+  classical
+  let e := singleSingletonDescentDataEquiv (F := F) p
+  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)
+  let H := singletonToSingleFunctor (F := F) p
+  have hH : H.FullyFaithful := by
+    simpa [H, e, singleSingletonDescentDataEquiv] using e.fullyFaithfulInverse
+  haveI : H.Faithful := by
+    simpa [H, e, singleSingletonDescentDataEquiv] using (show e.inverse.Faithful from inferInstance)
+  constructor
+  · rintro ⟨hGH⟩
+    refine ⟨CategoryTheory.Functor.FullyFaithful.ofCompFaithful (F := G) (G := H) ?_⟩
+    simpa [singleMorphismComparisonFunctor, G, H] using hGH
+  · rintro ⟨hG⟩
+    refine ⟨?_⟩
+    simpa [singleMorphismComparisonFunctor, G, H] using hG.comp hH
+
+theorem isEffectiveDescentMorphism_iff_toDescentData_isEquivalence :
+    IsEffectiveDescentMorphism (F := F) p ↔
+      (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)).IsEquivalence := by
+  classical
+  let e := singleSingletonDescentDataEquiv (F := F) p
+  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)
+  let H := singletonToSingleFunctor (F := F) p
+  haveI : H.IsEquivalence := by
+    simpa [H, e, singleSingletonDescentDataEquiv] using (show e.inverse.IsEquivalence from inferInstance)
+  constructor
+  · intro hGH
+    have : (G ⋙ H).IsEquivalence := by simpa [singleMorphismComparisonFunctor, G, H] using hGH
+    -- cancel the equivalence `H` on the right
+    haveI : (G ⋙ H).IsEquivalence := this
+    exact CategoryTheory.Functor.isEquivalence_of_comp_right G H
+  · intro hG
+    haveI : G.IsEquivalence := hG
+    -- composition with an equivalence is an equivalence
+    have : (G ⋙ H).IsEquivalence := by infer_instance
+    simpa [singleMorphismComparisonFunctor, G, H] using this
+
+theorem isPrestackFor_singleton_iff_isDescentMorphism :
+    CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
+      IsDescentMorphism (F := F) p := by
+  have hPresieve :
+      CategoryTheory.Presieve.ofArrows (fun _ : PUnit => E) (singletonMorphism p) =
+        CategoryTheory.Presieve.singleton p := by
+    simpa [singletonMorphism] using (CategoryTheory.Presieve.ofArrows_pUnit (f := p))
+  have h :
+      CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)).FullyFaithful := by
+    simpa [hPresieve] using
+      (CategoryTheory.Pseudofunctor.isPrestackFor_ofArrows_iff (F := F) (S := B) (f := singletonMorphism p))
+  exact h.trans (isDescentMorphism_iff_nonempty_toDescentData_fullyFaithful (F := F) p).symm
+
+theorem isStackFor_singleton_iff_isEffectiveDescentMorphism :
+    CategoryTheory.Pseudofunctor.IsStackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
+      IsEffectiveDescentMorphism (F := F) p := by
+  have hPresieve :
+      CategoryTheory.Presieve.ofArrows (fun _ : PUnit => E) (singletonMorphism p) =
+        CategoryTheory.Presieve.singleton p := by
+    simpa [singletonMorphism] using (CategoryTheory.Presieve.ofArrows_pUnit (f := p))
+  have h :
+      CategoryTheory.Pseudofunctor.IsStackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := singletonMorphism p)).IsEquivalence := by
+    simpa [hPresieve] using
+      (CategoryTheory.Pseudofunctor.isStackFor_ofArrows_iff (F := F) (S := B) (f := singletonMorphism p))
+  exact h.trans (isEffectiveDescentMorphism_iff_toDescentData_isEquivalence (F := F) p).symm
 
 end
 

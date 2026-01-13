@@ -11,6 +11,15 @@ import Mathlib.CategoryTheory.Sites.Descent.DescentData
 
 Defines `reindex` and the basic coherence isomorphisms for a pseudofunctor
 `F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`.
+
+## TODO (Facets of Descent, II)
+
+* [RESEARCH] Implement the paper’s `cat(C)`-extension `A : cat(C)ᵒᵖ ⥤ CAT` for indexed categories
+  (Theorem 2.5), once an internal-category API is available (or develop a minimal one without
+  duplicating future Mathlib work).
+* [RESEARCH] Use that extension to define `A^D` for internal categories `D` and prove that `A` sends internal
+  category equivalences to equivalences of ordinary categories (Lemma 3.4), which is a key input for
+  Theorem 3.5.
 -/
 
 open CategoryTheory
