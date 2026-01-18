@@ -4,22 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Elias Judin
 -/
 
-import Mathlib.CategoryTheory.Sites.Descent.DescentData
+import Mathlib.CategoryTheory.Bicategory.Functor.Pseudofunctor
+import Mathlib.CategoryTheory.Bicategory.LocallyDiscrete
+import Mathlib.CategoryTheory.Category.Cat
 
 /-!
 # Reindexing for pseudofunctors
 
 Defines `reindex` and the basic coherence isomorphisms for a pseudofunctor
 `F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`.
-
-## TODO (Facets of Descent, II)
-
-* [RESEARCH] Implement the paper’s `cat(C)`-extension `A : cat(C)ᵒᵖ ⥤ CAT` for indexed categories
-  (Theorem 2.5), once an internal-category API is available (or develop a minimal one without
-  duplicating future Mathlib work).
-* [RESEARCH] Use that extension to define `A^D` for internal categories `D` and prove that `A` sends internal
-  category equivalences to equivalences of ordinary categories (Lemma 3.4), which is a key input for
-  Theorem 3.5.
 -/
 
 open CategoryTheory

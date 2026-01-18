@@ -13,19 +13,10 @@ import Descent.FiberedCategory.Reindexing
 Defines Čech-style descent data for a fibered category `pA : 𝒜 ⥤ C` along
 `p : E ⟶ B`, with unit and cocycle conditions on overlaps. Main definitions
 are `SingleMorphismDescentData` and `singleMorphismComparisonXi`.
-
-## TODO (Facets of Descent, II)
-
-* [RESEARCH] Define the comparison functor `Φₚ : Fiber pA B ⥤ SingleMorphismDescentData p` (paper §3.2) and
-  the corresponding predicates “(effective) descent morphism for `pA`”.
-* [RESEARCH] Prove the fibered-category analogue of §3.3: for a cloven fibration inducing an indexed category
-  `A : Cᵒᵖ ⥤ CAT`, show that the fibered descent data here agrees with `DesA(p)` (up to the paper’s
-  `ξ`/`ξ⁻¹` convention).
-* [RESEARCH] Once the bridge to indexed categories is in place, transport Theorems 3.5, 4.5, and 5.2 to the
-  fibered category setting.
 -/
 
-open CategoryTheory Functor Category
+open CategoryTheory
+open CategoryTheory.Functor
 
 namespace Descent.FiberedCategory.Descent
 
@@ -35,8 +26,6 @@ variable {C : Type u} [Category.{v} C]
 variable {𝒜 : Type w} [Category.{v} 𝒜] (pA : 𝒜 ⥤ C) [pA.IsFibered]
 
 noncomputable section
-
-open CategoryTheory.Functor
 open Descent.FiberedCategory
 open Descent.Cech
 
@@ -157,7 +146,7 @@ namespace SingleMorphismDescentData
 
 variable {E B : C} {p : E ⟶ B}
 
-/-- Morphisms of descent data are morphisms in the fiber over `E` compatible with the glueing
+/-- Morphisms of descent data are morphisms in the fiber over `E` compatible with the gluing
 isomorphisms. -/
 structure Hom (D D' : SingleMorphismDescentData (pA := pA) p) where
   /-- The underlying morphism in the fiber over `E`. -/
@@ -187,8 +176,6 @@ def Hom.comp {D₁ D₂ D₃ : SingleMorphismDescentData (pA := pA) p} (f : Hom 
     (g : Hom (pA := pA) D₂ D₃) : Hom (pA := pA) D₁ D₃ where
   hom := f.hom ≫ g.hom
   comm := by
-    -- Expand and use the commutativity conditions for `f` and `g`.
-    -- (We keep this proof `simp`-friendly to ease later rewriting.)
     simp [Functor.map_comp]
     calc
       D₁.ξ.hom ≫ (reindex (pA := pA) (p1 p)).map f.hom ≫ (reindex (pA := pA) (p1 p)).map g.hom =

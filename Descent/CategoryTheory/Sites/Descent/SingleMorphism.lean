@@ -14,12 +14,8 @@ category `CategoryTheory.Pseudofunctor.DescentData F f` and the comparison funct
 `CategoryTheory.Pseudofunctor.toDescentData F f`.
 
 For a single morphism `p : E ⟶ B`, the relevant family is the singleton family
-`fun _ : PUnit => p`. This file provides a thin, upstream-friendly layer naming this
-special case (and its associated “descent”/“effective descent” predicates) without
-duplicating Mathlib’s existing API.
-
-This file is laid out to match a potential Mathlib upstream location
-`Mathlib/CategoryTheory/Sites/Descent/SingleMorphism.lean`.
+`fun _ : PUnit => p`. This file provides abbreviations for this special case, together with the
+associated “descent” and “effective descent” predicates.
 -/
 
 namespace CategoryTheory
@@ -37,27 +33,22 @@ section
 
 variable {E B : C} (p : E ⟶ B)
 
-/-- The singleton family `fun _ : PUnit => p`. -/
-abbrev singletonMorphism : ∀ (_ : PUnit.{1}), E ⟶ B := fun _ => p
-
 /-- The category of descent data for a single morphism `p : E ⟶ B`,
 as `F.DescentData` for the singleton family `fun _ : PUnit => p`. -/
 abbrev SingleMorphismDescentData : Type _ :=
-  F.DescentData (f := singletonMorphism p)
+  F.DescentData (f := fun _ : PUnit.{1} => p)
 
 /-- The comparison functor for descent data along `p : E ⟶ B`,
 i.e. `F.toDescentData` for the singleton family. -/
 abbrev singleMorphismComparisonFunctor :
-    F.obj (.mk (op B)) ⥤ F.DescentData (f := singletonMorphism p) :=
-  F.toDescentData (f := singletonMorphism p)
+    F.obj (.mk (op B)) ⥤ F.DescentData (f := fun _ : PUnit.{1} => p) :=
+  F.toDescentData (f := fun _ : PUnit.{1} => p)
 
-/-- `p` is a descent morphism for `F` if the comparison functor is fully faithful
-(paper: *Facets of Descent, II*, §3.2). -/
+/-- `p` is a descent morphism for `F` if the comparison functor is fully faithful. -/
 abbrev IsDescentMorphism : Prop :=
   Nonempty (singleMorphismComparisonFunctor (F := F) p).FullyFaithful
 
-/-- `p` is an effective descent morphism for `F` if the comparison functor is an equivalence
-(paper: *Facets of Descent, II*, §3.2). -/
+/-- `p` is an effective descent morphism for `F` if the comparison functor is an equivalence. -/
 abbrev IsEffectiveDescentMorphism : Prop :=
   (singleMorphismComparisonFunctor (F := F) p).IsEquivalence
 

@@ -19,7 +19,7 @@ In addition, the project relates the single-morphism formulation to Mathlib’s
 
 ## Status
 
-This is an active research-style project: APIs and file organization may change.
+This library is under active development: APIs and file organization may change.
 
 If you are looking for the main entry point, start with `Descent.lean` and then
 follow imports into `Descent/`.
@@ -29,7 +29,7 @@ follow imports into `Descent/`.
 - `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.
 - `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.
 - `Descent/Pseudofunctor/`: reindexing for pseudofunctors and single-morphism descent data.
-- `Descent/Pseudofunctor/Descent/SingleMorphismEquiv.lean`: comparison with Mathlib’s
+- `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean`: comparison with Mathlib’s
   singleton-cover descent data.
 
 ## Related references

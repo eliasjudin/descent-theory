@@ -13,9 +13,6 @@ Defines the Čech overlaps for a morphism `p : E ⟶ B` in a category with pullb
 We set `cechTripleOverlap p := pullback (p2 p) (p1 p)` so the cocycle reads
 `ξ₂₃ ≫ ξ₁₂ = ξ₁₃`. Main definitions are `cechKernelPair`, `cechTripleOverlap` and the projections
 `p1`, `p2`, `p12`, `p23`, `p13`, with basic lemmas about diagonals and projections.
-
-This file is laid out to match a potential Mathlib upstream location
-`Mathlib/CategoryTheory/Sites/Descent/Cech.lean`.
 -/
 
 open CategoryTheory
@@ -48,10 +45,12 @@ abbrev p2 {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ E :=
 abbrev diag {E B : C} (p : E ⟶ B) : E ⟶ cechKernelPair p :=
   Limits.pullback.diagonal p
 
-@[simp] lemma diag_p1 {E B : C} (p : E ⟶ B) : diag p ≫ p1 p = 𝟙 E := by
+@[simp, reassoc]
+lemma diag_p1 {E B : C} (p : E ⟶ B) : diag p ≫ p1 p = 𝟙 E := by
   simp [diag, p1]
 
-@[simp] lemma diag_p2 {E B : C} (p : E ⟶ B) : diag p ≫ p2 p = 𝟙 E := by
+@[simp, reassoc]
+lemma diag_p2 {E B : C} (p : E ⟶ B) : diag p ≫ p2 p = 𝟙 E := by
   simp [diag, p2]
 
 /-- The key pullback condition: `p1 p ≫ p = p2 p ≫ p`. -/
@@ -87,7 +86,7 @@ abbrev p23 {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ cechKernelPair p :=
   Limits.pullback.snd (f := p2 p) (g := p1 p)
 
 /-- The key condition for the triple overlap: `p12 ≫ p2 = p23 ≫ p1`. -/
-@[simp] lemma p12_p2_eq_p23_p1 {E B : C} (p : E ⟶ B) :
+@[simp, reassoc] lemma p12_p2_eq_p23_p1 {E B : C} (p : E ⟶ B) :
     p12 p ≫ p2 p = p23 p ≫ p1 p := by
   simp only [p12, p23, Limits.pullback.condition]
 
@@ -101,19 +100,16 @@ for the middle projection (`p12 ≫ p2` vs `p23 ≫ p1`) when needed.
 -/
 
 /-- The `(1)`-coordinate projection `E ×_B E ×_B E ⟶ E`. -/
-abbrev p1_ {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
+abbrev p1Triple {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
   p12 p ≫ p1 p
 
 /-- The `(2)`-coordinate projection `E ×_B E ×_B E ⟶ E`. -/
-abbrev p2_ {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
+abbrev p2Triple {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
   p12 p ≫ p2 p
 
 /-- The `(3)`-coordinate projection `E ×_B E ×_B E ⟶ E`. -/
-abbrev p3_ {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
+abbrev p3Triple {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ E :=
   p23 p ≫ p2 p
-
--- NOTE: we intentionally do not tag the defining equalities for `p1_`, `p2_`, `p3_` as simp lemmas:
--- since these are definitional abbreviations, marking them `[simp]` can create simp loops.
 
 /-- The projection `E ×_B E ×_B E ⟶ E ×_B E` picking the `(1,3)`-coordinates.
 
@@ -128,15 +124,16 @@ abbrev p13 {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ cechKernelPair p :=
         simpa only [Category.assoc] using congrArg (fun k => k ≫ p) (p12_p2_eq_p23_p1 p)
       _ = p23 p ≫ p2 p ≫ p := by simp [p1_comp_p_eq_p2_comp_p])
 
-@[simp] lemma p13_p1 {E B : C} (p : E ⟶ B) :
+@[simp, reassoc]
+lemma p13_p1 {E B : C} (p : E ⟶ B) :
     p13 p ≫ p1 p = p12 p ≫ p1 p := by
   simp [p13]
 
-@[simp] lemma p13_p2 {E B : C} (p : E ⟶ B) :
+@[simp, reassoc]
+lemma p13_p2 {E B : C} (p : E ⟶ B) :
     p13 p ≫ p2 p = p23 p ≫ p2 p := by
   simp [p13]
 
 end
 
 end CategoryTheory.Cech
-

@@ -5,24 +5,16 @@ Authors: Elias Judin
 -/
 
 import Mathlib.CategoryTheory.FiberedCategory.HasFibers
-import Mathlib.CategoryTheory.FiberedCategory.Fibered
 
 /-!
 # Reindexing on fibers of a fibered category
 
 Defines reindexing functors `f^* : Fiber pA S ⥤ Fiber pA R` for a fibered category
 `pA : 𝒜 ⥤ C`, together with the basic coherence isomorphisms for composition and identity.
-
-## TODO (Facets of Descent, II)
-
-* [RESEARCH] Relate this reindexing construction to the pseudofunctor viewpoint `A : Cᵒᵖ ⥤ CAT` (indexed
-  categories) used in the paper, i.e. show that `X ↦ Fiber pA X` defines a `C`-indexed category and
-  that the resulting pullback functors match `reindex` up to coherent isomorphism (cf. §3.3).
-* [RESEARCH] Use that bridge to transport the paper’s results stated for indexed categories to the fibered
-  category API in `Descent/FiberedCategory/Descent/`.
 -/
 
-open CategoryTheory Functor Category
+open CategoryTheory
+open CategoryTheory.Functor
 
 namespace Descent.FiberedCategory
 
@@ -32,8 +24,6 @@ variable {C : Type u} [Category.{v} C]
 variable {𝒜 : Type w} [Category.{v} 𝒜] (pA : 𝒜 ⥤ C) [pA.IsFibered]
 
 noncomputable section
-
-open CategoryTheory.Functor
 
 /-!
 ## Reindexing on standard fibers

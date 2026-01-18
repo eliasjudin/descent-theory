@@ -19,21 +19,8 @@ This file records the corresponding (Čech) data:
 - `eqId p := Δ : E ⟶ E ×_B E`
 - `eqComp p := π₁₃ : E ×_B E ×_B E ⟶ E ×_B E`
 
-We deliberately do *not* introduce a general library of internal categories here: as of the pinned
-mathlib revision for this project, there is no canonical internal-category API to build on, and we
-want to avoid duplicating future upstream developments.
-
-## TODO (Facets of Descent, II)
-
-* [RESEARCH] Define (or reuse, once available in Mathlib) an internal category structure on the data here,
-  showing that `eqDom/eqCod/eqId/eqComp` satisfy the axioms from §1.1 and the construction in §3.1.
-* [RESEARCH] Define the discrete internal category on `B` and the internal functor `p̄ : Eq(p) ⟶ B`
-  (diagram (17)), together with the diagonal factorization `δ : E ⟶ Eq(p)`.
-* [RESEARCH] If `p` is a split epimorphism with section `s : B ⟶ E`, construct `s̄ : B ⟶ Eq(p)` and the internal
-  natural isomorphisms (19) exhibiting `p̄` as an internal-category equivalence (used in Theorem 3.5).
-* [RESEARCH] Add a paper-facing equivalence between `DesA(p) := A^{Eq(p)}` (as in §3.2) and the Čech-style
-  descent datum `SingleMorphismDescentData` (keeping track of the paper’s choice of `ξ` vs `ξ⁻¹` in
-  [9], as discussed in §3.3).
+We do not develop a general internal-category API here; this file only provides the basic maps and
+identities needed elsewhere in the library.
 -/
 
 open CategoryTheory
@@ -76,16 +63,20 @@ abbrev eqComp : eqCompObj p ⟶ eqHom p := p13 p
 ## Basic identities
 -/
 
-@[simp] lemma eqId_eqDom : eqId p ≫ eqDom p = 𝟙 E := by
+@[simp, reassoc]
+lemma eqId_comp_eqDom : eqId p ≫ eqDom p = 𝟙 E := by
   simp [eqId, eqDom]
 
-@[simp] lemma eqId_eqCod : eqId p ≫ eqCod p = 𝟙 E := by
+@[simp, reassoc]
+lemma eqId_comp_eqCod : eqId p ≫ eqCod p = 𝟙 E := by
   simp [eqId, eqCod]
 
-@[simp] lemma eqComp_eqCod : eqComp p ≫ eqCod p = p12 p ≫ eqCod p := by
+@[simp, reassoc]
+lemma eqComp_comp_eqCod : eqComp p ≫ eqCod p = p12 p ≫ eqCod p := by
   simp [eqComp, eqCod]
 
-@[simp] lemma eqComp_eqDom : eqComp p ≫ eqDom p = p23 p ≫ eqDom p := by
+@[simp, reassoc]
+lemma eqComp_comp_eqDom : eqComp p ≫ eqDom p = p23 p ≫ eqDom p := by
   simp [eqComp, eqDom]
 
 /-- The equivalence relation induced by `p` is its kernel pair (paper §3.1). -/

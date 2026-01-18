@@ -1,6 +1,10 @@
 .lake/
 build/
 .DS_Store
+.claude/
+.factory/
+.tmp/
+.venv/
 *.olean
 *.ilean
 *.c
