@@ -13,3 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
+      - name: Lint
+        run: lake build Descent.Lint
+      - name: Examples
+        run: lake build Descent.Test

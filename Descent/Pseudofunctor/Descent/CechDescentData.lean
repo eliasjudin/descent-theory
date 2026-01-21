@@ -205,7 +205,7 @@ def swapLeft {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p 
       simpa using (Category.assoc (swapLeft p) (p12 p) (p1 p)).symm
     _ = p1 p := by simp
 
-@[simp] lemma swapLeft_p12_p2 {E B : C} (p : E ⟶ B) :
+lemma swapLeft_p12_p2 {E B : C} (p : E ⟶ B) :
     swapLeft p ≫ p12 p ≫ p2 p = p2 p := by
   calc
     swapLeft p ≫ p12 p ≫ p2 p = (swapLeft p ≫ p12 p) ≫ p2 p := by
@@ -246,7 +246,7 @@ def swapRight {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p
       simpa using (Category.assoc (swapRight p) (p12 p) (p1 p)).symm
     _ = p2 p := by simp
 
-@[simp] lemma swapRight_p12_p2 {E B : C} (p : E ⟶ B) :
+lemma swapRight_p12_p2 {E B : C} (p : E ⟶ B) :
     swapRight p ≫ p12 p ≫ p2 p = p1 p := by
   calc
     swapRight p ≫ p12 p ≫ p2 p = (swapRight p ≫ p12 p) ≫ p2 p := by

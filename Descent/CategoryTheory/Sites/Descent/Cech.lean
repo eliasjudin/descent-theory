@@ -45,11 +45,11 @@ abbrev p2 {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ E :=
 abbrev diag {E B : C} (p : E ⟶ B) : E ⟶ cechKernelPair p :=
   Limits.pullback.diagonal p
 
-@[simp, reassoc]
+@[reassoc]
 lemma diag_p1 {E B : C} (p : E ⟶ B) : diag p ≫ p1 p = 𝟙 E := by
   simp [diag, p1]
 
-@[simp, reassoc]
+@[reassoc]
 lemma diag_p2 {E B : C} (p : E ⟶ B) : diag p ≫ p2 p = 𝟙 E := by
   simp [diag, p2]
 
@@ -124,12 +124,12 @@ abbrev p13 {E B : C} (p : E ⟶ B) : cechTripleOverlap p ⟶ cechKernelPair p :=
         simpa only [Category.assoc] using congrArg (fun k => k ≫ p) (p12_p2_eq_p23_p1 p)
       _ = p23 p ≫ p2 p ≫ p := by simp [p1_comp_p_eq_p2_comp_p])
 
-@[simp, reassoc]
+@[reassoc]
 lemma p13_p1 {E B : C} (p : E ⟶ B) :
     p13 p ≫ p1 p = p12 p ≫ p1 p := by
   simp [p13]
 
-@[simp, reassoc]
+@[reassoc]
 lemma p13_p2 {E B : C} (p : E ⟶ B) :
     p13 p ≫ p2 p = p23 p ≫ p2 p := by
   simp [p13]
