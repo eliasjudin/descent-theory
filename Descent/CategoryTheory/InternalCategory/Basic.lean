@@ -51,9 +51,9 @@ structure InternalCategory where
   id_comp_dom : id ≫ dom = 𝟙 obj
   /-- `cod (id x) = x`. -/
   id_comp_cod : id ≫ cod = 𝟙 obj
-  /-- `dom (f ≫ g) = dom g`. -/
+  /-- `dom (g ≫ f) = dom g`. -/
   comp_comp_dom : comp ≫ dom = Limits.pullback.snd dom cod ≫ dom
-  /-- `cod (f ≫ g) = cod f`. -/
+  /-- `cod (g ≫ f) = cod f`. -/
   comp_comp_cod : comp ≫ cod = Limits.pullback.fst dom cod ≫ cod
   /-- Right identity: `f ≫ id (cod f) = f`. -/
   comp_id :

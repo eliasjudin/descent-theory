@@ -45,7 +45,23 @@ example : eqId p ≫ eqCod p = 𝟙 E := by simp
 
 example {X : C} (f : E ⟶ X) : eqId p ≫ eqDom p ≫ f = f := by simp
 
+/-!
+Regression tests for the convention that the Čech triple overlap is the object of composable
+pairs for `Eq(p)`, i.e. `cechTripleOverlap p = pullback (eqDom p) (eqCod p)`.
+-/
+
+example : cechTripleOverlap p = Limits.pullback (eqDom p) (eqCod p) := rfl
+
+example : Limits.pullback.fst (eqDom p) (eqCod p) = p12 p := rfl
+
+example : Limits.pullback.snd (eqDom p) (eqCod p) = p23 p := rfl
+
+example : eqComp p ≫ p1 p = p12 p ≫ p1 p := by
+  simp [eqComp, CategoryTheory.Cech.p13]
+
+example : eqComp p ≫ p2 p = p23 p ≫ p2 p := by
+  simp [eqComp, CategoryTheory.Cech.p13]
+
 end Eq
 
 end Descent.Examples
-

@@ -283,7 +283,7 @@ noncomputable def reindexIdIsoNatIso {S : C} :
       (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) ≫ φ.1
   simp
 
-/-- The natural isomorphism `(g ≫ f)^* ≅ g^* ⋙ f^*` on fibers. -/
+/-- The natural isomorphism `(g ≫ f)^* ≅ f^* ⋙ g^*` on fibers. -/
 noncomputable def reindexCompIso {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
     reindex (pA := pA) (g ≫ f) ≅ (reindex (pA := pA) f) ⋙ (reindex (pA := pA) g) := by
   refine

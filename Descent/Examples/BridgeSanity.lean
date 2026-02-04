@@ -33,6 +33,7 @@ variable (pA : 𝒜 ⥤ C) [pA.IsFibered]
 variable {E B : C} (p : E ⟶ B)
 
 open Descent.FiberedCategory.Descent
+open CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat
 
 abbrev F : CategoryTheory.Pseudofunctor (CategoryTheory.LocallyDiscrete Cᵒᵖ) Cat.{v, w} :=
   fibersPseudofunctor (pA := pA)
@@ -111,6 +112,46 @@ by
     Descent.Pseudofunctor.reindexCompIsoObj, Descent.Pseudofunctor.reindexObjIsoOfEq,
     Descent.Pseudofunctor.reindex,
     CategoryTheory.FiberedCategory.pseudofunctorOfFibers, CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
+
+/-!
+## Compatibility of the induced morphisms on triple overlaps
+
+For the pseudofunctor of fibers, the induced morphisms `xi12/xi23/xi13` should reduce to the
+fibered-category ones (this catches swapped-projection or cocycle-convention mistakes).
+-/
+
+example {C₀ : Fiber pA E}
+    (ξ :
+      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+        (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
+    Descent.Pseudofunctor.Descent.xi12 (F := F (pA := pA)) p ξ.hom =
+      Descent.FiberedCategory.Descent.xi12 (pA := pA) p ξ := by
+  classical
+  simp [Descent.Pseudofunctor.Descent.xi12, Descent.FiberedCategory.Descent.xi12, pullHom,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
+
+example {C₀ : Fiber pA E}
+    (ξ :
+      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+        (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
+    Descent.Pseudofunctor.Descent.xi23 (F := F (pA := pA)) p ξ.hom =
+      Descent.FiberedCategory.Descent.xi23 (pA := pA) p ξ := by
+  classical
+  simp [Descent.Pseudofunctor.Descent.xi23, Descent.FiberedCategory.Descent.xi23, pullHom,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
+
+example {C₀ : Fiber pA E}
+    (ξ :
+      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+        (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
+    Descent.Pseudofunctor.Descent.xi13 (F := F (pA := pA)) p ξ.hom =
+      Descent.FiberedCategory.Descent.xi13 (pA := pA) p ξ := by
+  classical
+  simp [Descent.Pseudofunctor.Descent.xi13, Descent.FiberedCategory.Descent.xi13, pullHom,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 /-!
 ## Compatibility with Mathlib's singleton-family descent data (object component)
