@@ -6,6 +6,7 @@ Authors: Elias Judin
 
 import Descent
 import Descent.Cech.Eq
+import Descent.FiberedCategory.Descent.PseudofunctorEquiv
 import Descent.Pseudofunctor.Descent.CechDescentDataEquiv
 import Mathlib.Tactic.Linter
 
@@ -21,3 +22,4 @@ linters see the whole library.
 -/
 
 #lint in Descent
+#lint in CategoryTheory.FiberedCategory

@@ -6,6 +6,8 @@ Authors: Elias Judin
 
 import Descent.Examples.Cech
 import Descent.Examples.FiberedCategory
+import Descent.Examples.FiberedPseudofunctorBridge
+import Descent.Examples.BridgeSanity
 import Descent.Examples.Pseudofunctor
 import Descent.Examples.SingletonEquiv
 

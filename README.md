@@ -28,6 +28,8 @@ follow imports into `Descent/`.
 
 - `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.
 - `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.
+- `Descent/FiberedCategory/Descent/PseudofunctorEquiv.lean`: bridge between fibered-category
+  descent data and pseudofunctor Čech descent data for the pseudofunctor of fibers.
 - `Descent/Pseudofunctor/`: reindexing for pseudofunctors and single-morphism descent data.
 - `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean`: comparison with Mathlib’s
   singleton-cover descent data.
