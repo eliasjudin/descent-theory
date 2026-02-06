@@ -39,16 +39,16 @@ variable {𝒜 : Type w} [Category.{v} 𝒜]
 noncomputable section
 
 /-- The pseudofunctor of fibers associated to a fibered functor `pA : 𝒜 ⥤ C`. -/
-noncomputable def pseudofunctorOfFibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :
+noncomputable def pseudofunctor_of_fibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :
     Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v, w} :=
   CategoryTheory.pseudofunctorOfIsLocallyDiscrete
     (B := LocallyDiscrete Cᵒᵖ) (C := Cat.{v, w})
     (obj := fun X => Cat.of (Fiber pA (unop X.as)))
     (map := fun {X Y} f => (reindex (pA := pA) f.as.unop).toCatHom)
     (mapId := fun X => CategoryTheory.Cat.Hom.isoMk (by
-      simpa using (reindexIdIsoNatIso (pA := pA) (S := unop X.as))))
+      simpa using (reindex_id_iso_nat_iso (pA := pA) (S := unop X.as))))
     (mapComp := fun {X Y Z} f g => CategoryTheory.Cat.Hom.isoMk (by
-      simpa using (reindexCompIso (pA := pA) (g := g.as.unop) (f := f.as.unop))))
+      simpa using (reindex_comp_iso (pA := pA) (g := g.as.unop) (f := f.as.unop))))
     (map₂_associator := by
       -- TODO: coherence (pentagon) for the chosen pullbacks/reindexing isomorphisms.
       -- This is a standard cleavage-coherence statement.
@@ -61,14 +61,14 @@ noncomputable def pseudofunctorOfFibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :
       sorry)
 
 @[simp]
-lemma pseudofunctorOfFibers_obj (pA : 𝒜 ⥤ C) [pA.IsFibered] (S : C) :
-    (pseudofunctorOfFibers (pA := pA)).obj (.mk (op S)) = Cat.of (Fiber pA S) :=
+lemma pseudofunctor_of_fibers_obj (pA : 𝒜 ⥤ C) [pA.IsFibered] (S : C) :
+    (pseudofunctor_of_fibers (pA := pA)).obj (.mk (op S)) = Cat.of (Fiber pA S) :=
   rfl
 
 @[simp]
-lemma pseudofunctorOfFibers_map {pA : 𝒜 ⥤ C} [pA.IsFibered]
+lemma pseudofunctor_of_fibers_map {pA : 𝒜 ⥤ C} [pA.IsFibered]
     {R S : C} (f : R ⟶ S) :
-    (pseudofunctorOfFibers (pA := pA)).map f.op.toLoc =
+    (pseudofunctor_of_fibers (pA := pA)).map f.op.toLoc =
       (reindex (pA := pA) f).toCatHom := by
   rfl
 
@@ -77,4 +77,3 @@ end
 end FiberedCategory
 
 end CategoryTheory
-

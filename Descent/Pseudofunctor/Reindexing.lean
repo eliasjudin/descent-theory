@@ -38,35 +38,35 @@ abbrev reindex {R S : C} (f : R ⟶ S) :
   (F.map f.op.toLoc).toFunctor
 
 /-- If `f = g`, then `f^* a ≅ g^* a`. -/
-def reindexObjIsoOfEq {R S : C} {f g : R ⟶ S} (h : f = g)
+def reindex_obj_iso_of_eq {R S : C} {f g : R ⟶ S} (h : f = g)
     (a : F.obj (.mk (op S))) :
     (reindex F f).obj a ≅ (reindex F g).obj a := by
   refine eqToIso ?_
   simpa using congrArg (fun k => (reindex F k).obj a) h
 
 @[simp]
-lemma reindexObjIsoOfEq_hom {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
-    (reindexObjIsoOfEq (F := F) (f := f) (g := g) h a).hom =
+lemma reindex_obj_iso_of_eq_hom {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
+    (reindex_obj_iso_of_eq (F := F) (f := f) (g := g) h a).hom =
       eqToHom (by simpa using congrArg (fun k => (reindex F k).obj a) h) := by
   cases h
-  simp [reindexObjIsoOfEq]
+  simp [reindex_obj_iso_of_eq]
 
 @[simp]
-lemma reindexObjIsoOfEq_inv {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
-    (reindexObjIsoOfEq (F := F) (f := f) (g := g) h a).inv =
+lemma reindex_obj_iso_of_eq_inv {R S : C} {f g : R ⟶ S} (h : f = g) (a : F.obj (.mk (op S))) :
+    (reindex_obj_iso_of_eq (F := F) (f := f) (g := g) h a).inv =
       eqToHom (by
         simpa using (congrArg (fun k => (reindex F k).obj a) h).symm) := by
   cases h
-  simp [reindexObjIsoOfEq]
+  simp [reindex_obj_iso_of_eq]
 
 /-- The canonical isomorphism `(g ≫ f)^* a ≅ g^* (f^* a)`. -/
-def reindexCompIsoObj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : F.obj (.mk (op S))) :
+def reindex_comp_iso_obj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : F.obj (.mk (op S))) :
     (reindex F (g ≫ f)).obj a ≅
       (reindex F g).obj ((reindex F f).obj a) :=
   (CategoryTheory.Cat.Hom.toNatIso (F.mapComp f.op.toLoc g.op.toLoc)).app a
 
 /-- The canonical isomorphism `((𝟙 S)^* a) ≅ a`. -/
-def reindexIdIsoObj {S : C} (a : F.obj (.mk (op S))) :
+def reindex_id_iso_obj {S : C} (a : F.obj (.mk (op S))) :
     (reindex F (𝟙 S)).obj a ≅ a :=
   (CategoryTheory.Cat.Hom.toNatIso (F.mapId (.mk (op S)))).app a
 

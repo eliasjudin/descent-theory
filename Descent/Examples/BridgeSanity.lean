@@ -15,7 +15,7 @@ descent data and pseudofunctor Čech descent data for the pseudofunctor of fiber
 
 These tests aim to detect convention mismatches (e.g. swapped projections or reversed cocycle
 convention) via definitional equalities and `simp`, without relying on the (currently partial)
-equivalence packaging in `singleCechDescentDataEquiv`.
+equivalence packaging in `single_cech_descent_data_equiv`.
 -/
 
 open CategoryTheory
@@ -36,26 +36,26 @@ open Descent.FiberedCategory.Descent
 open CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat
 
 abbrev F : CategoryTheory.Pseudofunctor (CategoryTheory.LocallyDiscrete Cᵒᵖ) Cat.{v, w} :=
-  fibersPseudofunctor (pA := pA)
+  fibers_pseudofunctor (pA := pA)
 
 /-!
 ## Basic component checks
 -/
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
-    (singleToCechDescentData (pA := pA) p D).obj = D.obj :=
+    (single_to_cech_descent_data (pA := pA) p D).obj = D.obj :=
   rfl
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
-    (singleToCechDescentData (pA := pA) p D).ξ = D.ξ.hom :=
+    (single_to_cech_descent_data (pA := pA) p D).ξ = D.ξ.hom :=
   rfl
 
 example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p) :
-    (cechToSingleDescentData (pA := pA) p D).obj = D.obj :=
+    (cech_to_single_descent_data (pA := pA) p D).obj = D.obj :=
   rfl
 
 example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p) :
-    (cechToSingleDescentData (pA := pA) p D).ξ.hom = D.ξ :=
+    (cech_to_single_descent_data (pA := pA) p D).ξ.hom = D.ξ :=
   rfl
 
 /-!
@@ -65,20 +65,27 @@ These avoid any use of the (currently partial) `≌` data.
 -/
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
-    (cechToSingleDescentData (pA := pA) p (singleToCechDescentData (pA := pA) p D)).obj = D.obj :=
+    (cech_to_single_descent_data (pA := pA) p
+          (single_to_cech_descent_data (pA := pA) p D)).obj =
+      D.obj :=
   rfl
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
-    (cechToSingleDescentData (pA := pA) p (singleToCechDescentData (pA := pA) p D)).ξ.hom =
-      D.ξ.hom :=
+    (cech_to_single_descent_data (pA := pA) p
+          (single_to_cech_descent_data (pA := pA) p D)).ξ.hom =
+        D.ξ.hom :=
   rfl
 
 example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p) :
-    (singleToCechDescentData (pA := pA) p (cechToSingleDescentData (pA := pA) p D)).obj = D.obj :=
+    (single_to_cech_descent_data (pA := pA) p
+          (cech_to_single_descent_data (pA := pA) p D)).obj =
+      D.obj :=
   rfl
 
 example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p) :
-    (singleToCechDescentData (pA := pA) p (cechToSingleDescentData (pA := pA) p D)).ξ = D.ξ :=
+    (single_to_cech_descent_data (pA := pA) p
+          (cech_to_single_descent_data (pA := pA) p D)).ξ =
+      D.ξ :=
   rfl
 
 /-!
@@ -86,12 +93,12 @@ example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p
 -/
 
 example {D D' : SingleMorphismDescentData (pA := pA) p} (f : D ⟶ D') :
-    ((cechToSingleFunctor (pA := pA) p).map ((singleToCechFunctor (pA := pA) p).map f)).hom =
+    ((cech_to_single_functor (pA := pA) p).map ((single_to_cech_functor (pA := pA) p).map f)).hom =
       f.hom :=
   rfl
 
 example {D D' : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p} (f : D ⟶ D') :
-    ((singleToCechFunctor (pA := pA) p).map ((cechToSingleFunctor (pA := pA) p).map f)).hom =
+    ((single_to_cech_functor (pA := pA) p).map ((cech_to_single_functor (pA := pA) p).map f)).hom =
       f.hom :=
   rfl
 
@@ -103,15 +110,14 @@ definitionally agree with the fibered-category construction.
 -/
 
 example (a : Fiber pA B) :
-    (Descent.Pseudofunctor.Descent.singleMorphismComparisonXi (F := F (pA := pA)) p a).hom =
-      (singleMorphismComparisonXi (pA := pA) p a).hom :=
+    (Descent.Pseudofunctor.Descent.single_morphism_comparison_xi (F := F (pA := pA)) p a).hom =
+      (single_morphism_comparison_xi (pA := pA) p a).hom :=
 by
-  classical
   -- Unfold the pseudofunctor comparison isomorphism and simplify the `Cat` wrappers.
-  simp [Descent.Pseudofunctor.Descent.singleMorphismComparisonXi, singleMorphismComparisonXi,
-    Descent.Pseudofunctor.reindexCompIsoObj, Descent.Pseudofunctor.reindexObjIsoOfEq,
+  simp [Descent.Pseudofunctor.Descent.single_morphism_comparison_xi, single_morphism_comparison_xi,
+    Descent.Pseudofunctor.reindex_comp_iso_obj, Descent.Pseudofunctor.reindex_obj_iso_of_eq,
     Descent.Pseudofunctor.reindex,
-    CategoryTheory.FiberedCategory.pseudofunctorOfFibers, CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
+    CategoryTheory.FiberedCategory.pseudofunctor_of_fibers, CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 /-!
 ## Compatibility of the induced morphisms on triple overlaps
@@ -122,35 +128,32 @@ fibered-category ones (this catches swapped-projection or cocycle-convention mis
 
 example {C₀ : Fiber pA E}
     (ξ :
-      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+    (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
         (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
     Descent.Pseudofunctor.Descent.xi12 (F := F (pA := pA)) p ξ.hom =
       Descent.FiberedCategory.Descent.xi12 (pA := pA) p ξ := by
-  classical
   simp [Descent.Pseudofunctor.Descent.xi12, Descent.FiberedCategory.Descent.xi12, pullHom,
-    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctor_of_fibers,
     CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 example {C₀ : Fiber pA E}
     (ξ :
-      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+    (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
         (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
     Descent.Pseudofunctor.Descent.xi23 (F := F (pA := pA)) p ξ.hom =
       Descent.FiberedCategory.Descent.xi23 (pA := pA) p ξ := by
-  classical
   simp [Descent.Pseudofunctor.Descent.xi23, Descent.FiberedCategory.Descent.xi23, pullHom,
-    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctor_of_fibers,
     CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 example {C₀ : Fiber pA E}
     (ξ :
-      (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
+    (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p2 p)).obj C₀ ≅
         (Descent.FiberedCategory.reindex (pA := pA) (Descent.Cech.p1 p)).obj C₀) :
     Descent.Pseudofunctor.Descent.xi13 (F := F (pA := pA)) p ξ.hom =
       Descent.FiberedCategory.Descent.xi13 (pA := pA) p ξ := by
-  classical
   simp [Descent.Pseudofunctor.Descent.xi13, Descent.FiberedCategory.Descent.xi13, pullHom,
-    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctorOfFibers,
+    CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.FiberedCategory.pseudofunctor_of_fibers,
     CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 /-!
@@ -158,8 +161,8 @@ example {C₀ : Fiber pA E}
 -/
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
-    (Descent.Pseudofunctor.Descent.singleToSingletonDescentData (F := F (pA := pA)) p
-          (singleToCechDescentData (pA := pA) p D)).obj PUnit.unit =
+    (Descent.Pseudofunctor.Descent.single_to_singleton_descent_data (F := F (pA := pA)) p
+          (single_to_cech_descent_data (pA := pA) p D)).obj PUnit.unit =
       D.obj :=
   rfl
 

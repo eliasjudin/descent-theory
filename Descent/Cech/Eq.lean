@@ -85,18 +85,18 @@ This is `π₁ ≫ p` (which equals `π₂ ≫ p`). -/
 abbrev pbarHom : eqHom p ⟶ B := eqCod p ≫ p
 
 @[reassoc]
-lemma pbarHom_eq_eqDom_comp : pbarHom p = eqDom p ≫ p := by
+lemma pbar_hom_eq_eq_dom_comp : pbarHom p = eqDom p ≫ p := by
   -- Both composites are the canonical map `E ×_B E ⟶ B`.
   simpa [pbarHom, eqCod, eqDom] using (p1_comp_p_eq_p2_comp_p p)
 
 @[reassoc]
-lemma eqCod_comp_pbarObj : eqCod p ≫ pbarObj p = pbarHom p := by
+lemma eq_cod_comp_pbar_obj : eqCod p ≫ pbarObj p = pbarHom p := by
   rfl
 
 @[reassoc]
-lemma eqDom_comp_pbarObj : eqDom p ≫ pbarObj p = pbarHom p := by
+lemma eq_dom_comp_pbar_obj : eqDom p ≫ pbarObj p = pbarHom p := by
   -- Rewrite `pbarHom` via the other projection.
-  simpa [pbarObj] using (pbarHom_eq_eqDom_comp (p := p)).symm
+  simpa [pbarObj] using (pbar_hom_eq_eq_dom_comp (p := p)).symm
 
 /-!
 ## The diagonal `δ : E ⟶ Eq(p)`
@@ -118,11 +118,11 @@ abbrev deltaHom : E ⟶ eqHom p := eqId p
 
 omit [Limits.HasPullbacks C] in
 @[reassoc]
-lemma deltaObj_comp_pbarObj : deltaObj ≫ pbarObj p = p := by
+lemma delta_obj_comp_pbar_obj : deltaObj ≫ pbarObj p = p := by
   simp [deltaObj, pbarObj]
 
 @[reassoc]
-lemma deltaHom_comp_pbarHom : deltaHom p ≫ pbarHom p = p := by
+lemma delta_hom_comp_pbar_hom : deltaHom p ≫ pbarHom p = p := by
   simp [deltaHom, pbarHom, eqId, eqCod]
 
 /-!
@@ -130,40 +130,40 @@ lemma deltaHom_comp_pbarHom : deltaHom p ≫ pbarHom p = p := by
 -/
 
 @[reassoc]
-lemma eqId_comp_eqDom : eqId p ≫ eqDom p = 𝟙 E := by
+lemma eq_id_comp_eq_dom : eqId p ≫ eqDom p = 𝟙 E := by
   simp [eqId, eqDom]
 
 @[reassoc]
-lemma eqId_comp_eqCod : eqId p ≫ eqCod p = 𝟙 E := by
+lemma eq_id_comp_eq_cod : eqId p ≫ eqCod p = 𝟙 E := by
   simp [eqId, eqCod]
 
 @[reassoc]
-lemma eqComp_comp_eqCod : eqComp p ≫ eqCod p = p12 p ≫ eqCod p := by
+lemma eq_comp_comp_eq_cod : eqComp p ≫ eqCod p = p12 p ≫ eqCod p := by
   simp [eqComp, eqCod]
 
 @[reassoc]
-lemma eqComp_comp_eqDom : eqComp p ≫ eqDom p = p23 p ≫ eqDom p := by
+lemma eq_comp_comp_eq_dom : eqComp p ≫ eqDom p = p23 p ≫ eqDom p := by
   simp [eqComp, eqDom]
 
 /-- The equivalence relation induced by `p` is its kernel pair (paper §3.1). -/
-lemma isKernelPair_eqCod_eqDom : CategoryTheory.IsKernelPair p (eqCod p) (eqDom p) := by
+lemma is_kernel_pair_eq_cod_eq_dom : CategoryTheory.IsKernelPair p (eqCod p) (eqDom p) := by
   simpa [eqCod, eqDom, p1, p2, cechKernelPair] using
     (CategoryTheory.Limits.pullback.diagonal_isKernelPair (f := p))
 
 /-- The internal category `Eq(p)` (Facets of Descent, II, §3.1). -/
-noncomputable def eqInternalCategory : CategoryTheory.InternalCategory (C := C) where
+noncomputable def eq_internal_category : CategoryTheory.InternalCategory (C := C) where
   obj := E
   hom := eqHom p
   dom := eqDom p
   cod := eqCod p
   id := eqId p
   comp := eqComp p
-  id_comp_dom := eqId_comp_eqDom (p := p)
-  id_comp_cod := eqId_comp_eqCod (p := p)
+  id_comp_dom := eq_id_comp_eq_dom (p := p)
+  id_comp_cod := eq_id_comp_eq_cod (p := p)
   comp_comp_dom := by
-    rw [eqComp_comp_eqDom (p := p)]
+    rw [eq_comp_comp_eq_dom (p := p)]
   comp_comp_cod := by
-    rw [eqComp_comp_eqCod (p := p)]
+    rw [eq_comp_comp_eq_cod (p := p)]
   comp_id := by
     apply Limits.pullback.hom_ext <;> simp [Category.assoc, eqComp, eqCod, eqDom, eqId]
   id_comp := by

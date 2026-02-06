@@ -28,7 +28,7 @@ variable {𝒜 : Type w} [Category.{v} 𝒜]
 variable (pA : 𝒜 ⥤ C) [pA.IsFibered]
 
 example {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
-    (reindexCompIsoObj (pA := pA) g f a).hom.1 ≫
+    (reindex_comp_iso_obj (pA := pA) g f a).hom.1 ≫
         IsPreFibered.pullbackMap (p := pA)
             (IsPreFibered.pullbackObj_proj (p := pA) a.2 f) g ≫
           IsPreFibered.pullbackMap (p := pA) a.2 f =
@@ -36,11 +36,10 @@ example {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
   simp
 
 example {S : C} (a : Fiber pA S) :
-    (reindexIdIso (pA := pA) a).hom.1 =
+    (reindex_id_iso (pA := pA) a).hom.1 =
       IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) := by
-  exact reindexIdIso_hom_eq (pA := pA) a
+  exact reindex_id_iso_hom_eq (pA := pA) a
 
 end
 
 end Descent.Examples
-

@@ -12,7 +12,7 @@ import Descent.FiberedCategory.Reindexing
 
 Defines Čech-style descent data for a fibered category `pA : 𝒜 ⥤ C` along
 `p : E ⟶ B`, with unit and cocycle conditions on overlaps. Main definitions
-are `SingleMorphismDescentData` and `singleMorphismComparisonXi`.
+are `SingleMorphismDescentData` and `single_morphism_comparison_xi`.
 -/
 
 open CategoryTheory
@@ -35,7 +35,7 @@ section
 variable [Limits.HasPullbacks C]
 
 /-- The canonical isomorphism `diag^*(π₁^* a) ≅ a`. -/
-noncomputable def diagIsoP1 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
+noncomputable def diag_iso_p1 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
     (reindex (pA := pA) (Limits.pullback.diagonal p)).obj
         ((reindex (pA := pA) (p1 p)).obj a) ≅ a := by
   -- rewrite in terms of `reindexObj`
@@ -43,29 +43,29 @@ noncomputable def diagIsoP1 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
       reindexObj (pA := pA) (Limits.pullback.diagonal p)
           (reindexObj (pA := pA) (p1 p) a) ≅ a
   refine
-      (reindexCompIsoObj (pA := pA) (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫ ?_
+      (reindex_comp_iso_obj (pA := pA) (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫ ?_
   refine
-    (reindexObjIsoOfEq (pA := pA) (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
+    (reindex_obj_iso_of_eq (pA := pA) (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
         (by simp) a)
       ≪≫
       ?_
-  exact reindexIdIso (pA := pA) a
+  exact reindex_id_iso (pA := pA) a
 
 /-- The canonical isomorphism `diag^*(π₂^* a) ≅ a`. -/
-noncomputable def diagIsoP2 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
+noncomputable def diag_iso_p2 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
     (reindex (pA := pA) (Limits.pullback.diagonal p)).obj
         ((reindex (pA := pA) (p2 p)).obj a) ≅ a := by
   change
       reindexObj (pA := pA) (Limits.pullback.diagonal p)
           (reindexObj (pA := pA) (p2 p) a) ≅ a
   refine
-      (reindexCompIsoObj (pA := pA) (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫ ?_
+      (reindex_comp_iso_obj (pA := pA) (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫ ?_
   refine
-    (reindexObjIsoOfEq (pA := pA) (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
+    (reindex_obj_iso_of_eq (pA := pA) (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
         (by simp) a)
       ≪≫
       ?_
-  exact reindexIdIso (pA := pA) a
+  exact reindex_id_iso (pA := pA) a
 
 /-!
 ## Descent data for a single morphism
@@ -90,9 +90,9 @@ noncomputable def xi12 {E B : C} (p : E ⟶ B) {C₀ : Fiber pA E}
     (ξ : (reindex (pA := pA) (p2 p)).obj C₀ ≅ (reindex (pA := pA) (p1 p)).obj C₀) :
     reindexObj (pA := pA) (p12 p ≫ p2 p) C₀ ⟶ reindexObj (pA := pA) (p12 p ≫ p1 p) C₀ := by
   refine
-    (reindexCompIsoObj (pA := pA) (g := p12 p) (f := p2 p) C₀).hom ≫
+    (reindex_comp_iso_obj (pA := pA) (g := p12 p) (f := p2 p) C₀).hom ≫
       (reindex (pA := pA) (p12 p)).map ξ.hom ≫
-      (reindexCompIsoObj (pA := pA) (g := p12 p) (f := p1 p) C₀).inv
+      (reindex_comp_iso_obj (pA := pA) (g := p12 p) (f := p1 p) C₀).inv
 
 /-- The morphism on the `(2,3)`-overlap induced from `ξ`, transported so that its codomain
 is the `(1,2)`-pullback. -/
@@ -100,10 +100,10 @@ noncomputable def xi23 {E B : C} (p : E ⟶ B) {C₀ : Fiber pA E}
     (ξ : (reindex (pA := pA) (p2 p)).obj C₀ ≅ (reindex (pA := pA) (p1 p)).obj C₀) :
     reindexObj (pA := pA) (p23 p ≫ p2 p) C₀ ⟶ reindexObj (pA := pA) (p12 p ≫ p2 p) C₀ := by
   refine
-    (reindexCompIsoObj (pA := pA) (g := p23 p) (f := p2 p) C₀).hom ≫
+    (reindex_comp_iso_obj (pA := pA) (g := p23 p) (f := p2 p) C₀).hom ≫
       (reindex (pA := pA) (p23 p)).map ξ.hom ≫
-      (reindexCompIsoObj (pA := pA) (g := p23 p) (f := p1 p) C₀).inv ≫
-        (reindexObjIsoOfEq (pA := pA) (a := C₀)
+      (reindex_comp_iso_obj (pA := pA) (g := p23 p) (f := p1 p) C₀).inv ≫
+        (reindex_obj_iso_of_eq (pA := pA) (a := C₀)
           (by simp)).hom
 
 /-- The morphism on the `(1,3)`-overlap induced from `ξ`, transported so that its domain and
@@ -112,12 +112,12 @@ noncomputable def xi13 {E B : C} (p : E ⟶ B) {C₀ : Fiber pA E}
     (ξ : (reindex (pA := pA) (p2 p)).obj C₀ ≅ (reindex (pA := pA) (p1 p)).obj C₀) :
     reindexObj (pA := pA) (p23 p ≫ p2 p) C₀ ⟶ reindexObj (pA := pA) (p12 p ≫ p1 p) C₀ := by
   refine
-    (reindexObjIsoOfEq (pA := pA) (a := C₀)
+    (reindex_obj_iso_of_eq (pA := pA) (a := C₀)
         (by simp)).hom ≫
-      (reindexCompIsoObj (pA := pA) (g := p13 p) (f := p2 p) C₀).hom ≫
+      (reindex_comp_iso_obj (pA := pA) (g := p13 p) (f := p2 p) C₀).hom ≫
         (reindex (pA := pA) (p13 p)).map ξ.hom ≫
-          (reindexCompIsoObj (pA := pA) (g := p13 p) (f := p1 p) C₀).inv ≫
-            (reindexObjIsoOfEq (pA := pA) (a := C₀)
+          (reindex_comp_iso_obj (pA := pA) (g := p13 p) (f := p1 p) C₀).inv ≫
+            (reindex_obj_iso_of_eq (pA := pA) (a := C₀)
               (by simp)).hom
 
 /-!
@@ -135,9 +135,9 @@ structure SingleMorphismDescentData {E B : C} (p : E ⟶ B) where
   ξ : (reindex (pA := pA) (p2 p)).obj obj ≅ (reindex (pA := pA) (p1 p)).obj obj
   /-- Unit condition: restricting along the diagonal yields the identity. -/
   unit :
-    (diagIsoP2 (pA := pA) p obj).inv ≫
+    (diag_iso_p2 (pA := pA) p obj).inv ≫
         (reindex (pA := pA) (Limits.pullback.diagonal p)).map ξ.hom ≫
-          (diagIsoP1 (pA := pA) p obj).hom =
+          (diag_iso_p1 (pA := pA) p obj).hom =
       𝟙 obj
   /-- Cocycle condition on triple overlaps. -/
   cocycle : xi23 (pA := pA) p ξ ≫ xi12 (pA := pA) p ξ = xi13 (pA := pA) p ξ
@@ -201,17 +201,17 @@ end SingleMorphismDescentData
 
 It is induced from the equality `π₁ ≫ p = π₂ ≫ p` identifying the two composites
 `E ×_B E ⟶ B`. -/
-noncomputable def singleMorphismComparisonXi {E B : C} (p : E ⟶ B) (a : Fiber pA B) :
+noncomputable def single_morphism_comparison_xi {E B : C} (p : E ⟶ B) (a : Fiber pA B) :
     (reindex (pA := pA) (p2 p)).obj ((reindex (pA := pA) p).obj a) ≅
       (reindex (pA := pA) (p1 p)).obj ((reindex (pA := pA) p).obj a) := by
   -- Rewrite to `reindexObj` to use our coherence isomorphisms.
   change
     reindexObj (pA := pA) (p2 p) (reindexObj (pA := pA) p a) ≅
       reindexObj (pA := pA) (p1 p) (reindexObj (pA := pA) p a)
-  refine (reindexCompIsoObj (pA := pA) (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
-      (reindexCompIsoObj (pA := pA) (g := p1 p) (f := p) a)
+  refine (reindex_comp_iso_obj (pA := pA) (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
+      (reindex_comp_iso_obj (pA := pA) (g := p1 p) (f := p) a)
   exact
-    reindexObjIsoOfEq (pA := pA) (a := a) (by
+    reindex_obj_iso_of_eq (pA := pA) (a := a) (by
       simpa using (p1_comp_p_eq_p2_comp_p p).symm)
 
 end

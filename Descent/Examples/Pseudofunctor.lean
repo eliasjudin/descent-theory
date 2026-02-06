@@ -28,21 +28,20 @@ variable {C : Type u} [Category.{v} C]
 variable (F : Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v', u'})
 
 example {T R S : C} (g : T ⟶ R) (f : R ⟶ S) {a b : F.obj (.mk (op S))} (φ : a ⟶ b) :
-    (reindexCompIsoObj (F := F) g f a).hom ≫ (reindex F g).map ((reindex F f).map φ) =
-      (reindex F (g ≫ f)).map φ ≫ (reindexCompIsoObj (F := F) g f b).hom := by
-  dsimp [reindexCompIsoObj, reindex]
+    (reindex_comp_iso_obj (F := F) g f a).hom ≫ (reindex F g).map ((reindex F f).map φ) =
+      (reindex F (g ≫ f)).map φ ≫ (reindex_comp_iso_obj (F := F) g f b).hom := by
+  dsimp [reindex_comp_iso_obj, reindex]
   let α := (CategoryTheory.Cat.Hom.toNatIso (F.mapComp f.op.toLoc g.op.toLoc)).hom
   have h := α.naturality φ
   exact h.symm
 
 example {S : C} {a b : F.obj (.mk (op S))} (φ : a ⟶ b) :
-    (reindex F (𝟙 S)).map φ ≫ (reindexIdIsoObj (F := F) b).hom =
-      (reindexIdIsoObj (F := F) a).hom ≫ φ := by
-  dsimp [reindexIdIsoObj, reindex]
+    (reindex F (𝟙 S)).map φ ≫ (reindex_id_iso_obj (F := F) b).hom =
+      (reindex_id_iso_obj (F := F) a).hom ≫ φ := by
+  dsimp [reindex_id_iso_obj, reindex]
   let α := (CategoryTheory.Cat.Hom.toNatIso (F.mapId (.mk (op S)))).hom
   exact α.naturality φ
 
 end
 
 end Descent.Examples
-

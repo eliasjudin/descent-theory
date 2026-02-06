@@ -46,10 +46,10 @@ variable [Limits.HasPullbacks C]
 variable {E B : C} (p : E ⟶ B)
 
 /-- The canonical descent data on the pullback `p^* a`. -/
-noncomputable def singleMorphismComparisonDescentData (a : Fiber pA B) :
+noncomputable def single_morphism_comparison_descent_data (a : Fiber pA B) :
     SingleMorphismDescentData (pA := pA) p where
   obj := (reindex (pA := pA) p).obj a
-  ξ := singleMorphismComparisonXi (pA := pA) p a
+  ξ := single_morphism_comparison_xi (pA := pA) p a
   unit := by
     -- TODO: prove the unit axiom using the defining equation `p1 ≫ p = p2 ≫ p` and the
     -- coherence isomorphisms for `reindex`.
@@ -60,48 +60,49 @@ noncomputable def singleMorphismComparisonDescentData (a : Fiber pA B) :
     sorry
 
 /-- The comparison functor `Φₚ : Fiber pA B ⥤ SingleMorphismDescentData (pA := pA) p`. -/
-noncomputable def singleMorphismComparisonFunctor :
+noncomputable def single_morphism_comparison_functor :
     Fiber pA B ⥤ SingleMorphismDescentData (pA := pA) p where
-  obj a := singleMorphismComparisonDescentData (pA := pA) p a
+  obj a := single_morphism_comparison_descent_data (pA := pA) p a
   map {a b} f :=
     { hom := (reindex (pA := pA) p).map f
       comm := by
-        -- TODO: naturality of `singleMorphismComparisonXi`.
+        -- TODO: naturality of `single_morphism_comparison_xi`.
         -- This follows from naturality of `reindexCompIsoObj` and `reindexObjIsoOfEq`.
         sorry }
   map_id a := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
     -- Unfold the identity in the target category to access the simp lemma `Hom.id_hom`.
     change (reindex (pA := pA) p).map (𝟙 a) =
-      (SingleMorphismDescentData.Hom.id (pA := pA) (singleMorphismComparisonDescentData (pA := pA) p a)).hom
+      (SingleMorphismDescentData.Hom.id (pA := pA)
+          (single_morphism_comparison_descent_data (pA := pA) p a)).hom
     simp
     rfl
   map_comp {a b c} f g := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
     -- We only care about the underlying morphism in the fiber over `E`.
     -- Make the source/target descent data explicit so that the `Hom.comp_hom` simp lemma applies.
-    let DX := singleMorphismComparisonDescentData (pA := pA) p a
-    let DY := singleMorphismComparisonDescentData (pA := pA) p b
-    let DZ := singleMorphismComparisonDescentData (pA := pA) p c
+    let DX := single_morphism_comparison_descent_data (pA := pA) p a
+    let DY := single_morphism_comparison_descent_data (pA := pA) p b
+    let DZ := single_morphism_comparison_descent_data (pA := pA) p c
     -- Unfold categorical composition as `Hom.comp`.
     change (reindex (pA := pA) p).map (f ≫ g) =
       (SingleMorphismDescentData.Hom.comp (pA := pA)
           (D₁ := DX) (D₂ := DY) (D₃ := DZ)
           { hom := (reindex (pA := pA) p).map f, comm := by
-              -- TODO: naturality of `singleMorphismComparisonXi`.
+              -- TODO: naturality of `single_morphism_comparison_xi`.
               sorry }
           { hom := (reindex (pA := pA) p).map g, comm := by
-              -- TODO: naturality of `singleMorphismComparisonXi`.
+              -- TODO: naturality of `single_morphism_comparison_xi`.
               sorry }).hom
     simp
 
 /-- `p` is a descent morphism for `pA` if `Φₚ` is fully faithful. -/
 abbrev IsDescentMorphism : Prop :=
-  Nonempty (singleMorphismComparisonFunctor (pA := pA) p).FullyFaithful
+  Nonempty (single_morphism_comparison_functor (pA := pA) p).FullyFaithful
 
 /-- `p` is an effective descent morphism for `pA` if `Φₚ` is an equivalence. -/
 abbrev IsEffectiveDescentMorphism : Prop :=
-  (singleMorphismComparisonFunctor (pA := pA) p).IsEquivalence
+  (single_morphism_comparison_functor (pA := pA) p).IsEquivalence
 
 end HasPullbacks
 

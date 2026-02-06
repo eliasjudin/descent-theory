@@ -29,10 +29,9 @@ variable {E B : C} (p : E ⟶ B)
 noncomputable example :
     Descent.FiberedCategory.Descent.SingleMorphismDescentData (pA := pA) p ≌
       Descent.Pseudofunctor.Descent.CechDescentData
-        (F := Descent.FiberedCategory.Descent.fibersPseudofunctor (pA := pA)) p :=
-  Descent.FiberedCategory.Descent.singleCechDescentDataEquiv (pA := pA) p
+        (F := Descent.FiberedCategory.Descent.fibers_pseudofunctor (pA := pA)) p :=
+  Descent.FiberedCategory.Descent.single_cech_descent_data_equiv (pA := pA) p
 
 end
 
 end Descent.Examples
-

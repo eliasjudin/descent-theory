@@ -13,7 +13,7 @@ import Mathlib.CategoryTheory.Sites.Descent.IsPrestack
 
 Defines descent data for a pseudofunctor along `p : E ⟶ B` using Čech overlaps,
 with cocycle convention `ξ₂₃ ≫ ξ₁₂ = ξ₁₃` and unit along the diagonal. Main
-definitions are `CechDescentData` and `singleMorphismComparisonXi`.
+definitions are `CechDescentData` and `single_morphism_comparison_xi`.
 
 We follow the paper (*Facets of Descent, II*, §3.3) and Mathlib’s `Pseudofunctor.DescentData`:
 the gluing map is stored as a morphism `π₂^* C ⟶ π₁^* C`, and `IsIso` is derived from the axioms.
@@ -41,7 +41,6 @@ private lemma pullHom_id_of_id_comp
     pullHom (F := F) (φ := 𝟙 ((reindex F (𝟙 X)).obj M)) (g := g) (gf₁ := g) (gf₂ := g)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F g).obj M) := by
-  classical
   -- Unfolding `pullHom` is safe here: the `id_comp` coherence reduces to `mapId`.
   dsimp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
   simp [CategoryTheory.Pseudofunctor.mapComp'_id_comp_hom_app,
@@ -66,7 +65,6 @@ private lemma pullHom_comp
       pullHom (F := F) (φ := φ) g gf₁ gf₂ hgf₁ hgf₂ ≫
         pullHom (F := F) (φ := ψ) g gf₂ gf₃ hgf₂ hgf₃ := by
   -- A direct computation from the definition of `pullHom`.
-  classical
   dsimp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
   simp [Functor.map_comp, Category.assoc, ← reassoc_of% Cat.Hom₂.comp_app]
 
@@ -79,22 +77,22 @@ variable [Limits.HasPullbacks C]
 -/
 
 /-- The canonical isomorphism `diag^*(π₁^* a) ≅ a`. -/
-def diagIsoP1 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
+def diag_iso_p1 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
     (reindex F (Limits.pullback.diagonal p)).obj ((reindex F (p1 p)).obj a) ≅ a := by
   refine
-    (reindexCompIsoObj F (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫
-      (reindexObjIsoOfEq F (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
+    (reindex_comp_iso_obj F (g := Limits.pullback.diagonal p) (f := p1 p) a).symm ≪≫
+      (reindex_obj_iso_of_eq F (f := Limits.pullback.diagonal p ≫ p1 p) (g := 𝟙 E)
         (by simp) a) ≪≫
-        reindexIdIsoObj F a
+        reindex_id_iso_obj F a
 
 /-- The canonical isomorphism `diag^*(π₂^* a) ≅ a`. -/
-def diagIsoP2 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
+def diag_iso_p2 {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op E))) :
     (reindex F (Limits.pullback.diagonal p)).obj ((reindex F (p2 p)).obj a) ≅ a := by
   refine
-    (reindexCompIsoObj F (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫
-      (reindexObjIsoOfEq F (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
+    (reindex_comp_iso_obj F (g := Limits.pullback.diagonal p) (f := p2 p) a).symm ≪≫
+      (reindex_obj_iso_of_eq F (f := Limits.pullback.diagonal p ≫ p2 p) (g := 𝟙 E)
         (by simp) a) ≪≫
-        reindexIdIsoObj F a
+        reindex_id_iso_obj F a
 
 /-!
 ## Descent data for a single morphism
@@ -139,9 +137,9 @@ structure CechDescentData {E B : C} (p : E ⟶ B) where
   ξ : (reindex F (p2 p)).obj obj ⟶ (reindex F (p1 p)).obj obj
   /-- Unit condition: restricting along the diagonal yields the identity. -/
   unit :
-    (diagIsoP2 (F := F) p obj).inv ≫
+    (diag_iso_p2 (F := F) p obj).inv ≫
         (reindex F (Limits.pullback.diagonal p)).map ξ ≫
-          (diagIsoP1 (F := F) p obj).hom =
+          (diag_iso_p1 (F := F) p obj).hom =
       𝟙 obj
   /-- Cocycle condition on triple overlaps. -/
   cocycle :
@@ -178,7 +176,7 @@ def swap {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechKernelPair p :=
   simp [swap]
 
 /-- The candidate inverse of `ξ`, obtained by pulling back along the swap map. -/
-noncomputable def xiInv (D : CechDescentData (F := F) p) :
+noncomputable def xi_inv (D : CechDescentData (F := F) p) :
     (reindex F (p1 p)).obj D.obj ⟶ (reindex F (p2 p)).obj D.obj :=
   pullHom (F := F) (φ := D.ξ) (g := swap p) (gf₁ := p1 p) (gf₂ := p2 p)
     (hgf₁ := by simp)
@@ -189,85 +187,85 @@ noncomputable def xiInv (D : CechDescentData (F := F) p) :
 -/
 
 /-- The map `E ×_B E ⟶ E ×_B E ×_B E` corresponding to `(id, swap)`. -/
-def swapLeft {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p :=
+def swap_left {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p :=
   Limits.pullback.lift (𝟙 _) (swap p) (by simp)
 
-@[simp] lemma swapLeft_p12 {E B : C} (p : E ⟶ B) : swapLeft p ≫ p12 p = 𝟙 _ := by
-  simp [swapLeft]
+@[simp] lemma swap_left_p12 {E B : C} (p : E ⟶ B) : swap_left p ≫ p12 p = 𝟙 _ := by
+  simp [swap_left]
 
-@[simp] lemma swapLeft_p23 {E B : C} (p : E ⟶ B) : swapLeft p ≫ p23 p = swap p := by
-  simp [swapLeft]
+@[simp] lemma swap_left_p23 {E B : C} (p : E ⟶ B) : swap_left p ≫ p23 p = swap p := by
+  simp [swap_left]
 
-@[simp] lemma swapLeft_p12_p1 {E B : C} (p : E ⟶ B) :
-    swapLeft p ≫ p12 p ≫ p1 p = p1 p := by
+@[simp] lemma swap_left_p12_p1 {E B : C} (p : E ⟶ B) :
+    swap_left p ≫ p12 p ≫ p1 p = p1 p := by
   calc
-    swapLeft p ≫ p12 p ≫ p1 p = (swapLeft p ≫ p12 p) ≫ p1 p := by
-      simpa using (Category.assoc (swapLeft p) (p12 p) (p1 p)).symm
+    swap_left p ≫ p12 p ≫ p1 p = (swap_left p ≫ p12 p) ≫ p1 p := by
+      simpa using (Category.assoc (swap_left p) (p12 p) (p1 p)).symm
     _ = p1 p := by simp
 
-lemma swapLeft_p12_p2 {E B : C} (p : E ⟶ B) :
-    swapLeft p ≫ p12 p ≫ p2 p = p2 p := by
+lemma swap_left_p12_p2 {E B : C} (p : E ⟶ B) :
+    swap_left p ≫ p12 p ≫ p2 p = p2 p := by
   calc
-    swapLeft p ≫ p12 p ≫ p2 p = (swapLeft p ≫ p12 p) ≫ p2 p := by
-      simpa using (Category.assoc (swapLeft p) (p12 p) (p2 p)).symm
+    swap_left p ≫ p12 p ≫ p2 p = (swap_left p ≫ p12 p) ≫ p2 p := by
+      simpa using (Category.assoc (swap_left p) (p12 p) (p2 p)).symm
     _ = p2 p := by simp
 
-@[simp] lemma swapLeft_p23_p2 {E B : C} (p : E ⟶ B) :
-    swapLeft p ≫ p23 p ≫ p2 p = p1 p := by
+@[simp] lemma swap_left_p23_p2 {E B : C} (p : E ⟶ B) :
+    swap_left p ≫ p23 p ≫ p2 p = p1 p := by
   calc
-    swapLeft p ≫ p23 p ≫ p2 p = (swapLeft p ≫ p23 p) ≫ p2 p := by
-      simpa using (Category.assoc (swapLeft p) (p23 p) (p2 p)).symm
+    swap_left p ≫ p23 p ≫ p2 p = (swap_left p ≫ p23 p) ≫ p2 p := by
+      simpa using (Category.assoc (swap_left p) (p23 p) (p2 p)).symm
     _ = p1 p := by simp
 
-@[simp] lemma swapLeft_p23_p1 {E B : C} (p : E ⟶ B) :
-    swapLeft p ≫ p23 p ≫ p1 p = p2 p := by
+@[simp] lemma swap_left_p23_p1 {E B : C} (p : E ⟶ B) :
+    swap_left p ≫ p23 p ≫ p1 p = p2 p := by
   calc
-    swapLeft p ≫ p23 p ≫ p1 p = (swapLeft p ≫ p23 p) ≫ p1 p := by
-      simpa using (Category.assoc (swapLeft p) (p23 p) (p1 p)).symm
+    swap_left p ≫ p23 p ≫ p1 p = (swap_left p ≫ p23 p) ≫ p1 p := by
+      simpa using (Category.assoc (swap_left p) (p23 p) (p1 p)).symm
     _ = p2 p := by simp
 
-@[simp] lemma swapLeft_p13 {E B : C} (p : E ⟶ B) : swapLeft p ≫ p13 p = p1 p ≫ diag p := by
+@[simp] lemma swap_left_p13 {E B : C} (p : E ⟶ B) : swap_left p ≫ p13 p = p1 p ≫ diag p := by
   apply Limits.pullback.hom_ext <;> simp
 
 /-- The map `E ×_B E ⟶ E ×_B E ×_B E` corresponding to `(swap, id)`. -/
-def swapRight {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p :=
+def swap_right {E B : C} (p : E ⟶ B) : cechKernelPair p ⟶ cechTripleOverlap p :=
   Limits.pullback.lift (swap p) (𝟙 _) (by simp)
 
-@[simp] lemma swapRight_p12 {E B : C} (p : E ⟶ B) : swapRight p ≫ p12 p = swap p := by
-  simp [swapRight]
+@[simp] lemma swap_right_p12 {E B : C} (p : E ⟶ B) : swap_right p ≫ p12 p = swap p := by
+  simp [swap_right]
 
-@[simp] lemma swapRight_p23 {E B : C} (p : E ⟶ B) : swapRight p ≫ p23 p = 𝟙 _ := by
-  simp [swapRight]
+@[simp] lemma swap_right_p23 {E B : C} (p : E ⟶ B) : swap_right p ≫ p23 p = 𝟙 _ := by
+  simp [swap_right]
 
-@[simp] lemma swapRight_p12_p1 {E B : C} (p : E ⟶ B) :
-    swapRight p ≫ p12 p ≫ p1 p = p2 p := by
+@[simp] lemma swap_right_p12_p1 {E B : C} (p : E ⟶ B) :
+    swap_right p ≫ p12 p ≫ p1 p = p2 p := by
   calc
-    swapRight p ≫ p12 p ≫ p1 p = (swapRight p ≫ p12 p) ≫ p1 p := by
-      simpa using (Category.assoc (swapRight p) (p12 p) (p1 p)).symm
+    swap_right p ≫ p12 p ≫ p1 p = (swap_right p ≫ p12 p) ≫ p1 p := by
+      simpa using (Category.assoc (swap_right p) (p12 p) (p1 p)).symm
     _ = p2 p := by simp
 
-lemma swapRight_p12_p2 {E B : C} (p : E ⟶ B) :
-    swapRight p ≫ p12 p ≫ p2 p = p1 p := by
+lemma swap_right_p12_p2 {E B : C} (p : E ⟶ B) :
+    swap_right p ≫ p12 p ≫ p2 p = p1 p := by
   calc
-    swapRight p ≫ p12 p ≫ p2 p = (swapRight p ≫ p12 p) ≫ p2 p := by
-      simpa using (Category.assoc (swapRight p) (p12 p) (p2 p)).symm
+    swap_right p ≫ p12 p ≫ p2 p = (swap_right p ≫ p12 p) ≫ p2 p := by
+      simpa using (Category.assoc (swap_right p) (p12 p) (p2 p)).symm
     _ = p1 p := by simp
 
-@[simp] lemma swapRight_p23_p2 {E B : C} (p : E ⟶ B) :
-    swapRight p ≫ p23 p ≫ p2 p = p2 p := by
+@[simp] lemma swap_right_p23_p2 {E B : C} (p : E ⟶ B) :
+    swap_right p ≫ p23 p ≫ p2 p = p2 p := by
   calc
-    swapRight p ≫ p23 p ≫ p2 p = (swapRight p ≫ p23 p) ≫ p2 p := by
-      simpa using (Category.assoc (swapRight p) (p23 p) (p2 p)).symm
+    swap_right p ≫ p23 p ≫ p2 p = (swap_right p ≫ p23 p) ≫ p2 p := by
+      simpa using (Category.assoc (swap_right p) (p23 p) (p2 p)).symm
     _ = p2 p := by simp
 
-@[simp] lemma swapRight_p23_p1 {E B : C} (p : E ⟶ B) :
-    swapRight p ≫ p23 p ≫ p1 p = p1 p := by
+@[simp] lemma swap_right_p23_p1 {E B : C} (p : E ⟶ B) :
+    swap_right p ≫ p23 p ≫ p1 p = p1 p := by
   calc
-    swapRight p ≫ p23 p ≫ p1 p = (swapRight p ≫ p23 p) ≫ p1 p := by
-      simpa using (Category.assoc (swapRight p) (p23 p) (p1 p)).symm
+    swap_right p ≫ p23 p ≫ p1 p = (swap_right p ≫ p23 p) ≫ p1 p := by
+      simpa using (Category.assoc (swap_right p) (p23 p) (p1 p)).symm
     _ = p1 p := by simp
 
-@[simp] lemma swapRight_p13 {E B : C} (p : E ⟶ B) : swapRight p ≫ p13 p = p2 p ≫ diag p := by
+@[simp] lemma swap_right_p13 {E B : C} (p : E ⟶ B) : swap_right p ≫ p13 p = p2 p ≫ diag p := by
   apply Limits.pullback.hom_ext <;> simp
 
 /-!
@@ -280,17 +278,17 @@ private lemma pullHom_diag_eq_id (D : CechDescentData (F := F) p) :
       𝟙 ((reindex F (𝟙 _)).obj D.obj) := by
   -- Rewrite `D.unit` as a conjugation statement for `pullHom` along the diagonal.
   have hu :
-      (reindexIdIsoObj F D.obj).inv ≫
+      (reindex_id_iso_obj F D.obj).inv ≫
           pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
               (hgf₁ := by simp) (hgf₂ := by simp) ≫
-            (reindexIdIsoObj F D.obj).hom =
+            (reindex_id_iso_obj F D.obj).hom =
         𝟙 D.obj := by
     -- `simp` after unfolding the diagonal comparison isomorphisms.
-    simpa [diagIsoP1, diagIsoP2, pullHom, reindexCompIsoObj, reindex, reindexObjIsoOfEq,
+    simpa [diag_iso_p1, diag_iso_p2, pullHom, reindex_comp_iso_obj, reindex, reindex_obj_iso_of_eq,
       CategoryTheory.Pseudofunctor.mapComp', PrelaxFunctor.map₂_eqToHom, Category.assoc] using D.unit
-  -- Cancel the outer `reindexIdIsoObj` isomorphisms.
+  -- Cancel the outer `reindex_id_iso_obj` isomorphisms.
   have hu' := congrArg (fun t =>
-    (reindexIdIsoObj F D.obj).hom ≫ t ≫ (reindexIdIsoObj F D.obj).inv) hu
+    (reindex_id_iso_obj F D.obj).hom ≫ t ≫ (reindex_id_iso_obj F D.obj).inv) hu
   simpa [Category.assoc] using hu'
 
 
@@ -340,137 +338,135 @@ private lemma pullHom_p2_diag_eq_id (D : CechDescentData (F := F) p) :
 -/
 
 
-lemma xiInv_comp_xi (D : CechDescentData (F := F) p) :
-    xiInv (F := F) (p := p) D ≫ D.ξ = 𝟙 _ := by
-  classical
-  -- Pull back the cocycle along `swapLeft : E ×_B E ⟶ E ×_B E ×_B E`.
+lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
+    xi_inv (F := F) (p := p) D ≫ D.ξ = 𝟙 _ := by
+  -- Pull back the cocycle along `swap_left : E ×_B E ⟶ E ×_B E ×_B E`.
   have hc :=
       congrArg
         (fun t =>
-          pullHom (F := F) (φ := t) (g := swapLeft p) (gf₁ := p1 p) (gf₂ := p1 p)
+          pullHom (F := F) (φ := t) (g := swap_left p) (gf₁ := p1 p) (gf₂ := p1 p)
             (hgf₁ := by simp) (hgf₂ := by simp))
         (D.cocycle (p := p))
 
   -- Rewrite the pullback of the composite using `pullHom_comp`.
   have hcomp :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swapLeft p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
           (hgf₂ := by simp) =
-        pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapLeft p)
+        pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) ≫
-          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapLeft p)
+          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) := by
     simpa using
       (pullHom_comp (F := F) (φ := xi23 (F := F) p D.ξ) (ψ := xi12 (F := F) p D.ξ)
-        (g := swapLeft p) (gf₁ := p1 p) (gf₂ := p2 p) (gf₃ := p1 p)
+        (g := swap_left p) (gf₁ := p1 p) (gf₂ := p2 p) (gf₃ := p1 p)
         (hgf₁ := by simp) (hgf₂ := by simp)
         (hgf₃ := by simp))
 
   have hc' :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapLeft p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) ≫
-          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapLeft p)
+          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
-        pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swapLeft p)
+        pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
           (hgf₂ := by simp) := by
     simpa [hcomp] using hc
 
   -- Identify the three pulled-back morphisms.
   have h23 :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapLeft p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
-        xiInv (F := F) (p := p) D := by
-    simp [xi23, xiInv, swapLeft_p23, pullHom_pullHom]
+        xi_inv (F := F) (p := p) D := by
+    simp [xi23, xi_inv, swap_left_p23, pullHom_pullHom]
 
   have h12 :
-      pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapLeft p)
+      pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
         D.ξ := by
-    simp [xi12, swapLeft_p12, pullHom_pullHom, pullHom_id]
+    simp [xi12, swap_left_p12, pullHom_pullHom, pullHom_id]
 
   have h13 :
-      pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swapLeft p)
+      pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
           (hgf₂ := by simp) =
         𝟙 _ := by
-    simp [xi13, swapLeft_p13, pullHom_pullHom, pullHom_p1_diag_eq_id]
+    simp [xi13, swap_left_p13, pullHom_pullHom, pullHom_p1_diag_eq_id]
 
   -- Conclude.
   simpa [h23, h12, h13, Category.assoc] using hc'
 
-lemma xi_comp_xiInv (D : CechDescentData (F := F) p) :
-    D.ξ ≫ xiInv (F := F) (p := p) D = 𝟙 _ := by
-  classical
+lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
+    D.ξ ≫ xi_inv (F := F) (p := p) D = 𝟙 _ := by
   have hc :=
       congrArg
         (fun t =>
-          pullHom (F := F) (φ := t) (g := swapRight p) (gf₁ := p2 p) (gf₂ := p2 p)
+          pullHom (F := F) (φ := t) (g := swap_right p) (gf₁ := p2 p) (gf₂ := p2 p)
             (hgf₁ := by simp) (hgf₂ := by simp))
         (D.cocycle (p := p))
 
   have hcomp :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swapRight p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swap_right p)
           (gf₁ := p2 p) (gf₂ := p2 p) (hgf₁ := by simp)
           (hgf₂ := by simp) =
-        pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapRight p)
+        pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) ≫
-          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapRight p)
+          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) := by
     simpa using
       (pullHom_comp (F := F) (φ := xi23 (F := F) p D.ξ) (ψ := xi12 (F := F) p D.ξ)
-        (g := swapRight p) (gf₁ := p2 p) (gf₂ := p1 p) (gf₃ := p2 p)
+        (g := swap_right p) (gf₁ := p2 p) (gf₂ := p1 p) (gf₃ := p2 p)
         (hgf₁ := by simp) (hgf₂ := by simp)
         (hgf₃ := by simp))
 
   have hc' :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapRight p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) ≫
-          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapRight p)
+          pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
-        pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swapRight p)
+        pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_right p)
           (gf₁ := p2 p) (gf₂ := p2 p) (hgf₁ := by simp)
           (hgf₂ := by simp) := by
     simpa [hcomp] using hc
 
   have h23 :
-      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swapRight p)
+      pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
         D.ξ := by
-    -- `swapRight ≫ p23 = 𝟙`.
-    simp [xi23, swapRight_p23, pullHom_id, pullHom_pullHom]
+    -- `swap_right ≫ p23 = 𝟙`.
+    simp [xi23, swap_right_p23, pullHom_id, pullHom_pullHom]
 
   have h12 :
-      pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swapRight p)
+      pullHom (F := F) (φ := xi12 (F := F) p D.ξ) (g := swap_right p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
-        xiInv (F := F) (p := p) D := by
-    -- `swapRight ≫ p12 = swap`, giving `xiInv`.
-    simp [xi12, xiInv, swapRight_p12, pullHom_pullHom]
+        xi_inv (F := F) (p := p) D := by
+    -- `swap_right ≫ p12 = swap`, giving `xi_inv`.
+    simp [xi12, xi_inv, swap_right_p12, pullHom_pullHom]
 
   have h13 :
-      pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swapRight p)
+      pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_right p)
           (gf₁ := p2 p) (gf₂ := p2 p) (hgf₁ := by simp)
           (hgf₂ := by simp) =
         𝟙 _ := by
-    simp [xi13, swapRight_p13, pullHom_pullHom, pullHom_p2_diag_eq_id]
+    simp [xi13, swap_right_p13, pullHom_pullHom, pullHom_p2_diag_eq_id]
 
   simpa [h23, h12, h13, Category.assoc] using hc'
 
 instance (D : CechDescentData (F := F) p) : IsIso D.ξ :=
-  ⟨⟨xiInv (F := F) (p := p) D, xi_comp_xiInv (F := F) (p := p) D,
-      xiInv_comp_xi (F := F) (p := p) D⟩⟩
+  ⟨⟨xi_inv (F := F) (p := p) D, xi_comp_xi_inv (F := F) (p := p) D,
+      xi_inv_comp_xi (F := F) (p := p) D⟩⟩
 
 /-- Morphisms of descent data are morphisms compatible with the gluing isomorphisms. -/
 structure Hom (D D' : CechDescentData (F := F) p) where
@@ -523,14 +519,14 @@ instance instCategory : Category (CechDescentData (F := F) p) where
 end CechDescentData
 
 /-- The canonical descent isomorphism on `p^* a`. -/
-def singleMorphismComparisonXi {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op B))) :
+def single_morphism_comparison_xi {E B : C} (p : E ⟶ B) (a : F.obj (.mk (op B))) :
     (reindex F (p2 p)).obj ((reindex F p).obj a) ≅
       (reindex F (p1 p)).obj ((reindex F p).obj a) := by
   refine
-    (reindexCompIsoObj F (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
-      (reindexCompIsoObj F (g := p1 p) (f := p) a)
+    (reindex_comp_iso_obj F (g := p2 p) (f := p) a).symm ≪≫ ?_ ≪≫
+      (reindex_comp_iso_obj F (g := p1 p) (f := p) a)
   exact
-    reindexObjIsoOfEq F (f := p2 p ≫ p) (g := p1 p ≫ p) (a := a) (by
+    reindex_obj_iso_of_eq F (f := p2 p ≫ p) (g := p1 p ≫ p) (a := a) (by
       simpa using (p1_comp_p_eq_p2_comp_p p).symm)
 
 end HasPullbacks

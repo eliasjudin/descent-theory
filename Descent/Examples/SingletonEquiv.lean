@@ -30,7 +30,7 @@ open Descent.Pseudofunctor.Descent
 noncomputable example :
     Descent.Pseudofunctor.Descent.CechDescentData (F := F) p ≌
       CategoryTheory.Pseudofunctor.DescentData (F := F) (f := fun _ : PUnit.{1} => p) :=
-  Descent.Pseudofunctor.Descent.singleSingletonDescentDataEquiv (F := F) p
+  Descent.Pseudofunctor.Descent.single_singleton_descent_data_equiv (F := F) p
 
 /-!
 ## Direction sanity checks
@@ -41,14 +41,14 @@ opposite direction; the equivalence compensates for this via `inv`/`symm`.
 -/
 
 example (D : CechDescentData (F := F) p) :
-    (singleToSingletonDescentData (F := F) p D).obj PUnit.unit = D.obj :=
+    (single_to_singleton_descent_data (F := F) p D).obj PUnit.unit = D.obj :=
   rfl
 
 example (D : CechDescentData (F := F) p) :
     D.ξ =
-      ((singleToSingletonFunctor (F := F) p ⋙ singletonToSingleFunctor (F := F) p).obj D).ξ := by
+      ((single_to_singleton_functor (F := F) p ⋙ singleton_to_single_functor (F := F) p).obj D).ξ := by
   -- The unit isomorphism has underlying morphism `𝟙`, so `comm` reduces to equality of `ξ`.
-  simpa [singleSingletonUnit] using (singleSingletonUnit (F := F) p D).hom.comm
+  simpa [single_singleton_unit] using (single_singleton_unit (F := F) p D).hom.comm
 
 end
 
