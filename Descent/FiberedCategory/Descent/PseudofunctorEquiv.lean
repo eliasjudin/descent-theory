@@ -236,11 +236,11 @@ private def single_cech_unit_component
 private def single_cech_unitIso :
     𝟭 (SingleMorphismDescentData (pA := pA) p) ≅
       single_to_cech_functor (pA := pA) p ⋙ cech_to_single_functor (pA := pA) p := by
-  refine NatIso.ofComponents (fun D => single_cech_unit_component (pA := pA) (p := p) D) ?_
-  intro D D' f
-  apply SingleMorphismDescentData.Hom.ext (pA := pA)
-  change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
-  simp
+  refine NatIso.ofComponents (fun D ↦ single_cech_unit_component (pA := pA) (p := p) D)
+    (fun {D D'} f ↦ by
+      apply SingleMorphismDescentData.Hom.ext (pA := pA)
+      change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
+      simp)
 
 /-- Component of the counit isomorphism for `single_cech_descent_data_equiv`. -/
 private def single_cech_counit_component
@@ -265,11 +265,11 @@ private def single_cech_counit_component
 private def single_cech_counitIso :
     cech_to_single_functor (pA := pA) p ⋙ single_to_cech_functor (pA := pA) p ≅
       𝟭 (Descent.Pseudofunctor.Descent.CechDescentData (F := fibers_pseudofunctor (pA := pA)) p) := by
-  refine NatIso.ofComponents (fun D => single_cech_counit_component (pA := pA) (p := p) D) ?_
-  intro D D' f
-  apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
-  change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
-  simp
+  refine NatIso.ofComponents (fun D ↦ single_cech_counit_component (pA := pA) (p := p) D)
+    (fun {D D'} f ↦ by
+      apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
+      change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
+      simp)
 
 /-- The expected equivalence between fibered-category and pseudofunctor Čech descent data. -/
 noncomputable def single_cech_descent_data_equiv :

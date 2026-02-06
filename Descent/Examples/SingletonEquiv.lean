@@ -29,7 +29,7 @@ open Descent.Pseudofunctor.Descent
 
 noncomputable example :
     Descent.Pseudofunctor.Descent.CechDescentData (F := F) p ≌
-      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := fun _ : PUnit.{1} => p) :=
+      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := fun _ : PUnit.{1} ↦ p) :=
   Descent.Pseudofunctor.Descent.single_singleton_descent_data_equiv (F := F) p
 
 /-!

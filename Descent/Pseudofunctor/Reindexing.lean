@@ -6,7 +6,6 @@ Authors: Elias Judin
 
 import Mathlib.CategoryTheory.Bicategory.Functor.Pseudofunctor
 import Mathlib.CategoryTheory.Bicategory.LocallyDiscrete
-import Mathlib.CategoryTheory.Category.Cat
 
 /-!
 # Reindexing for pseudofunctors

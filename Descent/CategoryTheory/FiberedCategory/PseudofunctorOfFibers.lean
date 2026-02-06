@@ -6,7 +6,6 @@ Authors: Elias Judin
 
 import Descent.CategoryTheory.FiberedCategory.Reindexing
 import Mathlib.CategoryTheory.Bicategory.Functor.LocallyDiscrete
-import Mathlib.CategoryTheory.Category.Cat
 
 /-!
 # The pseudofunctor of fibers of a fibered category

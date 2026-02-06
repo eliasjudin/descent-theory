@@ -10,7 +10,7 @@ import Descent.CategoryTheory.Sites.Descent.SingleMorphism
 # Equivalence with Mathlib's descent data
 
 Relates `CechDescentData` for `p : E ⟶ B` to Mathlib's
-`Pseudofunctor.DescentData` for the singleton family `fun _ : PUnit.{1} => p`.
+`Pseudofunctor.DescentData` for the singleton family `fun _ : PUnit.{1} ↦ p`.
 Main definitions: `single_to_singleton_descent_data`, `singleton_to_single_descent_data`,
 `single_to_singleton_functor`, `singleton_to_single_functor`, `single_singleton_descent_data_equiv`.
 -/
@@ -320,8 +320,7 @@ private lemma single_to_singleton_hom_aux_comm {D₁ D₂ : CechDescentData (F :
         simpa [Quiver.Hom.comp_toLoc] using hu1Loc)).hom.toNatTrans.app
       D₁.obj)]
   -- reassociate to expose the left-composite `(_ ≫ _)` for rewriting
-  rw [← Category.assoc]
-  rw [hmap']
+  rw [← Category.assoc, hmap']
   simp [Category.assoc]
 
 /-!
@@ -334,7 +333,7 @@ The key mapping:
 - `obj ()` := `D.obj`
 - `hom q f₁ f₂` at Y mapping to E comes from `D.ξ` transported appropriately -/
 def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
-    CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p)) where
+    CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) where
   obj := fun _ => D.obj
   hom := fun {Y} q {i₁ i₂} f₁ f₂ hf₁ hf₂ => by
     cases i₁; cases i₂ -- Both are PUnit.unit
@@ -402,7 +401,7 @@ def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
 
 omit [Limits.HasPullbacks C] in
 private lemma descent_data_hom_congr
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) {Y : C}
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) {Y : C}
     (q : Y ⟶ B) {f₁ f₁' f₂ f₂' : Y ⟶ E} (hf₁ : f₁ ≫ p = q) (hf₂ : f₂ ≫ p = q) (hf₁' : f₁' ≫ p = q)
     (hf₂' : f₂' ≫ p = q) (h₁ : f₁ = f₁') (h₂ : f₂ = f₂') :
     eqToHom
@@ -422,7 +421,7 @@ private lemma descent_data_hom_congr
 
 omit [Limits.HasPullbacks C] in
 private lemma descent_data_hom_congr'
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) {Y : C} (q : Y ⟶ B)
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) {Y : C} (q : Y ⟶ B)
     {f₁ f₁' f₂ f₂' : Y ⟶ E} (hf₁ : f₁ ≫ p = q) (hf₂ : f₂ ≫ p = q) (h₁ : f₁ = f₁')
     (h₂ : f₂ = f₂') :
     eqToHom
@@ -441,7 +440,7 @@ private lemma descent_data_hom_congr'
   simp
 
 private lemma singleton_to_single_unit
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) :
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
     (diag_iso_p2 (F := F) p (D.obj PUnit.unit)).inv ≫
         (reindex F (Limits.pullback.diagonal p)).map
             (D.hom (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p2 p) (p1 p)
@@ -553,7 +552,7 @@ private lemma singleton_to_single_unit
       (F.mapId { as := op E }).hom.toNatTrans.app (D.obj PUnit.unit)) hhom
 
 private lemma singleton_to_single_cocycle
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) :
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
   xi23 (F := F) p
         (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
           (by rfl)
@@ -782,7 +781,7 @@ private lemma singleton_to_single_cocycle
 
 /-- Convert Mathlib's descent data for the singleton family to a single morphism descent datum. -/
 def singleton_to_single_descent_data
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) :
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
     CechDescentData (F := F) p where
   obj := D.obj PUnit.unit
   ξ := by
@@ -814,7 +813,7 @@ def single_to_singleton_hom {D₁ D₂ : CechDescentData (F := F) p}
 
 /-- Convert a morphism of mathlib descent data to a morphism of single-morphism descent data. -/
 def singleton_to_single_hom
-    {D₁ D₂ : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))}
+    {D₁ D₂ : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))}
     (f : D₁ ⟶ D₂) :
     singleton_to_single_descent_data F p D₁ ⟶ singleton_to_single_descent_data F p D₂ :=
   ⟨f.hom PUnit.unit, by
@@ -836,7 +835,7 @@ def singleton_to_single_hom
 /-- The functor from single-morphism descent data to mathlib descent data. -/
 def single_to_singleton_functor :
     CechDescentData (F := F) p ⥤
-      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p)) where
+      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) where
   obj := single_to_singleton_descent_data F p
   map := single_to_singleton_hom F p
   map_id := fun D => by
@@ -851,7 +850,7 @@ def single_to_singleton_functor :
 
 /-- The functor from mathlib descent data to single-morphism descent data. -/
 def singleton_to_single_functor :
-    CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p)) ⥤
+    CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) ⥤
       CechDescentData (F := F) p where
   obj := singleton_to_single_descent_data F p
   map := singleton_to_single_hom F p
@@ -889,7 +888,7 @@ def single_singleton_unit (D : CechDescentData (F := F) p) :
 
 /-- The counit of the equivalence: `singleToSingleton (singletonToSingle D) ≅ D`. -/
 def single_singleton_counit
-    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p))) :
+    (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
     (singleton_to_single_functor F p ⋙ single_to_singleton_functor F p).obj D ≅ D where
   hom := ⟨fun _ => 𝟙 (D.obj PUnit.unit), by
     intro Y q i₁ i₂ f₁ f₂ hf₁ hf₂
@@ -1044,19 +1043,17 @@ def single_singleton_counit
 for the singleton family. -/
 def single_singleton_descent_data_equiv :
     CechDescentData (F := F) p ≌
-      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} => p)) where
+      CategoryTheory.Pseudofunctor.DescentData (F := F) (f := fun _ : PUnit.{1} ↦ p) where
   functor := single_to_singleton_functor F p
   inverse := singleton_to_single_functor F p
-  unitIso := NatIso.ofComponents (single_singleton_unit F p) (by
-    intro D₁ D₂ f
+  unitIso := NatIso.ofComponents (single_singleton_unit F p) (fun {_ _} f ↦ by
     apply CechDescentData.Hom.ext
     simp [CechDescentData.instCategory, single_to_singleton_functor,
-      singleton_to_single_functor, single_singleton_unit, single_to_singleton_hom, singleton_to_single_hom,
-      single_to_singleton_descent_data, singleton_to_single_descent_data, Functor.comp_obj,
-      Functor.id_obj, Functor.comp_map, Functor.id_map,
+      singleton_to_single_functor, single_singleton_unit, single_to_singleton_hom,
+      singleton_to_single_hom, single_to_singleton_descent_data, singleton_to_single_descent_data,
+      Functor.comp_obj, Functor.id_obj, Functor.comp_map, Functor.id_map,
       CechDescentData.Hom.comp_hom, Category.id_comp, Category.comp_id])
-  counitIso := NatIso.ofComponents (single_singleton_counit F p) (by
-    intro D₁ D₂ f
+  counitIso := NatIso.ofComponents (single_singleton_counit F p) (fun {_ _} f ↦ by
     ext i
     cases i
     simp only [single_to_singleton_functor, singleton_to_single_functor, single_singleton_counit,
@@ -1081,7 +1078,7 @@ It is defined as `F.toDescentData` for the singleton family, followed by the (in
 from Mathlib's descent data to our Čech-style descent data. -/
 noncomputable def single_morphism_comparison_functor :
     F.obj (.mk (op B)) ⥤ CechDescentData (F := F) p :=
-  (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))) ⋙
+  (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) ⋙
     singleton_to_single_functor (F := F) p
 
 /-- `p` is a descent morphism for `F` if the comparison functor `Φₚ` is fully faithful
@@ -1099,7 +1096,7 @@ abbrev IsEffectiveDescentMorphism : Prop :=
 
 Mathlib’s descent theory is formulated for arbitrary presieves `R` via the functor
 `F.toDescentData (fun (f : R.category) ↦ f.obj.hom)`. In the singleton case, the presieve
-`Presieve.singleton p` is (definitionally) the same as `Presieve.ofArrows _ (fun _ : PUnit.{1} => p)`,
+`Presieve.singleton p` is (definitionally) the same as `Presieve.ofArrows _ (fun _ : PUnit.{1} ↦ p)`,
 see `CategoryTheory.Presieve.ofArrows_pUnit`.
 
 The functor `single_morphism_comparison_functor` differs from `F.toDescentData` only by postcomposition
@@ -1107,11 +1104,11 @@ with the (inverse) equivalence `singleton_to_single_functor`, so it has the same
 “is equivalence” properties.
 -/
 
-theorem is_descent_morphism_iff_nonempty_to_descent_data_fully_faithful :
+theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
     IsDescentMorphism (F := F) p ↔
-      Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))).FullyFaithful := by
+      Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).FullyFaithful := by
   let e := single_singleton_descent_data_equiv (F := F) p
-  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))
+  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)
   let H := singleton_to_single_functor (F := F) p
   have hH : H.FullyFaithful := by
     simpa [H, e, single_singleton_descent_data_equiv] using e.fullyFaithfulInverse
@@ -1125,11 +1122,11 @@ theorem is_descent_morphism_iff_nonempty_to_descent_data_fully_faithful :
     refine ⟨?_⟩
     simpa [single_morphism_comparison_functor, G, H] using hG.comp hH
 
-theorem is_effective_descent_morphism_iff_to_descent_data_is_equivalence :
+theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     IsEffectiveDescentMorphism (F := F) p ↔
-      (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))).IsEquivalence := by
+      (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).IsEquivalence := by
   let e := single_singleton_descent_data_equiv (F := F) p
-  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))
+  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)
   let H := singleton_to_single_functor (F := F) p
   haveI : H.IsEquivalence := by
     simpa [H, e, single_singleton_descent_data_equiv] using (show e.inverse.IsEquivalence from inferInstance)
@@ -1145,33 +1142,41 @@ theorem is_effective_descent_morphism_iff_to_descent_data_is_equivalence :
     have : (G ⋙ H).IsEquivalence := by infer_instance
     simpa [single_morphism_comparison_functor, G, H] using this
 
-theorem is_prestack_for_singleton_iff_is_descent_morphism :
+theorem is_prestack_for_singleton_iff_descent_morphism :
     CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
       IsDescentMorphism (F := F) p := by
   have hPresieve :
-      CategoryTheory.Presieve.ofArrows (fun _ : PUnit.{1} => E) ((fun _ : PUnit.{1} => p)) =
+      CategoryTheory.Presieve.ofArrows (fun _ : PUnit.{1} ↦ E) (fun _ : PUnit.{1} ↦ p) =
         CategoryTheory.Presieve.singleton p := by
     simpa using (CategoryTheory.Presieve.ofArrows_pUnit (f := p))
   have h :
       CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
-        Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))).FullyFaithful := by
+        Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).FullyFaithful := by
     simpa [hPresieve] using
-      (CategoryTheory.Pseudofunctor.isPrestackFor_ofArrows_iff (F := F) (S := B) (f := (fun _ : PUnit.{1} => p)))
-  exact h.trans (is_descent_morphism_iff_nonempty_to_descent_data_fully_faithful (F := F) p).symm
+      (CategoryTheory.Pseudofunctor.isPrestackFor_ofArrows_iff (F := F) (S := B)
+        (f := fun _ : PUnit.{1} ↦ p))
+  let hd := is_descent_morphism_iff_to_descent_data_fully_faithful (F := F) p
+  refine ⟨fun hstack ↦ ?_, fun hdesc ↦ ?_⟩
+  · exact hd.2 (h.1 hstack)
+  · exact h.2 (hd.1 hdesc)
 
-theorem is_stack_for_singleton_iff_is_effective_descent_morphism :
+theorem is_stack_for_singleton_iff_effective_descent_morphism :
     CategoryTheory.Pseudofunctor.IsStackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
       IsEffectiveDescentMorphism (F := F) p := by
   have hPresieve :
-      CategoryTheory.Presieve.ofArrows (fun _ : PUnit.{1} => E) ((fun _ : PUnit.{1} => p)) =
+      CategoryTheory.Presieve.ofArrows (fun _ : PUnit.{1} ↦ E) (fun _ : PUnit.{1} ↦ p) =
         CategoryTheory.Presieve.singleton p := by
     simpa using (CategoryTheory.Presieve.ofArrows_pUnit (f := p))
   have h :
       CategoryTheory.Pseudofunctor.IsStackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
-        (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} => p))).IsEquivalence := by
+        (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).IsEquivalence := by
     simpa [hPresieve] using
-      (CategoryTheory.Pseudofunctor.isStackFor_ofArrows_iff (F := F) (S := B) (f := (fun _ : PUnit.{1} => p)))
-  exact h.trans (is_effective_descent_morphism_iff_to_descent_data_is_equivalence (F := F) p).symm
+      (CategoryTheory.Pseudofunctor.isStackFor_ofArrows_iff (F := F) (S := B)
+        (f := fun _ : PUnit.{1} ↦ p))
+  let he := is_effective_descent_morphism_iff_to_descent_data_equivalence (F := F) p
+  refine ⟨fun hstack ↦ ?_, fun hdesc ↦ ?_⟩
+  · exact he.2 (h.1 hstack)
+  · exact h.2 (he.1 hdesc)
 
 end
 

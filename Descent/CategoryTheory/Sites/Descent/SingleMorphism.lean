@@ -36,13 +36,13 @@ variable {E B : C} (p : E ⟶ B)
 /-- The category of descent data for a single morphism `p : E ⟶ B`,
 as `F.DescentData` for the singleton family `fun _ : PUnit => p`. -/
 abbrev SingleMorphismDescentData : Type _ :=
-  F.DescentData (f := fun _ : PUnit.{1} => p)
+  F.DescentData (f := fun _ : PUnit.{1} ↦ p)
 
 /-- The comparison functor for descent data along `p : E ⟶ B`,
 i.e. `F.toDescentData` for the singleton family. -/
 abbrev single_morphism_comparison_functor :
-    F.obj (.mk (op B)) ⥤ F.DescentData (f := fun _ : PUnit.{1} => p) :=
-  F.toDescentData (f := fun _ : PUnit.{1} => p)
+    F.obj (.mk (op B)) ⥤ F.DescentData (f := fun _ : PUnit.{1} ↦ p) :=
+  F.toDescentData (f := fun _ : PUnit.{1} ↦ p)
 
 /-- `p` is a descent morphism for `F` if the comparison functor is fully faithful. -/
 abbrev IsDescentMorphism : Prop :=

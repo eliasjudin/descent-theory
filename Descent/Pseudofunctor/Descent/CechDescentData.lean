@@ -49,8 +49,7 @@ private lemma pullHom_id_of_id_comp
   rw [(F.map g.op.toLoc).toFunctor.map_id ((reindex F (𝟙 X)).obj M)]
   -- Unfold `reindex` (and simplify away the inserted identity morphism).
   simp [reindex]
-  rw [← Functor.map_comp]
-  rw [Cat.Hom.inv_hom_id_toNatTrans_app (F.mapId { as := op X }) M]
+  rw [← Functor.map_comp, Cat.Hom.inv_hom_id_toNatTrans_app (F.mapId { as := op X }) M]
   simp
 
 private lemma pullHom_comp
