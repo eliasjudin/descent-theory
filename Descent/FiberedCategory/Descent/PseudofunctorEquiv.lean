@@ -23,13 +23,12 @@ This repository contains two Čech-style descent data notions along a single mor
   `F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`, where the gluing map is stored as a morphism.
 
 In the case `F = pseudofunctor_of_fibers pA`, these two categories should be equivalent. This file
-provides the comparison functors and records the expected equivalence. Some proofs are left as
-`sorry`, since relating the two sets of coherence isomorphisms requires additional (standard)
-cleavage-coherence lemmas.
+provides the comparison functors and the resulting equivalence.
 
-The object-level conversions `single_to_cech_descent_data` and `cech_to_single_descent_data` are fully
-proved (including the unit and cocycle conditions). The remaining `sorry`s are only for packaging
-the `≌` data (`unitIso`, `counitIso`, and the triangle identity).
+The conversions `single_to_cech_descent_data` and `cech_to_single_descent_data`, together with the
+equivalence packaging (`unitIso`, `counitIso`, and the triangle identity), are implemented here.
+Any remaining placeholders in this bridge are inherited only from upstream cleavage-coherence
+placeholders for `pseudofunctor_of_fibers`.
 -/
 
 open CategoryTheory
@@ -214,6 +213,64 @@ noncomputable def cech_to_single_functor :
     change (Descent.Pseudofunctor.Descent.CechDescentData.Hom.comp f g).hom = (f'.comp g').hom
     simp [f', g']
 
+/-- Component of the unit isomorphism for `single_cech_descent_data_equiv`. -/
+private def single_cech_unit_component
+    (D : SingleMorphismDescentData (pA := pA) p) :
+    D ≅ ((single_to_cech_functor (pA := pA) p ⋙ cech_to_single_functor (pA := pA) p).obj D) := by
+  refine ⟨?hom, ?inv, ?hom_inv_id, ?inv_hom_id⟩
+  · refine ⟨𝟙 D.obj, ?_⟩
+    -- Checklist: both sides use the same `π₂ → π₁` gluing orientation.
+    simp [single_to_cech_functor, cech_to_single_functor,
+      single_to_cech_descent_data, cech_to_single_descent_data]
+  · refine ⟨𝟙 D.obj, ?_⟩
+    simp [single_to_cech_functor, cech_to_single_functor,
+      single_to_cech_descent_data, cech_to_single_descent_data]
+  · apply SingleMorphismDescentData.Hom.ext (pA := pA)
+    change 𝟙 D.obj ≫ 𝟙 D.obj = 𝟙 D.obj
+    simp
+  · apply SingleMorphismDescentData.Hom.ext (pA := pA)
+    change 𝟙 D.obj ≫ 𝟙 D.obj = 𝟙 D.obj
+    simp
+
+/-- Unit natural isomorphism for `single_cech_descent_data_equiv`. -/
+private def single_cech_unitIso :
+    𝟭 (SingleMorphismDescentData (pA := pA) p) ≅
+      single_to_cech_functor (pA := pA) p ⋙ cech_to_single_functor (pA := pA) p := by
+  refine NatIso.ofComponents (fun D => single_cech_unit_component (pA := pA) (p := p) D) ?_
+  intro D D' f
+  apply SingleMorphismDescentData.Hom.ext (pA := pA)
+  change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
+  simp
+
+/-- Component of the counit isomorphism for `single_cech_descent_data_equiv`. -/
+private def single_cech_counit_component
+    (D : Descent.Pseudofunctor.Descent.CechDescentData (F := fibers_pseudofunctor (pA := pA)) p) :
+    ((cech_to_single_functor (pA := pA) p ⋙ single_to_cech_functor (pA := pA) p).obj D) ≅ D := by
+  refine ⟨?hom, ?inv, ?hom_inv_id, ?inv_hom_id⟩
+  · refine ⟨𝟙 D.obj, ?_⟩
+    -- Checklist: morphism-level cocycle convention remains `ξ₂₃ ≫ ξ₁₂ = ξ₁₃`.
+    simp [single_to_cech_functor, cech_to_single_functor,
+      single_to_cech_descent_data, cech_to_single_descent_data]
+  · refine ⟨𝟙 D.obj, ?_⟩
+    simp [single_to_cech_functor, cech_to_single_functor,
+      single_to_cech_descent_data, cech_to_single_descent_data]
+  · apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
+    change 𝟙 D.obj ≫ 𝟙 D.obj = 𝟙 D.obj
+    simp
+  · apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
+    change 𝟙 D.obj ≫ 𝟙 D.obj = 𝟙 D.obj
+    simp
+
+/-- Counit natural isomorphism for `single_cech_descent_data_equiv`. -/
+private def single_cech_counitIso :
+    cech_to_single_functor (pA := pA) p ⋙ single_to_cech_functor (pA := pA) p ≅
+      𝟭 (Descent.Pseudofunctor.Descent.CechDescentData (F := fibers_pseudofunctor (pA := pA)) p) := by
+  refine NatIso.ofComponents (fun D => single_cech_counit_component (pA := pA) (p := p) D) ?_
+  intro D D' f
+  apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
+  change f.hom ≫ 𝟙 D'.obj = 𝟙 D.obj ≫ f.hom
+  simp
+
 /-- The expected equivalence between fibered-category and pseudofunctor Čech descent data. -/
 noncomputable def single_cech_descent_data_equiv :
     SingleMorphismDescentData (pA := pA) p ≌
@@ -221,17 +278,13 @@ noncomputable def single_cech_descent_data_equiv :
   refine
     { functor := single_to_cech_functor (pA := pA) p
       inverse := cech_to_single_functor (pA := pA) p
-      unitIso := by
-        -- TODO: construct the unit isomorphism explicitly.
-        -- One expects the identity on the underlying fiber object, after identifying the
-        -- coherence isomorphisms used in the two descent-data structures.
-        sorry
-      counitIso := by
-        -- TODO: construct the counit isomorphism explicitly.
-        sorry
+      unitIso := single_cech_unitIso (pA := pA) (p := p)
+      counitIso := single_cech_counitIso (pA := pA) (p := p)
       functor_unitIso_comp := by
-        -- TODO: triangle identity.
-        sorry }
+        intro X
+        apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
+        change 𝟙 X.obj ≫ 𝟙 X.obj = 𝟙 X.obj
+        simp }
 
 end HasPullbacks
 

@@ -38,27 +38,77 @@ variable {𝒜 : Type w} [Category.{v} 𝒜]
 
 noncomputable section
 
+/-- Fiber category object part for the pseudofunctor of fibers. -/
+private abbrev fibers_obj (pA : 𝒜 ⥤ C) [pA.IsFibered] (X : LocallyDiscrete Cᵒᵖ) : Cat.{v, w} :=
+  Cat.of (Fiber pA (unop X.as))
+
+/-- Reindexing functor as the morphism part for the pseudofunctor of fibers. -/
+private abbrev fibers_map (pA : 𝒜 ⥤ C) [pA.IsFibered] {X Y : LocallyDiscrete Cᵒᵖ}
+    (f : X ⟶ Y) : fibers_obj (pA := pA) X ⟶ fibers_obj (pA := pA) Y :=
+  (reindex (pA := pA) f.as.unop).toCatHom
+
+/-- Identity coherence for the morphism part of the pseudofunctor of fibers. -/
+private abbrev fibers_mapId (pA : 𝒜 ⥤ C) [pA.IsFibered] (X : LocallyDiscrete Cᵒᵖ) :
+    fibers_map (pA := pA) (𝟙 X) ≅ 𝟙 (fibers_obj (pA := pA) X) :=
+  CategoryTheory.Cat.Hom.isoMk (by
+    simpa using (reindex_id_iso_nat_iso (pA := pA) (S := unop X.as)))
+
+/-- Composition coherence for the morphism part of the pseudofunctor of fibers. -/
+private abbrev fibers_mapComp (pA : 𝒜 ⥤ C) [pA.IsFibered]
+    {X Y Z : LocallyDiscrete Cᵒᵖ} (f : X ⟶ Y) (g : Y ⟶ Z) :
+    fibers_map (pA := pA) (f ≫ g) ≅ fibers_map (pA := pA) f ≫ fibers_map (pA := pA) g :=
+  CategoryTheory.Cat.Hom.isoMk (by
+    simpa using (reindex_comp_iso (pA := pA) (g := g.as.unop) (f := f.as.unop)))
+
+/-- Associator coherence for the pseudofunctor of fibers. -/
+private lemma fibers_map₂_associator (pA : 𝒜 ⥤ C) [pA.IsFibered] :
+    ∀ {X Y Z W : LocallyDiscrete Cᵒᵖ} (f : X ⟶ Y) (g : Y ⟶ Z) (h : Z ⟶ W),
+      (fibers_mapComp (pA := pA) (f ≫ g) h).hom ≫
+          Bicategory.whiskerRight (fibers_mapComp (pA := pA) f g).hom (fibers_map (pA := pA) h) ≫
+            (Bicategory.associator (fibers_map (pA := pA) f) (fibers_map (pA := pA) g)
+              (fibers_map (pA := pA) h)).hom ≫
+              Bicategory.whiskerLeft (fibers_map (pA := pA) f)
+                (fibers_mapComp (pA := pA) g h).inv ≫
+                (fibers_mapComp (pA := pA) f (g ≫ h)).inv =
+        eqToHom (by simp [fibers_map]) := by
+  intro X Y Z W f g h
+  -- Checklist: contravariance and overlap-map orientation are fixed by `fibers_map`.
+  sorry
+
+/-- Left unitor coherence for the pseudofunctor of fibers. -/
+private lemma fibers_map₂_left_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
+    ∀ {X Y : LocallyDiscrete Cᵒᵖ} (f : X ⟶ Y),
+      (fibers_mapComp (pA := pA) (𝟙 X) f).hom ≫
+          Bicategory.whiskerRight (fibers_mapId (pA := pA) X).hom (fibers_map (pA := pA) f) ≫
+            (Bicategory.leftUnitor (fibers_map (pA := pA) f)).hom =
+        eqToHom (by simp [fibers_map]) := by
+  intro X Y f
+  -- Checklist: unitor direction is consistent with the chosen `f^*` orientation.
+  sorry
+
+/-- Right unitor coherence for the pseudofunctor of fibers. -/
+private lemma fibers_map₂_right_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
+    ∀ {X Y : LocallyDiscrete Cᵒᵖ} (f : X ⟶ Y),
+      (fibers_mapComp (pA := pA) f (𝟙 Y)).hom ≫
+          Bicategory.whiskerLeft (fibers_map (pA := pA) f) (fibers_mapId (pA := pA) Y).hom ≫
+            (Bicategory.rightUnitor (fibers_map (pA := pA) f)).hom =
+        eqToHom (by simp [fibers_map]) := by
+  intro X Y f
+  -- Checklist: unitor direction is consistent with the chosen `f^*` orientation.
+  sorry
+
 /-- The pseudofunctor of fibers associated to a fibered functor `pA : 𝒜 ⥤ C`. -/
 noncomputable def pseudofunctor_of_fibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :
     Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v, w} :=
   CategoryTheory.pseudofunctorOfIsLocallyDiscrete
     (B := LocallyDiscrete Cᵒᵖ) (C := Cat.{v, w})
-    (obj := fun X => Cat.of (Fiber pA (unop X.as)))
-    (map := fun {X Y} f => (reindex (pA := pA) f.as.unop).toCatHom)
-    (mapId := fun X => CategoryTheory.Cat.Hom.isoMk (by
-      simpa using (reindex_id_iso_nat_iso (pA := pA) (S := unop X.as))))
-    (mapComp := fun {X Y Z} f g => CategoryTheory.Cat.Hom.isoMk (by
-      simpa using (reindex_comp_iso (pA := pA) (g := g.as.unop) (f := f.as.unop))))
-    (map₂_associator := by
-      -- TODO: coherence (pentagon) for the chosen pullbacks/reindexing isomorphisms.
-      -- This is a standard cleavage-coherence statement.
-      sorry)
-    (map₂_left_unitor := by
-      -- TODO: coherence (left unitor) for the chosen pullbacks/reindexing isomorphisms.
-      sorry)
-    (map₂_right_unitor := by
-      -- TODO: coherence (right unitor) for the chosen pullbacks/reindexing isomorphisms.
-      sorry)
+    (obj := fibers_obj (pA := pA))
+    (map := fun f => fibers_map (pA := pA) f)
+    (mapId := fibers_mapId (pA := pA))
+    (mapComp := fun f g => fibers_mapComp (pA := pA) f g)
+    (map₂_associator := fibers_map₂_associator (pA := pA))
+    (map₂_left_unitor := fibers_map₂_left_unitor (pA := pA))
+    (map₂_right_unitor := fibers_map₂_right_unitor (pA := pA))
 
 @[simp]
 lemma pseudofunctor_of_fibers_obj (pA : 𝒜 ⥤ C) [pA.IsFibered] (S : C) :

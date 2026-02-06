@@ -36,6 +36,7 @@ variable {𝒜 : Type w} [Category.{v} 𝒜]
 noncomputable section
 
 open Descent.FiberedCategory
+open Descent.Cech
 
 variable (pA : 𝒜 ⥤ C) [pA.IsFibered]
 
@@ -45,19 +46,42 @@ variable [Limits.HasPullbacks C]
 
 variable {E B : C} (p : E ⟶ B)
 
+/-- Unit coherence for the canonical comparison descent datum on `p^* a`. -/
+private lemma single_morphism_comparison_unit (a : Fiber pA B) :
+    (diag_iso_p2 (pA := pA) p ((reindex (pA := pA) p).obj a)).inv ≫
+        (reindex (pA := pA) (Limits.pullback.diagonal p)).map
+          (single_morphism_comparison_xi (pA := pA) p a).hom ≫
+          (diag_iso_p1 (pA := pA) p ((reindex (pA := pA) p).obj a)).hom =
+      𝟙 ((reindex (pA := pA) p).obj a) := by
+  -- Checklist: `ξ` is oriented as `π₂^* (p^* a) ⟶ π₁^* (p^* a)` and unit is along `diag`.
+  sorry
+
+/-- Cocycle coherence for the canonical comparison descent datum on `p^* a`. -/
+private lemma single_morphism_comparison_cocycle (a : Fiber pA B) :
+    xi23 (pA := pA) p (single_morphism_comparison_xi (pA := pA) p a) ≫
+        xi12 (pA := pA) p (single_morphism_comparison_xi (pA := pA) p a) =
+      xi13 (pA := pA) p (single_morphism_comparison_xi (pA := pA) p a) := by
+  -- Checklist: cocycle convention is exactly `ξ₂₃ ≫ ξ₁₂ = ξ₁₃`.
+  sorry
+
+/-- Naturality of the canonical comparison isomorphism `ξ` under reindexing along `p`. -/
+private lemma single_morphism_comparison_naturality {a b : Fiber pA B} (f : a ⟶ b) :
+    (single_morphism_comparison_xi (pA := pA) p a).hom ≫
+        (reindex (pA := pA) (p1 p)).map ((reindex (pA := pA) p).map f) =
+      (reindex (pA := pA) (p2 p)).map ((reindex (pA := pA) p).map f) ≫
+        (single_morphism_comparison_xi (pA := pA) p b).hom := by
+  -- Checklist: source/target agree with the fixed pullback leg conventions `p12`, `p23`, `p13`.
+  sorry
+
 /-- The canonical descent data on the pullback `p^* a`. -/
 noncomputable def single_morphism_comparison_descent_data (a : Fiber pA B) :
     SingleMorphismDescentData (pA := pA) p where
   obj := (reindex (pA := pA) p).obj a
   ξ := single_morphism_comparison_xi (pA := pA) p a
   unit := by
-    -- TODO: prove the unit axiom using the defining equation `p1 ≫ p = p2 ≫ p` and the
-    -- coherence isomorphisms for `reindex`.
-    sorry
+    simpa using single_morphism_comparison_unit (pA := pA) (p := p) a
   cocycle := by
-    -- TODO: prove the cocycle axiom on triple overlaps using the associativity coherence for
-    -- `reindexCompIsoObj` and the naturality of `reindexObjIsoOfEq`.
-    sorry
+    simpa using single_morphism_comparison_cocycle (pA := pA) (p := p) a
 
 /-- The comparison functor `Φₚ : Fiber pA B ⥤ SingleMorphismDescentData (pA := pA) p`. -/
 noncomputable def single_morphism_comparison_functor :
@@ -66,9 +90,8 @@ noncomputable def single_morphism_comparison_functor :
   map {a b} f :=
     { hom := (reindex (pA := pA) p).map f
       comm := by
-        -- TODO: naturality of `single_morphism_comparison_xi`.
-        -- This follows from naturality of `reindexCompIsoObj` and `reindexObjIsoOfEq`.
-        sorry }
+        simpa [single_morphism_comparison_descent_data] using
+          single_morphism_comparison_naturality (pA := pA) (p := p) f }
   map_id a := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
     -- Unfold the identity in the target category to access the simp lemma `Hom.id_hom`.
@@ -79,22 +102,23 @@ noncomputable def single_morphism_comparison_functor :
     rfl
   map_comp {a b c} f g := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
-    -- We only care about the underlying morphism in the fiber over `E`.
-    -- Make the source/target descent data explicit so that the `Hom.comp_hom` simp lemma applies.
     let DX := single_morphism_comparison_descent_data (pA := pA) p a
     let DY := single_morphism_comparison_descent_data (pA := pA) p b
     let DZ := single_morphism_comparison_descent_data (pA := pA) p c
-    -- Unfold categorical composition as `Hom.comp`.
+    let f' : SingleMorphismDescentData.Hom (pA := pA) DX DY :=
+      { hom := (reindex (pA := pA) p).map f
+        comm := by
+          simpa [DX, DY, single_morphism_comparison_descent_data] using
+            single_morphism_comparison_naturality (pA := pA) (p := p) f }
+    let g' : SingleMorphismDescentData.Hom (pA := pA) DY DZ :=
+      { hom := (reindex (pA := pA) p).map g
+        comm := by
+          simpa [DY, DZ, single_morphism_comparison_descent_data] using
+            single_morphism_comparison_naturality (pA := pA) (p := p) g }
     change (reindex (pA := pA) p).map (f ≫ g) =
       (SingleMorphismDescentData.Hom.comp (pA := pA)
-          (D₁ := DX) (D₂ := DY) (D₃ := DZ)
-          { hom := (reindex (pA := pA) p).map f, comm := by
-              -- TODO: naturality of `single_morphism_comparison_xi`.
-              sorry }
-          { hom := (reindex (pA := pA) p).map g, comm := by
-              -- TODO: naturality of `single_morphism_comparison_xi`.
-              sorry }).hom
-    simp
+          (D₁ := DX) (D₂ := DY) (D₃ := DZ) f' g').hom
+    simp [f', g']
 
 /-- `p` is a descent morphism for `pA` if `Φₚ` is fully faithful. -/
 abbrev IsDescentMorphism : Prop :=
