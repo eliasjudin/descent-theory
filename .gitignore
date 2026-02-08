@@ -5,6 +5,9 @@ build/
 .factory/
 .tmp/
 .venv/
+codex-skills/
+lean4-skills/
+.repair/
 *.olean
 *.ilean
 *.c

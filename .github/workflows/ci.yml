@@ -13,7 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
-      - name: Lint
-        run: lake build Descent.Lint
-      - name: Examples
-        run: lake build Descent.Test
+      - name: Build matrix (full + targeted + lint + examples)
+        run: |
+          set -euo pipefail
+          : > ci-build.log
+          run_and_log() {
+            echo "=== $1 ===" | tee -a ci-build.log
+            shift
+            "$@" 2>&1 | tee -a ci-build.log
+          }
+
+          run_and_log "lake build" lake build
+          run_and_log "lake build Descent.FiberedCategory.Descent.SingleMorphismComparison" \
+            lake build Descent.FiberedCategory.Descent.SingleMorphismComparison
+          run_and_log "lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers" \
+            lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers
+          run_and_log "lake build Descent.Lint" lake build Descent.Lint
+          run_and_log "lake build Descent.Test" lake build Descent.Test
+      - name: Warning gate (non-sorry + exact SORRY_TRACKER allowlist)
+        run: |
+          set -euo pipefail
+          bash scripts/ci_warning_gate.sh ci-build.log SORRY_TRACKER.md
