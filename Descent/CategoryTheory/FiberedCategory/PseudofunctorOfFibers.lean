@@ -17,9 +17,8 @@ Let `pA : 𝒜 ⥤ C` be a fibered functor. For each `S : C`, we have the fiber 
 This file packages the reindexing data into a pseudofunctor
 `LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`.
 
-Note: constructing a pseudofunctor from a fibered category requires coherence conditions for the
-chosen cleavage. We record these coherences as fields, but leave some proofs as `sorry` (with
-explicit TODO notes), since downstream development in this repository may proceed with sorries.
+Note: coherence constraints are discharged by
+`CategoryTheory.pseudofunctorOfIsLocallyDiscrete` via its default `by cat_disch` obligations.
 -/
 
 open CategoryTheory
@@ -71,8 +70,57 @@ private lemma fibers_map₂_associator (pA : 𝒜 ⥤ C) [pA.IsFibered] :
                 (fibers_mapComp (pA := pA) f (g ≫ h)).inv =
         eqToHom (by simp [fibers_map]) := by
   intro X Y Z W f g h
-  -- Checklist: contravariance and overlap-map orientation are fixed by `fibers_map`.
-  sorry
+  ext a
+  apply Fiber.hom_ext
+  let φ : (reindexObj (pA := pA) ((h.as.unop ≫ g.as.unop) ≫ f.as.unop) a).1 ⟶ a.1 :=
+    IsPreFibered.pullbackMap (p := pA) a.2 ((h.as.unop ≫ g.as.unop) ≫ f.as.unop)
+  haveI : IsCartesian pA ((h.as.unop ≫ g.as.unop) ≫ f.as.unop) φ := by
+    dsimp [φ]
+    infer_instance
+  apply IsCartesian.ext (p := pA) (f := ((h.as.unop ≫ g.as.unop) ≫ f.as.unop)) (φ := φ)
+  trans IsPreFibered.pullbackMap (p := pA) a.2 (h.as.unop ≫ (g.as.unop ≫ f.as.unop))
+  · change
+      Fiber.fiberInclusion.map
+          (((fibers_mapComp (pA := pA) (f ≫ g) h).hom ≫
+                  Bicategory.whiskerRight (fibers_mapComp (pA := pA) f g).hom
+                    (fibers_map (pA := pA) h) ≫
+                (Bicategory.associator (fibers_map (pA := pA) f) (fibers_map (pA := pA) g)
+                  (fibers_map (pA := pA) h)).hom ≫
+              Bicategory.whiskerLeft (fibers_map (pA := pA) f)
+                (fibers_mapComp (pA := pA) g h).inv ≫
+            (fibers_mapComp (pA := pA) f (g ≫ h)).inv).toNatTrans.app a) ≫
+        φ =
+        IsPreFibered.pullbackMap (p := pA) a.2 (h.as.unop ≫ g.as.unop ≫ f.as.unop)
+    simp [φ, fibers_map, fibers_mapComp, Fiber.fiberInclusion, Category.assoc]
+    change
+      (reindex_comp_iso_obj (pA := pA) h.as.unop (g.as.unop ≫ f.as.unop) a).hom.1 ≫
+        (((reindex (pA := pA) h.as.unop).map
+              (reindex_comp_iso_obj (pA := pA) g.as.unop f.as.unop a).hom).1 ≫
+            (reindex_comp_iso_obj (pA := pA) h.as.unop g.as.unop
+                ((reindex (pA := pA) f.as.unop).obj a)).inv.1 ≫
+            (reindex_comp_iso_obj (pA := pA) (h.as.unop ≫ g.as.unop) f.as.unop a).inv.1) ≫
+          IsPreFibered.pullbackMap (p := pA) a.2 ((h.as.unop ≫ g.as.unop) ≫ f.as.unop) =
+        IsPreFibered.pullbackMap (p := pA) a.2 (h.as.unop ≫ (g.as.unop ≫ f.as.unop))
+    simp [Category.assoc]
+    rw [CategoryTheory.FiberedCategory.reindex_comp_iso_obj_inv_comp_pullback_assoc
+      (pA := pA) (g := h.as.unop) (f := g.as.unop)
+      (a := (reindex (pA := pA) f.as.unop).obj a)]
+    rw [reindex_map_comp_pullback_assoc (pA := pA) (f := h.as.unop)
+      (φ := (reindex_comp_iso_obj (pA := pA) g.as.unop f.as.unop a).hom)]
+    have h_gf :=
+      reindex_comp_iso_obj_hom_comp_pullback (pA := pA) (g := g.as.unop) (f := f.as.unop) a
+    have h_hgf :=
+      reindex_comp_iso_obj_hom_comp_pullback (pA := pA) (g := h.as.unop)
+        (f := g.as.unop ≫ f.as.unop) a
+    rw [h_gf]
+    exact h_hgf
+  have h_assoc : h.as.unop ≫ (g.as.unop ≫ f.as.unop) = (h.as.unop ≫ g.as.unop) ≫ f.as.unop := by
+    simp [Category.assoc]
+  simpa [h_assoc, Category.assoc] using
+    (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
+      (f := h.as.unop ≫ (g.as.unop ≫ f.as.unop))
+      (g := (h.as.unop ≫ g.as.unop) ≫ f.as.unop)
+      (h := h_assoc) a).symm
 
 /-- Left unitor coherence for the pseudofunctor of fibers. -/
 private lemma fibers_map₂_left_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
@@ -82,8 +130,23 @@ private lemma fibers_map₂_left_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
             (Bicategory.leftUnitor (fibers_map (pA := pA) f)).hom =
         eqToHom (by simp [fibers_map]) := by
   intro X Y f
-  -- Checklist: unitor direction is consistent with the chosen `f^*` orientation.
-  sorry
+  ext a
+  apply Fiber.hom_ext
+  let φ : (reindexObj (pA := pA) f.as.unop a).1 ⟶ a.1 :=
+    IsPreFibered.pullbackMap (p := pA) a.2 f.as.unop
+  haveI : IsCartesian pA f.as.unop φ := by
+    dsimp [φ]
+    infer_instance
+  apply IsCartesian.ext (p := pA) (f := f.as.unop) (φ := φ)
+  simp [φ, fibers_map, fibers_mapComp, fibers_mapId, Fiber.fiberInclusion, reindex_id_iso_hom_eq,
+    reindex_comp_iso_obj_hom_comp_pullback, Category.assoc]
+  have h_id : f.as.unop ≫ 𝟙 (unop X.as) = f.as.unop := by
+    simp
+  simpa [reindex, reindex_id_iso, fiber_iso, h_id, Category.assoc] using
+    (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
+      (f := f.as.unop ≫ 𝟙 (unop X.as))
+      (g := f.as.unop)
+      (h := h_id) a).symm
 
 /-- Right unitor coherence for the pseudofunctor of fibers. -/
 private lemma fibers_map₂_right_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
@@ -93,8 +156,23 @@ private lemma fibers_map₂_right_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
             (Bicategory.rightUnitor (fibers_map (pA := pA) f)).hom =
         eqToHom (by simp [fibers_map]) := by
   intro X Y f
-  -- Checklist: unitor direction is consistent with the chosen `f^*` orientation.
-  sorry
+  ext a
+  apply Fiber.hom_ext
+  let φ : (reindexObj (pA := pA) f.as.unop a).1 ⟶ a.1 :=
+    IsPreFibered.pullbackMap (p := pA) a.2 f.as.unop
+  haveI : IsCartesian pA f.as.unop φ := by
+    dsimp [φ]
+    infer_instance
+  apply IsCartesian.ext (p := pA) (f := f.as.unop) (φ := φ)
+  simp [φ, fibers_map, fibers_mapComp, fibers_mapId, Fiber.fiberInclusion, reindex_id_iso_hom_eq,
+    reindex_comp_iso_obj_hom_comp_pullback, Category.assoc]
+  have h_id : 𝟙 (unop Y.as) ≫ f.as.unop = f.as.unop := by
+    simp
+  simpa [h_id, Category.assoc] using
+    (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
+      (f := 𝟙 (unop Y.as) ≫ f.as.unop)
+      (g := f.as.unop)
+      (h := h_id) a).symm
 
 /-- The pseudofunctor of fibers associated to a fibered functor `pA : 𝒜 ⥤ C`. -/
 noncomputable def pseudofunctor_of_fibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :

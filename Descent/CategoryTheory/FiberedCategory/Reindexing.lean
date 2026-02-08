@@ -105,6 +105,13 @@ noncomputable def reindex {R S : C} (f : R ⟶ S) : Fiber pA S ⥤ Fiber pA R wh
 abbrev reindexObj {R S : C} (f : R ⟶ S) (a : Fiber pA S) : Fiber pA R :=
   (reindex (pA := pA) f).obj a
 
+@[simp, reassoc]
+lemma reindex_map_comp_pullback {R S : C} (f : R ⟶ S) {a b : Fiber pA S} (φ : a ⟶ b) :
+    ((reindex (pA := pA) f).map φ).1 ≫ IsPreFibered.pullbackMap (p := pA) b.2 f =
+      IsPreFibered.pullbackMap (p := pA) a.2 f ≫ φ.1 := by
+  dsimp [reindex]
+  simp
+
 /-!
 ## Auxiliary isomorphisms
 -/
@@ -167,6 +174,19 @@ lemma reindex_obj_iso_of_eq_inv_naturality {R S : C} {f g : R ⟶ S} (h : f = g)
         (reindex (pA := pA) f).map φ := by
   subst h
   simp [reindex_obj_iso_of_eq]
+
+/-- Compatibility of `reindex_obj_iso_of_eq` with the chosen pullback maps. -/
+@[reassoc]
+lemma reindex_obj_iso_of_eq_hom_comp_pullback {R S : C} {f g : R ⟶ S} (h : f = g)
+    (a : Fiber pA S) :
+    (reindex_obj_iso_of_eq (pA := pA) (f := f) (g := g) h a).hom.1 ≫
+        IsPreFibered.pullbackMap (p := pA) a.2 g =
+      IsPreFibered.pullbackMap (p := pA) a.2 f := by
+  subst h
+  change (𝟙 (IsPreFibered.pullbackObj (p := pA) a.2 f)) ≫
+      IsPreFibered.pullbackMap (p := pA) a.2 f =
+    IsPreFibered.pullbackMap (p := pA) a.2 f
+  simp
 
 /-- The canonical isomorphism `(g ≫ f)^* a ≅ g^* (f^* a)`. -/
 noncomputable def reindex_comp_iso_obj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
@@ -333,7 +353,7 @@ def reindex_comp_iso_comp_reindex {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
 This lemma characterizes `reindexCompIsoObj` in terms of the universal property:
 the hom component, when composed with the iterated Cartesian lifts, equals the
 Cartesian lift for the composed morphism. -/
-@[simp]
+@[simp, reassoc]
 lemma reindex_comp_iso_obj_hom_comp_pullback {T R S : C} (g : T ⟶ R) (f : R ⟶ S)
     (a : Fiber pA S) :
     (reindex_comp_iso_obj (pA := pA) g f a).hom.1 ≫
@@ -345,7 +365,7 @@ lemma reindex_comp_iso_obj_hom_comp_pullback {T R S : C} (g : T ⟶ R) (f : R �
     Functor.IsFibered.pullbackPullbackIso, IsCartesian.domainUniqueUpToIso]
 
 /-- The inverse of the composition coherence isomorphism. -/
-@[simp]
+@[simp, reassoc]
 lemma reindex_comp_iso_obj_inv_comp_pullback {T R S : C} (g : T ⟶ R) (f : R ⟶ S)
     (a : Fiber pA S) :
     (reindex_comp_iso_obj (pA := pA) g f a).inv.1 ≫
