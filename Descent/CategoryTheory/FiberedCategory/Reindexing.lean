@@ -35,7 +35,7 @@ noncomputable section
 -/
 
 /-- Reindexing (pullback) functor on the standard fibers of a fibered category. -/
-noncomputable def reindex {R S : C} (f : R ⟶ S) : Fiber pA S ⥤ Fiber pA R where
+def reindex {R S : C} (f : R ⟶ S) : Fiber pA S ⥤ Fiber pA R where
   obj a :=
     ⟨IsPreFibered.pullbackObj (p := pA) a.2 f,
       IsPreFibered.pullbackObj_proj (p := pA) a.2 f⟩
@@ -117,7 +117,7 @@ lemma reindex_map_comp_pullback {R S : C} (f : R ⟶ S) {a b : Fiber pA S} (φ :
 -/
 
 /-- Lift an isomorphism in the total category to an isomorphism in a fiber. -/
-noncomputable def fiber_iso {S : C} {a b : Fiber pA S} (i : a.1 ≅ b.1)
+def fiber_iso {S : C} {a b : Fiber pA S} (i : a.1 ≅ b.1)
     (hi : pA.IsHomLift (𝟙 S) i.hom) : a ≅ b where
   hom := ⟨i.hom, hi⟩
   inv :=
@@ -134,7 +134,7 @@ noncomputable def fiber_iso {S : C} {a b : Fiber pA S} (i : a.1 ≅ b.1)
     exact i.inv_hom_id
 
 /-- If `f = g`, then `f^* a ≅ g^* a`. -/
-noncomputable def reindex_obj_iso_of_eq {R S : C} {f g : R ⟶ S} (h : f = g) (a : Fiber pA S) :
+def reindex_obj_iso_of_eq {R S : C} {f g : R ⟶ S} (h : f = g) (a : Fiber pA S) :
     reindexObj (pA := pA) f a ≅ reindexObj (pA := pA) g a := by
   subst h
   exact Iso.refl _
@@ -189,7 +189,7 @@ lemma reindex_obj_iso_of_eq_hom_comp_pullback {R S : C} {f g : R ⟶ S} (h : f =
   simp
 
 /-- The canonical isomorphism `(g ≫ f)^* a ≅ g^* (f^* a)`. -/
-noncomputable def reindex_comp_iso_obj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
+def reindex_comp_iso_obj {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
     reindexObj (pA := pA) (g ≫ f) a ≅
       reindexObj (pA := pA) g (reindexObj (pA := pA) f a) := by
   refine
@@ -220,7 +220,7 @@ lemma pullback_pullback_iso_inv_comp {R S T : C} {a : 𝒜} (ha : pA.obj a = S) 
   dsimp [Functor.IsFibered.pullbackPullbackIso, IsCartesian.domainUniqueUpToIso]
   simp
 
-/-- Naturality of `reindexCompIsoObj` with respect to morphisms in the fiber. -/
+/-- Naturality of `reindex_comp_iso_obj` with respect to morphisms in the fiber. -/
 lemma reindex_comp_iso_obj_hom_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S)
     {a b : Fiber pA S} (φ : a ⟶ b) :
     (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).hom ≫
@@ -251,7 +251,7 @@ lemma reindex_comp_iso_obj_hom_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
             IsPreFibered.pullbackMap (p := pA) a.2 f)
         (φ' := IsPreFibered.pullbackMap (p := pA) a.2 (g ≫ f)) (h := φ.1))
 
-/-- Naturality of the inverse of `reindexCompIsoObj`. -/
+/-- Naturality of the inverse of `reindex_comp_iso_obj`. -/
 lemma reindex_comp_iso_obj_inv_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S)
     {a b : Fiber pA S} (φ : a ⟶ b) :
     (reindex (pA := pA) g).map ((reindex (pA := pA) f).map φ) ≫
@@ -267,7 +267,7 @@ lemma reindex_comp_iso_obj_inv_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
         (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv) h
 
 /-- The canonical isomorphism `((𝟙 S)^* a) ≅ a`. -/
-noncomputable def reindex_id_iso {S : C} (a : Fiber pA S) : reindexObj (pA := pA) (𝟙 S) a ≅ a := by
+def reindex_id_iso {S : C} (a : Fiber pA S) : reindexObj (pA := pA) (𝟙 S) a ≅ a := by
   haveI : IsIso (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) := by
     have : pA.IsStronglyCartesian (𝟙 S) (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) := by
       infer_instance
@@ -283,7 +283,7 @@ noncomputable def reindex_id_iso {S : C} (a : Fiber pA S) : reindexObj (pA := pA
   infer_instance
 
 /-- The natural isomorphism `reindex (𝟙 S) ≅ 𝟭 _`. -/
-noncomputable def reindex_id_iso_nat_iso {S : C} :
+def reindex_id_iso_nat_iso {S : C} :
     reindex (pA := pA) (𝟙 S) ≅ 𝟭 (Fiber pA S) := by
   refine NatIso.ofComponents (fun a => reindex_id_iso (pA := pA) a) fun {a b} φ ↦ ?_
   haveI : pA.IsHomLift (𝟙 S) φ.1 := φ.2
@@ -304,7 +304,7 @@ noncomputable def reindex_id_iso_nat_iso {S : C} :
   simp
 
 /-- The natural isomorphism `(g ≫ f)^* ≅ f^* ⋙ g^*` on fibers. -/
-noncomputable def reindex_comp_iso {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
+def reindex_comp_iso {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
     reindex (pA := pA) (g ≫ f) ≅ (reindex (pA := pA) f) ⋙ (reindex (pA := pA) g) := by
   refine
     NatIso.ofComponents
@@ -350,7 +350,7 @@ def reindex_comp_iso_comp_reindex {T R S : C} (g : T ⟶ R) (f : R ⟶ S) :
 
 /-- The composition coherence isomorphism factors through the underlying Cartesian lifts.
 
-This lemma characterizes `reindexCompIsoObj` in terms of the universal property:
+This lemma characterizes `reindex_comp_iso_obj` in terms of the universal property:
 the hom component, when composed with the iterated Cartesian lifts, equals the
 Cartesian lift for the composed morphism. -/
 @[simp, reassoc]
@@ -376,9 +376,9 @@ lemma reindex_comp_iso_obj_inv_comp_pullback {T R S : C} (g : T ⟶ R) (f : R �
   simp [reindex_comp_iso_obj, fiber_iso, reindexObj,
     Functor.IsFibered.pullbackPullbackIso, IsCartesian.domainUniqueUpToIso]
 
-/-- The identity coherence `reindexIdIso` sends the chosen pullback along `𝟙 S` to the identity.
+/-- The identity coherence `reindex_id_iso` sends the chosen pullback along `𝟙 S` to the identity.
 
-Specifically, `(reindexIdIso a).hom.1` is the Cartesian lift along `𝟙 S`. -/
+Specifically, `(reindex_id_iso a).hom.1` is the Cartesian lift along `𝟙 S`. -/
 lemma reindex_id_iso_hom_eq {S : C} (a : Fiber pA S) :
     (reindex_id_iso (pA := pA) a).hom.1 = IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) := by
   simp [reindex_id_iso, fiber_iso]
