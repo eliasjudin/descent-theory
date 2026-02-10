@@ -1,5 +1,7 @@
 name = "descent"
 defaultTargets = ["Descent"]
+testDriver = "descent_test_driver"
+lintDriver = "descent_lint_driver"
 
 [[require]]
 name = "mathlib"
@@ -9,3 +11,11 @@ rev = "0ee01d5178b24f7a7d1bd7a50beccb773373d01b"
 [[lean_lib]]
 name = "Descent"
 leanOptions = {pp.unicode.fun = true, autoImplicit = false, maxSynthPendingDepth = 3}
+
+[[lean_exe]]
+name = "descent_test_driver"
+root = "DescentTestDriver"
+
+[[lean_exe]]
+name = "descent_lint_driver"
+root = "DescentLintDriver"

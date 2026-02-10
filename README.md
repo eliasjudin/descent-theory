@@ -24,6 +24,28 @@ This library is under active development: APIs and file organization may change.
 If you are looking for the main entry point, start with `Descent.lean` and then
 follow imports into `Descent/`.
 
+## Local quality loop
+
+Use the same commands locally that CI enforces:
+
+```bash
+lake build
+lake lint
+lake exe lint-style Descent
+lake test
+```
+
+`lake lint` and `lake test` are wired through dedicated Lake drivers that import
+`Descent.Lint` and `Descent.Test`.
+
+## Conventions
+
+- Prefer specific imports over broad imports.
+- Keep module headers and module-level docstrings in every Lean file.
+- Keep warning output clean; only tracked temporary `sorry`s are allowed by CI.
+- Treat edits touching `[simp]` attributes, instances, syntax/macros, priorities,
+  or global options (`set_option`) as high-risk and run the full quality loop.
+
 ## Project layout
 
 - `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.

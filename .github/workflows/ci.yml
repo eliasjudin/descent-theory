@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: leanprover/lean-action@v1
-      - name: Build matrix (full + targeted + lint + examples)
+      - name: Build matrix (canonical + strict gates)
         run: |
           set -euo pipefail
           : > ci-build.log
@@ -24,12 +26,20 @@ jobs:
           }
 
           run_and_log "lake build" lake build
-          run_and_log "lake build Descent.FiberedCategory.Descent.SingleMorphismComparison" \
-            lake build Descent.FiberedCategory.Descent.SingleMorphismComparison
-          run_and_log "lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers" \
-            lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers
-          run_and_log "lake build Descent.Lint" lake build Descent.Lint
-          run_and_log "lake build Descent.Test" lake build Descent.Test
+          run_and_log "lake lint" lake lint
+          run_and_log "lake exe lint-style Descent" lake exe lint-style Descent
+          run_and_log "lake test" lake test
+
+          if bash scripts/ci_high_risk_gate.sh; then
+            run_and_log "high-risk: lake build Descent.FiberedCategory.Descent.SingleMorphismComparison" \
+              lake build Descent.FiberedCategory.Descent.SingleMorphismComparison
+            run_and_log "high-risk: lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers" \
+              lake build Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers
+            run_and_log "high-risk: lake build Descent.Pseudofunctor.Descent.CechDescentDataEquiv" \
+              lake build Descent.Pseudofunctor.Descent.CechDescentDataEquiv
+          else
+            echo "No high-risk Lean edits; skipping expanded targeted builds." | tee -a ci-build.log
+          fi
       - name: Warning gate (non-sorry + exact SORRY_TRACKER allowlist)
         run: |
           set -euo pipefail
