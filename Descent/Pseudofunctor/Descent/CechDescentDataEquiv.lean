@@ -1067,11 +1067,12 @@ def single_singleton_descent_data_equiv :
 /-- The comparison functor `Φₚ : F(B) ⥤ Des_F(p)` from the paper (Facets of Descent II, §3.2),
 landing in the Čech-style descent data defined in `CechDescentData.lean`.
 
-It is defined as `F.toDescentData` for the singleton family, followed by the (inverse) functor
+It is defined as `CategoryTheory.Pseudofunctor.single_morphism_comparison_functor` for the
+singleton family, followed by the (inverse) functor
 from Mathlib's descent data to our Čech-style descent data. -/
 noncomputable def single_morphism_comparison_functor :
     F.obj (.mk (op B)) ⥤ CechDescentData (F := F) p :=
-  (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) ⋙
+  (CategoryTheory.Pseudofunctor.single_morphism_comparison_functor (F := F) p) ⋙
     singleton_to_single_functor (F := F) p
 
 /-- `p` is a descent morphism for `F` if the comparison functor `Φₚ` is fully faithful
@@ -1092,16 +1093,17 @@ Mathlib’s descent theory is formulated for arbitrary presieves `R` via the fun
 `Presieve.singleton p` is (definitionally) the same as `Presieve.ofArrows _ (fun _ : PUnit.{1} ↦ p)`,
 see `CategoryTheory.Presieve.ofArrows_pUnit`.
 
-The functor `single_morphism_comparison_functor` differs from `F.toDescentData` only by postcomposition
-with the (inverse) equivalence `singleton_to_single_functor`, so it has the same “fully faithful” and
-“is equivalence” properties.
+The functor `single_morphism_comparison_functor` differs from
+`CategoryTheory.Pseudofunctor.single_morphism_comparison_functor` only by postcomposition with the
+(inverse) equivalence `singleton_to_single_functor`, so it has the same “fully faithful” and “is
+equivalence” properties.
 -/
 
 theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
     IsDescentMorphism (F := F) p ↔
       Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).FullyFaithful := by
   let e := single_singleton_descent_data_equiv (F := F) p
-  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)
+  let G := CategoryTheory.Pseudofunctor.single_morphism_comparison_functor (F := F) p
   let H := singleton_to_single_functor (F := F) p
   have hH : H.FullyFaithful := by
     simpa [H, e, single_singleton_descent_data_equiv] using e.fullyFaithfulInverse
@@ -1110,22 +1112,26 @@ theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
   refine ⟨fun ⟨hGH⟩ ↦ ?_, fun ⟨hG⟩ ↦ ?_⟩
   ·
     refine ⟨CategoryTheory.Functor.FullyFaithful.ofCompFaithful (F := G) (G := H) ?_⟩
-    simpa [single_morphism_comparison_functor, G, H] using hGH
+    simpa [single_morphism_comparison_functor,
+      CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using hGH
   ·
     refine ⟨?_⟩
-    simpa [single_morphism_comparison_functor, G, H] using hG.comp hH
+    simpa [single_morphism_comparison_functor,
+      CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using hG.comp hH
 
 theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     IsEffectiveDescentMorphism (F := F) p ↔
       (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).IsEquivalence := by
   let e := single_singleton_descent_data_equiv (F := F) p
-  let G := CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)
+  let G := CategoryTheory.Pseudofunctor.single_morphism_comparison_functor (F := F) p
   let H := singleton_to_single_functor (F := F) p
   haveI : H.IsEquivalence := by
     simpa [H, e, single_singleton_descent_data_equiv] using (show e.inverse.IsEquivalence from inferInstance)
   refine ⟨fun hGH ↦ ?_, fun hG ↦ ?_⟩
   ·
-    have : (G ⋙ H).IsEquivalence := by simpa [single_morphism_comparison_functor, G, H] using hGH
+    have : (G ⋙ H).IsEquivalence := by
+      simpa [single_morphism_comparison_functor,
+        CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using hGH
     -- cancel the equivalence `H` on the right
     haveI : (G ⋙ H).IsEquivalence := this
     exact CategoryTheory.Functor.isEquivalence_of_comp_right G H
@@ -1133,7 +1139,8 @@ theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     haveI : G.IsEquivalence := hG
     -- composition with an equivalence is an equivalence
     have : (G ⋙ H).IsEquivalence := by infer_instance
-    simpa [single_morphism_comparison_functor, G, H] using this
+    simpa [single_morphism_comparison_functor,
+      CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using this
 
 theorem is_prestack_for_singleton_iff_descent_morphism :
     CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
