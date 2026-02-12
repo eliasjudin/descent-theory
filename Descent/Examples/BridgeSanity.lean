@@ -113,7 +113,6 @@ example (a : Fiber pA B) :
     (Descent.Pseudofunctor.Descent.single_morphism_comparison_xi (F := F (pA := pA)) p a).hom =
       (single_morphism_comparison_xi (pA := pA) p a).hom :=
 by
-  -- Unfold the pseudofunctor comparison isomorphism and simplify the `Cat` wrappers.
   simp [Descent.Pseudofunctor.Descent.single_morphism_comparison_xi, single_morphism_comparison_xi,
     Descent.Pseudofunctor.reindex_comp_iso_obj, Descent.Pseudofunctor.reindex_obj_iso_of_eq,
     Descent.Pseudofunctor.reindex,

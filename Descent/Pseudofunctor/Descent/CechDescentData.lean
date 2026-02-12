@@ -41,13 +41,10 @@ private lemma pullHom_id_of_id_comp
     pullHom (F := F) (φ := 𝟙 ((reindex F (𝟙 X)).obj M)) (g := g) (gf₁ := g) (gf₂ := g)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F g).obj M) := by
-  -- Unfolding `pullHom` is safe here: the `id_comp` coherence reduces to `mapId`.
   dsimp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
   simp [CategoryTheory.Pseudofunctor.mapComp'_id_comp_hom_app,
     CategoryTheory.Pseudofunctor.mapComp'_id_comp_inv_app]
-  -- Reduce to functoriality applied to `inv_hom_id` for `mapId`.
   rw [(F.map g.op.toLoc).toFunctor.map_id ((reindex F (𝟙 X)).obj M)]
-  -- Unfold `reindex` (and simplify away the inserted identity morphism).
   simp [reindex]
   rw [← Functor.map_comp, Cat.Hom.inv_hom_id_toNatTrans_app (F.mapId { as := op X }) M]
   simp
@@ -63,7 +60,6 @@ private lemma pullHom_comp
     pullHom (F := F) (φ := φ ≫ ψ) g gf₁ gf₃ hgf₁ hgf₃ =
       pullHom (F := F) (φ := φ) g gf₁ gf₂ hgf₁ hgf₂ ≫
         pullHom (F := F) (φ := ψ) g gf₂ gf₃ hgf₂ hgf₃ := by
-  -- A direct computation from the definition of `pullHom`.
   dsimp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
   simp [Functor.map_comp, Category.assoc, ← reassoc_of% Cat.Hom₂.comp_app]
 
@@ -275,17 +271,14 @@ private lemma pullHom_diag_eq_id (D : CechDescentData (F := F) p) :
     pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F (𝟙 _)).obj D.obj) := by
-  -- Rewrite `D.unit` as a conjugation statement for `pullHom` along the diagonal.
   have hu :
       (reindex_id_iso_obj F D.obj).inv ≫
           pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
               (hgf₁ := by simp) (hgf₂ := by simp) ≫
             (reindex_id_iso_obj F D.obj).hom =
         𝟙 D.obj := by
-    -- `simp` after unfolding the diagonal comparison isomorphisms.
     simpa [diag_iso_p1, diag_iso_p2, pullHom, reindex_comp_iso_obj, reindex, reindex_obj_iso_of_eq,
       CategoryTheory.Pseudofunctor.mapComp', PrelaxFunctor.map₂_eqToHom, Category.assoc] using D.unit
-  -- Cancel the outer `reindex_id_iso_obj` isomorphisms.
   have hu' := congrArg (fun t =>
     (reindex_id_iso_obj F D.obj).hom ≫ t ≫ (reindex_id_iso_obj F D.obj).inv) hu
   simpa [Category.assoc] using hu'
@@ -295,7 +288,6 @@ private lemma pullHom_p1_diag_eq_id (D : CechDescentData (F := F) p) :
     pullHom (F := F) (φ := D.ξ) (g := p1 p ≫ diag p) (gf₁ := p1 p) (gf₂ := p1 p)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F (p1 p)).obj D.obj) := by
-  -- Pull back the diagonal identity along `p1`.
   have hpull :=
     (pullHom_pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
       (g' := p1 p) (g'f₁ := p1 p) (g'f₂ := p1 p)
@@ -306,11 +298,8 @@ private lemma pullHom_p1_diag_eq_id (D : CechDescentData (F := F) p) :
             (gf₂ := 𝟙 _) (hgf₁ := by simp) (hgf₂ := by simp))
           (g := p1 p) (gf₁ := p1 p) (gf₂ := p1 p) =
         𝟙 _ := by
-    -- Rewrite the inner pullback using `D.unit` and finish by `simp`.
     rw [pullHom_diag_eq_id (F := F) (p := p) (D := D)]
     simpa using (pullHom_id_of_id_comp (F := F) (g := p1 p) (M := D.obj))
-  -- `hpull` identifies the goal's LHS with the pullback of the diagonal identity.
-  -- Rewrite along `hpull` and apply `hId` to avoid heavy definitional reductions in `Eq.trans`.
   rw [← hpull]
   exact hId
 
@@ -339,7 +328,6 @@ private lemma pullHom_p2_diag_eq_id (D : CechDescentData (F := F) p) :
 
 lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
     xi_inv (F := F) (p := p) D ≫ D.ξ = 𝟙 _ := by
-  -- Pull back the cocycle along `swap_left : E ×_B E ⟶ E ×_B E ×_B E`.
   have hc :=
       congrArg
         (fun t =>
@@ -347,7 +335,6 @@ lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
             (hgf₁ := by simp) (hgf₂ := by simp))
         (D.cocycle (p := p))
 
-  -- Rewrite the pullback of the composite using `pullHom_comp`.
   have hcomp :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
@@ -376,7 +363,6 @@ lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
           (hgf₂ := by simp) := by
     simpa [hcomp] using hc
 
-  -- Identify the three pulled-back morphisms.
   have h23 :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_left p)
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
@@ -398,7 +384,6 @@ lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
         𝟙 _ := by
     simp [xi13, swap_left_p13, pullHom_pullHom, pullHom_p1_diag_eq_id]
 
-  -- Conclude.
   simpa [h23, h12, h13, Category.assoc] using hc'
 
 lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
@@ -443,7 +428,6 @@ lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
             (gf₁ := p2 p) (gf₂ := p1 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
         D.ξ := by
-    -- `swap_right ≫ p23 = 𝟙`.
     simp [xi23, swap_right_p23, pullHom_id, pullHom_pullHom]
 
   have h12 :
@@ -451,7 +435,6 @@ lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
             (gf₁ := p1 p) (gf₂ := p2 p) (hgf₁ := by simp)
             (hgf₂ := by simp) =
         xi_inv (F := F) (p := p) D := by
-    -- `swap_right ≫ p12 = swap`, giving `xi_inv`.
     simp [xi12, xi_inv, swap_right_p12, pullHom_pullHom]
 
   have h13 :

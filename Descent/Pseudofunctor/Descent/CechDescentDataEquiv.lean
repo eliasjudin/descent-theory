@@ -57,7 +57,6 @@ private lemma single_to_singleton_hom_aux_comp
     single_to_singleton_hom_aux F p D f₁ f₂ h12 ≫
         single_to_singleton_hom_aux F p D f₂ f₃ h23 =
       single_to_singleton_hom_aux F p D f₁ f₃ h13 := by
-  -- Build the Čech 3-fold overlap map induced by (f₁,f₂,f₃).
   let u12 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₂ h12
   let u23 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₂ f₃ h23
   let u13 : Y ⟶ cechKernelPair p := Limits.pullback.lift f₁ f₃ h13
@@ -94,7 +93,6 @@ private lemma single_to_singleton_hom_aux_comp
   have hv13 : v ≫ p13 p = u13 := by
     apply Limits.pullback.hom_ext <;>
       simp [Category.assoc, hv12_p1, hv23_p2, hu13_1, hu13_2]
-  -- Provide `IsIso` instances for the Čech morphisms.
   letI : IsIso (xi12 (F := F) p D.ξ) := by
     dsimp [xi12, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
     infer_instance
@@ -104,7 +102,6 @@ private lemma single_to_singleton_hom_aux_comp
   letI : IsIso (xi13 (F := F) p D.ξ) := by
     dsimp [xi13, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
     infer_instance
-  -- Identify the pullbacks of the Čech morphisms.
   have hmapInv {Y : C} (g : Y ⟶ cechKernelPair p) :
       (F.map g.op.toLoc).toFunctor.map (inv D.ξ) =
         inv ((F.map g.op.toLoc).toFunctor.map D.ξ) := by
@@ -125,7 +122,6 @@ private lemma single_to_singleton_hom_aux_comp
     simp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom, xi23, reindex,
       CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.PrelaxFunctor.map₂_eqToHom,
       IsIso.inv_comp, Category.assoc, hmapInv (g := p23 p)]
-    -- Turn inverses of the `mapComp` components into the expected components.
     have hα :
         inv ((F.mapComp (p1 p).op.toLoc (p23 p).op.toLoc).inv.toNatTrans.app D.obj) =
           (F.mapComp (p1 p).op.toLoc (p23 p).op.toLoc).hom.toNatTrans.app D.obj := by
@@ -145,7 +141,6 @@ private lemma single_to_singleton_hom_aux_comp
     simp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom, xi13, reindex,
       CategoryTheory.Pseudofunctor.mapComp', CategoryTheory.PrelaxFunctor.map₂_eqToHom,
       IsIso.inv_comp, Category.assoc, hmapInv (g := p13 p)]
-    -- Turn inverses of the `mapComp` components into the expected components.
     have hα :
         inv ((F.mapComp (p1 p).op.toLoc (p13 p).op.toLoc).inv.toNatTrans.app D.obj) =
           (F.mapComp (p1 p).op.toLoc (p13 p).op.toLoc).hom.toNatTrans.app D.obj := by
@@ -157,19 +152,16 @@ private lemma single_to_singleton_hom_aux_comp
       apply IsIso.inv_eq_of_inv_hom_id
       simp
     simp [hα, hβ]
-  -- Rewrite the three auxiliary morphisms as pullbacks along `v`.
   have haux12 :
       single_to_singleton_hom_aux F p D f₁ f₂ h12 =
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi12 (F := F) p D.ξ)) (g := v) (gf₁ := f₁) (gf₂ := f₂)
           (hgf₁ := hv12_p1) (hgf₂ := hv12_p2) := by
-    -- Pull back along `v ≫ p12 = u12`.
     have h := (CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom_pullHom (F := F)
       (φ := inv D.ξ) (g := p12 p) (gf₁ := p12 p ≫ p1 p) (gf₂ := p12 p ≫ p2 p)
       (g' := v) (g'f₁ := f₁) (g'f₂ := f₂)
       (hgf₁ := by simp) (hgf₂ := by simp)
       (hg'f₁ := hv12_p1) (hg'f₂ := hv12_p2))
-    -- Use `hphi12` to identify the inner pullback.
     simpa [single_to_singleton_hom_aux, u12, hv12, hphi12] using h.symm
   have haux23 :
       single_to_singleton_hom_aux F p D f₂ f₃ h23 =
@@ -193,7 +185,6 @@ private lemma single_to_singleton_hom_aux_comp
       (hgf₁ := by simp) (hgf₂ := by simp)
       (hg'f₁ := hv12_p1) (hg'f₂ := hv23_p2))
     simpa [single_to_singleton_hom_aux, u13, hv13, hphi13] using h.symm
-  -- Composition of pullbacks along `v`.
   have hcomp_pull :
       CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F)
           (φ := inv (xi12 (F := F) p D.ξ)) (g := v) (gf₁ := f₁) (gf₂ := f₂)
@@ -207,20 +198,17 @@ private lemma single_to_singleton_hom_aux_comp
           (hgf₁ := hv12_p1) (hgf₂ := hv23_p2) := by
     simp [CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom, Functor.map_comp,
       Category.assoc]
-  -- Invert the cocycle.
   have h_cocycle_inv :
       inv (xi12 (F := F) p D.ξ) ≫ inv (xi23 (F := F) p D.ξ) =
         inv (xi13 (F := F) p D.ξ) := by
     have hinv : inv (xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) = inv (xi13 (F := F) p D.ξ) := by
       simp [D.cocycle]
     simpa [IsIso.inv_comp] using hinv
-  -- Assemble.
   simp [haux12, haux23, haux13, hcomp_pull, h_cocycle_inv]
 
 private lemma single_to_singleton_hom_aux_self
     (D : CechDescentData (F := F) p) {Y : C} (g : Y ⟶ E) :
     single_to_singleton_hom_aux F p D g g (by rfl) = 𝟙 _ := by
-  -- Use idempotence + isomorphism to deduce identity.
   let f := single_to_singleton_hom_aux F p D g g (by rfl)
   have hcomp : f ≫ f = f := by
     simpa [f] using
@@ -272,16 +260,13 @@ private lemma single_to_singleton_hom_aux_comm {D₁ D₂ : CechDescentData (F :
     (F.map g₁.op.toLoc).toFunctor.map f.hom ≫ single_to_singleton_hom_aux F p D₂ g₁ g₂ h =
       single_to_singleton_hom_aux F p D₁ g₁ g₂ h ≫
         (F.map g₂.op.toLoc).toFunctor.map f.hom := by
-  -- Rewrite `f.comm` in terms of `inv ξ`.
   have hcomm_inv :
       (F.map (p1 p).op.toLoc).toFunctor.map f.hom ≫ inv D₂.ξ =
         inv D₁.ξ ≫ (F.map (p2 p).op.toLoc).toFunctor.map f.hom := by
     have := congrArg (fun t => inv D₁.ξ ≫ t ≫ inv D₂.ξ) f.comm
     simpa [Descent.Pseudofunctor.reindex, Category.assoc] using this
-  -- Expand `single_to_singleton_hom_aux` and reduce to coherence for `mapComp'`.
   simp [single_to_singleton_hom_aux, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom,
     Category.assoc]
-  -- Apply the compatibility relation after reindexing along `u`.
   have hmap :
       (F.map (Limits.pullback.lift g₁ g₂ h).op.toLoc).toFunctor.map
             ((F.map (p1 p).op.toLoc).toFunctor.map f.hom) ≫
@@ -303,7 +288,6 @@ private lemma single_to_singleton_hom_aux_comm {D₁ D₂ : CechDescentData (F :
           (F.map (Limits.pullback.lift g₁ g₂ h).op.toLoc).toFunctor.map
             ((F.map (p2 p).op.toLoc).toFunctor.map f.hom) := by
     simpa using hmap
-  -- Cancel the leading `mapComp'` component and rewrite using `hmap'`.
   rw [cancel_epi
     ((F.mapComp' (p1 p).op.toLoc (Limits.pullback.lift g₁ g₂ h).op.toLoc g₁.op.toLoc (by
         have hu1 : Limits.pullback.lift g₁ g₂ h ≫ p1 p = g₁ :=
@@ -311,15 +295,12 @@ private lemma single_to_singleton_hom_aux_comm {D₁ D₂ : CechDescentData (F :
         have hu1' : (p1 p).op ≫ (Limits.pullback.lift g₁ g₂ h).op = g₁.op := by
           have hu1op : (Limits.pullback.lift g₁ g₂ h ≫ p1 p).op = g₁.op :=
             congrArg (fun k => k.op) hu1
-          -- rewrite `(f ≫ g).op` as `g.op ≫ f.op`
           rw [op_comp] at hu1op
           exact hu1op
         have hu1Loc : ((p1 p).op ≫ (Limits.pullback.lift g₁ g₂ h).op).toLoc = g₁.op.toLoc :=
           congrArg (fun k => k.toLoc) hu1'
-        -- rewrite `toLoc` of a composite
         simpa [Quiver.Hom.comp_toLoc] using hu1Loc)).hom.toNatTrans.app
       D₁.obj)]
-  -- reassociate to expose the left-composite `(_ ≫ _)` for rewriting
   rw [← Category.assoc, hmap']
   simp [Category.assoc]
 
@@ -343,12 +324,9 @@ def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
   pullHom_hom := by
     intro Y' Y g q q' hq i₁ i₂ f₁ f₂ hf₁ hf₂ gf₁ gf₂ hgf₁ hgf₂
     cases i₁; cases i₂
-    -- Expand the definition of `hom` on both sides.
-    -- Both sides are pullbacks of `D.ξ.inv` along the corresponding maps into `cechKernelPair p`.
     have hf₁' : f₁ ≫ p = f₂ ≫ p := by
       rw [hf₁, hf₂]
     have hgf₁' : gf₁ ≫ p = gf₂ ≫ p := by
-      -- both are equal to `q'`
       have hf₁q : f₁ ≫ p = q := by simpa using hf₁
       have hf₂q : f₂ ≫ p = q := by simpa using hf₂
       have h₁ : gf₁ ≫ p = q' := by
@@ -373,9 +351,6 @@ def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
     have hg_u : g ≫ u = u' := by
       apply Limits.pullback.hom_ext <;>
         simp [u, u', hu1, hu2, hu1', hu2', hgf₁, hgf₂, Category.assoc]
-    -- Use functoriality of `pullHom` and the equality `g ≫ u = u'`.
-    -- `pullHom_pullHom` rewrites the double pullback as a single pullback along `g ≫ u`.
-    -- Then we rewrite by `hg_u` to match the definition of `hom` for `q'`.
     simp [single_to_singleton_hom_aux, u, u', hg_u]
   hom_self := by
     intro Y q i g hg
@@ -449,15 +424,12 @@ private lemma singleton_to_single_unit
               (by rfl)) ≫
         (diag_iso_p1 (F := F) p (D.obj PUnit.unit)).hom =
       𝟙 (D.obj PUnit.unit) := by
-  -- Expand the diagonal isomorphisms.
   simp [diag_iso_p1, diag_iso_p2, reindex_comp_iso_obj, reindex_obj_iso_of_eq, reindex_id_iso_obj]
-  -- Abbreviate the kernel-pair transition morphism.
   set φ :=
     D.hom (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p2 p) (p1 p)
       (by
         simpa using (p1_comp_p_eq_p2_comp_p p).symm)
       (by rfl) with hφ
-  -- Rewrite the action of `diag^*` on `φ` using `map_eq_pullHom`.
   have hmap :
       (reindex F (Limits.pullback.diagonal p)).map φ =
         (F.mapComp (p2 p).op.toLoc (Limits.pullback.diagonal p).op.toLoc).inv.toNatTrans.app
@@ -477,9 +449,7 @@ private lemma singleton_to_single_unit
         (hgf₁ := (rfl : Limits.pullback.diagonal p ≫ p2 p = Limits.pullback.diagonal p ≫ p2 p))
         (hgf₂ := (rfl : Limits.pullback.diagonal p ≫ p1 p = Limits.pullback.diagonal p ≫ p1 p)))
   rw [hmap]
-  -- Cancel the `mapComp` isomorphisms.
   simp [Category.assoc]
-  -- Identify the pullback of `φ` along the diagonal.
   have hq : Limits.pullback.diagonal p ≫ (p1 p ≫ p) = p := by
     simp
   have hpull :
@@ -506,14 +476,12 @@ private lemma singleton_to_single_unit
         (gf₂ := Limits.pullback.diagonal p ≫ p1 p)
         (hgf₁ := rfl) (hgf₂ := rfl))
   rw [hpull]
-  -- Reduce to `hom_self` after simplifying the diagonal composites.
   have hself :
       D.hom p (i₁ := PUnit.unit) (i₂ := PUnit.unit) (𝟙 E) (𝟙 E)
           (by simp) (by simp) =
         𝟙 _ := by
     simpa using
       (D.hom_self (q := p) (i := PUnit.unit) (g := 𝟙 E) (by simp))
-  -- Transport the remaining `D.hom` along the diagonal equalities.
   have hdiag2 : Limits.pullback.diagonal p ≫ p2 p = 𝟙 E := by
     simp
   have hdiag1 : Limits.pullback.diagonal p ≫ p1 p = 𝟙 E := by
@@ -546,7 +514,6 @@ private lemma singleton_to_single_unit
         (hf₂' := by
           simp)
         (h₁ := hdiag2) (h₂ := hdiag1))
-  -- Finish using `hom_self` and pseudofunctor coherence for `mapId`.
   simpa [hself] using congrArg (fun t =>
     (F.mapId { as := op E }).inv.toNatTrans.app (D.obj PUnit.unit) ≫ t ≫
       (F.mapId { as := op E }).hom.toNatTrans.app (D.obj PUnit.unit)) hhom
@@ -589,7 +556,6 @@ private lemma singleton_to_single_cocycle
     dsimp [q0, q3]
     calc
       (p12 p ≫ p2 p) ≫ p = p12 p ≫ p2 p ≫ p := by
-        -- Avoid `simp`: the lemma `p12_p2_eq_p23_p1` is a simp lemma and would rewrite the goal.
         exact Category.assoc (p12 p) (p2 p) p
       _ = p12 p ≫ (p2 p ≫ p) := rfl
       _ = p12 p ≫ (p1 p ≫ p) := by
@@ -659,7 +625,6 @@ private lemma singleton_to_single_cocycle
     simp [xi13, reindex, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom,
       CategoryTheory.Pseudofunctor.DescentData.iso, hφ, q0]
 
-  -- Rewrite the three overlap morphisms as `DescentData.hom` on the triple overlap.
   have hx12 :
       xi12 (F := F) p
             (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
@@ -668,7 +633,6 @@ private lemma singleton_to_single_cocycle
                     simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
         D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
           (by simpa using hf12_1) (by simpa using hf12_2) := by
-    -- `pullHom` along `p12`.
     have hpull :
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
             (g := p12 p) (gf₁ := p12 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p) (hgf₁ := rfl) (hgf₂ := rfl) =
@@ -692,15 +656,12 @@ private lemma singleton_to_single_cocycle
                     simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
         D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
           (by simpa using hf23_1) (by simpa using hf12_1) := by
-    -- `pullHom` along `p23`, taking advantage of the fact that `xi23` already uses the transported
-    -- leg `p12 ≫ p2`.
     have hpull :
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
             (g := p23 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p2 p) (hgf₁ := rfl)
             (hgf₂ := by simp) =
           D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
             (by simpa using hf23_1) (by simpa using hf12_1) := by
-      -- `D.pullHom_hom` gives `pullHom ... = D.hom ...` after rewriting along `hq23`.
       have hq : p23 p ≫ q0 = q3 := hq23
       simpa [φ, hq] using
         (D.pullHom_hom (g := p23 p) (q := q0) (q' := q3) (hq := hq)
@@ -720,8 +681,6 @@ private lemma singleton_to_single_cocycle
                     simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
         D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p1 p)
             (by simpa using hf23_1) (by simpa using hf12_2) := by
-    -- `pullHom` along `p13`, taking advantage of the fact that `xi13` already uses the transported
-    -- legs `p23 ≫ p2` and `p12 ≫ p1`.
     have hpull :
         CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
             (g := p13 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p)
@@ -741,7 +700,6 @@ private lemma singleton_to_single_cocycle
           (hgf₂ := by simp))
     simpa [hx13_pull] using hpull
 
-  -- Final cocycle via `D.hom_comp`.
   have hcomp :
       D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
             (by simpa using hf23_1) (by simpa using hf12_1) ≫
@@ -751,7 +709,6 @@ private lemma singleton_to_single_cocycle
             (by simpa using hf23_1) (by simpa using hf12_2) := by
     simp [D.hom_comp]
 
-  -- Rewrite using the three identifications.
   calc
     xi23 (F := F) p
           (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
@@ -785,7 +742,6 @@ def singleton_to_single_descent_data
     CechDescentData (F := F) p where
   obj := D.obj PUnit.unit
   ξ := by
-    -- `D.iso` gives an isomorphism `π₁^* D.obj ≅ π₂^* D.obj`; we store the morphism `π₂^* ⟶ π₁^*`.
     exact
       (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p) (by rfl)
             (by
@@ -818,12 +774,9 @@ def singleton_to_single_hom
     singleton_to_single_descent_data F p D₁ ⟶ singleton_to_single_descent_data F p D₂ :=
   ⟨f.hom PUnit.unit, by
     simp only [singleton_to_single_descent_data]
-    -- The compatibility condition follows from f.hom_hom at π₁, π₂
     have hf₁ : p2 p ≫ p = p1 p ≫ p := by
       simpa using (p1_comp_p_eq_p2_comp_p p).symm
     have hf₂ : p1 p ≫ p = p1 p ≫ p := rfl
-    -- `f.comm` gives the compatibility for `D₁.hom`/`D₂.hom`; our gluing map is the
-    -- corresponding `iso` reversed, hence we take `.symm`.
     simpa [CategoryTheory.Pseudofunctor.DescentData.iso] using
       (f.comm (q := (p1 p ≫ p)) (i₁ := PUnit.unit) (i₂ := PUnit.unit)
         (f₁ := p2 p) (f₂ := p1 p) hf₁ hf₂).symm⟩
@@ -870,7 +823,6 @@ def singleton_to_single_functor :
 def single_singleton_unit (D : CechDescentData (F := F) p) :
     D ≅ (single_to_singleton_functor F p ⋙ singleton_to_single_functor F p).obj D where
   hom := ⟨𝟙 D.obj, by
-        -- The ξ's should match up to coherence
     simpa [single_to_singleton_functor, singleton_to_single_functor, single_to_singleton_descent_data,
       singleton_to_single_descent_data] using
         (single_to_singleton_hom_aux_swap (F := F) (p := p) D)⟩
@@ -967,7 +919,6 @@ def single_singleton_counit
         (F.map f₂.op.toLoc).toFunctor.map (𝟙 (D.obj PUnit.unit)) =
           𝟙 ((F.map f₂.op.toLoc).toFunctor.obj (D.obj PUnit.unit)) := by
       simp
-    -- Simplify away the identity components of the morphism of descent data.
     simp [single_to_singleton_functor, singleton_to_single_functor, single_to_singleton_descent_data,
       single_to_singleton_hom_aux, hinvξ, hmap₁, hmap₂]
     let pull :=
@@ -1132,12 +1083,10 @@ theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     have : (G ⋙ H).IsEquivalence := by
       simpa [single_morphism_comparison_functor,
         CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using hGH
-    -- cancel the equivalence `H` on the right
     haveI : (G ⋙ H).IsEquivalence := this
     exact CategoryTheory.Functor.isEquivalence_of_comp_right G H
   ·
     haveI : G.IsEquivalence := hG
-    -- composition with an equivalence is an equivalence
     have : (G ⋙ H).IsEquivalence := by infer_instance
     simpa [single_morphism_comparison_functor,
       CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using this

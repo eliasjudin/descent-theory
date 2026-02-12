@@ -38,7 +38,6 @@ variable [Limits.HasPullbacks C]
 noncomputable def diag_iso_p1 {E B : C} (p : E ⟶ B) (a : Fiber pA E) :
     (reindex (pA := pA) (Limits.pullback.diagonal p)).obj
         ((reindex (pA := pA) (p1 p)).obj a) ≅ a := by
-  -- rewrite in terms of `reindexObj`
   change
       reindexObj (pA := pA) (Limits.pullback.diagonal p)
           (reindexObj (pA := pA) (p1 p) a) ≅ a
@@ -204,7 +203,6 @@ It is induced from the equality `π₁ ≫ p = π₂ ≫ p` identifying the two 
 noncomputable def single_morphism_comparison_xi {E B : C} (p : E ⟶ B) (a : Fiber pA B) :
     (reindex (pA := pA) (p2 p)).obj ((reindex (pA := pA) p).obj a) ≅
       (reindex (pA := pA) (p1 p)).obj ((reindex (pA := pA) p).obj a) := by
-  -- Rewrite to `reindexObj` to use our coherence isomorphisms.
   change
     reindexObj (pA := pA) (p2 p) (reindexObj (pA := pA) p a) ≅
       reindexObj (pA := pA) (p1 p) (reindexObj (pA := pA) p a)

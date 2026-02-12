@@ -86,7 +86,6 @@ abbrev pbarHom : eqHom p ⟶ B := eqCod p ≫ p
 
 @[reassoc]
 lemma pbar_hom_eq_eq_dom_comp : pbarHom p = eqDom p ≫ p := by
-  -- Both composites are the canonical map `E ×_B E ⟶ B`.
   simpa [pbarHom, eqCod, eqDom] using (p1_comp_p_eq_p2_comp_p p)
 
 @[reassoc]
@@ -95,7 +94,6 @@ lemma eq_cod_comp_pbar_obj : eqCod p ≫ pbarObj p = pbarHom p := by
 
 @[reassoc]
 lemma eq_dom_comp_pbar_obj : eqDom p ≫ pbarObj p = pbarHom p := by
-  -- Rewrite `pbarHom` via the other projection.
   simpa [pbarObj] using (pbar_hom_eq_eq_dom_comp (p := p)).symm
 
 /-!

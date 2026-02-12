@@ -58,7 +58,6 @@ def reindex {R S : C} (f : R ⟶ S) : Fiber pA S ⥤ Fiber pA R where
     simp
   map_comp {a b c} φ ψ := by
     apply Fiber.hom_ext
-    -- Make the lifts available for elaboration.
     haveI : pA.IsHomLift (𝟙 S) φ.1 := φ.2
     haveI : pA.IsHomLift (𝟙 S) ψ.1 := ψ.2
     haveI : pA.IsHomLift f (IsPreFibered.pullbackMap (p := pA) a.2 f ≫ φ.1) := by
@@ -227,9 +226,7 @@ lemma reindex_comp_iso_obj_hom_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
         (reindex (pA := pA) g).map ((reindex (pA := pA) f).map φ) =
       (reindex (pA := pA) (g ≫ f)).map φ ≫
         (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).hom := by
-  -- Reduce to the total category and use the universal property of a Cartesian lift.
   apply Fiber.hom_ext
-  -- Consider the composite Cartesian arrow `g^*(f^* b) ⟶ b` over `g ≫ f`.
   let φb :
       (reindexObj (pA := pA) g (reindexObj (pA := pA) f b)).1 ⟶ b.1 :=
     IsPreFibered.pullbackMap (p := pA) (IsPreFibered.pullbackObj_proj (p := pA) b.2 f) g ≫
@@ -237,13 +234,9 @@ lemma reindex_comp_iso_obj_hom_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
   haveI : IsCartesian pA (g ≫ f) φb := by
     dsimp [φb]
     infer_instance
-  -- It suffices to compare after postcomposition with `φb`.
   apply IsCartesian.ext (p := pA) (f := g ≫ f) (φ := φb)
-  -- Compute both composites using the defining `fac` lemmas.
   dsimp [φb, reindex, reindex_comp_iso_obj, fiber_iso, Functor.IsFibered.pullbackPullbackIso]
-  -- Reduce `fiberInclusion.map` and use the `IsCartesian.fac` simp-lemmas.
   simp [Fiber.fiberInclusion, Category.assoc]
-  -- Finish by applying `IsCartesian.fac_assoc` to the remaining `IsCartesian.map`.
   simpa [Category.assoc] using
     (IsCartesian.fac_assoc (p := pA) (f := g ≫ f)
         (φ :=
@@ -258,10 +251,8 @@ lemma reindex_comp_iso_obj_inv_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
         (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv =
       (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).inv ≫
         (reindex (pA := pA) (g ≫ f)).map φ := by
-  -- Derive from naturality of the `hom` by canceling the isomorphisms.
   have h :=
     reindex_comp_iso_obj_hom_naturality (pA := pA) (g := g) (f := f) (a := a) (b := b) φ
-  -- `simp` takes care of rewriting with the `Iso` identities.
   simpa [Category.assoc] using
     congrArg (fun k => (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).inv ≫ k ≫
         (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv) h
@@ -295,7 +286,6 @@ def reindex_id_iso_nat_iso {S : C} :
         pA.IsHomLift (𝟙 S ≫ 𝟙 S)
           (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) ≫ φ.1))
   apply Fiber.hom_ext
-  -- Use the defining property of the cartesian lift of `𝟙 S`.
   change
       (IsCartesian.map pA (𝟙 S) (IsPreFibered.pullbackMap (p := pA) b.2 (𝟙 S))
           (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) ≫ φ.1)) ≫

@@ -104,7 +104,6 @@ noncomputable def single_to_cech_descent_data
   obj := D.obj
   ξ := D.ξ.hom
   unit := by
-    -- The diagonal isomorphisms for the pseudofunctor of fibers reduce to the fibered-category ones.
     simpa [Descent.Pseudofunctor.Descent.diag_iso_p1, Descent.Pseudofunctor.Descent.diag_iso_p2,
       Descent.FiberedCategory.Descent.diag_iso_p1, Descent.FiberedCategory.Descent.diag_iso_p2,
       Descent.Pseudofunctor.reindex, CategoryTheory.FiberedCategory.pseudofunctor_of_fibers,
@@ -117,20 +116,17 @@ noncomputable def single_to_cech_descent_data
 noncomputable def cech_to_single_descent_data
     (D : Descent.Pseudofunctor.Descent.CechDescentData (F := fibers_pseudofunctor (pA := pA)) p) :
     SingleMorphismDescentData (pA := pA) p := by
-  -- The Čech axioms imply `IsIso D.ξ` (see `Descent.Pseudofunctor.Descent.CechDescentData`).
   haveI : IsIso D.ξ := by
     infer_instance
   refine
     { obj := D.obj
       ξ := asIso D.ξ
       unit := by
-        -- The diagonal isomorphisms for the pseudofunctor of fibers reduce to the fibered-category ones.
         simpa [Descent.Pseudofunctor.Descent.diag_iso_p1, Descent.Pseudofunctor.Descent.diag_iso_p2,
           Descent.FiberedCategory.Descent.diag_iso_p1, Descent.FiberedCategory.Descent.diag_iso_p2,
           Descent.Pseudofunctor.reindex, CategoryTheory.FiberedCategory.pseudofunctor_of_fibers,
           CategoryTheory.pseudofunctorOfIsLocallyDiscrete] using D.unit
       cocycle := by
-        -- Rewrite `D.cocycle` to use the isomorphism `ξIso := asIso D.ξ` explicitly.
         let ξIso : (Descent.FiberedCategory.reindex (pA := pA) (p2 p)).obj D.obj ≅
             (Descent.FiberedCategory.reindex (pA := pA) (p1 p)).obj D.obj :=
           asIso D.ξ
@@ -139,7 +135,6 @@ noncomputable def cech_to_single_descent_data
                 Descent.Pseudofunctor.Descent.xi12 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom =
               Descent.Pseudofunctor.Descent.xi13 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom := by
           simpa [ξIso] using D.cocycle
-        -- Translate each term to the fibered-category expression.
         simpa [xi12_fibers (pA := pA) (p := p), xi23_fibers (pA := pA) (p := p),
           xi13_fibers (pA := pA) (p := p)] using hc }
 
@@ -151,18 +146,15 @@ noncomputable def single_to_cech_functor :
   map {D D'} f :=
     { hom := f.hom
       comm := by
-        -- The commutativity condition is definitionally the same after unfolding `ξ`.
         simpa [single_to_cech_descent_data, fibers_pseudofunctor_reindex] using f.comm }
   map_id D := by
     apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
-    -- Unfold the identity in the source and target categories.
     change (SingleMorphismDescentData.Hom.id (pA := pA) D).hom =
       (Descent.Pseudofunctor.Descent.CechDescentData.Hom.id
             (single_to_cech_descent_data (pA := pA) p D)).hom
     simp [single_to_cech_descent_data]
   map_comp {X Y Z} f g := by
     apply Descent.Pseudofunctor.Descent.CechDescentData.Hom.ext
-    -- Make the mapped morphisms explicit so that `Hom.comp_hom` applies without typeclass noise.
     let f' :
         Descent.Pseudofunctor.Descent.CechDescentData.Hom
           (single_to_cech_descent_data (pA := pA) p X) (single_to_cech_descent_data (pA := pA) p Y) :=
@@ -186,18 +178,14 @@ noncomputable def cech_to_single_functor :
   map {D D'} f :=
     { hom := f.hom
       comm := by
-        -- `asIso` does not change the underlying morphism, and reindexing for `fibers_pseudofunctor`
-        -- agrees with fibered-category reindexing.
         simpa [fibers_pseudofunctor_reindex] using f.comm }
   map_id D := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
-    -- Unfold the identity in the source and target categories.
     change (Descent.Pseudofunctor.Descent.CechDescentData.Hom.id D).hom =
       (SingleMorphismDescentData.Hom.id (pA := pA) (cech_to_single_descent_data (pA := pA) p D)).hom
     simp [cech_to_single_descent_data]
   map_comp {X Y Z} f g := by
     apply SingleMorphismDescentData.Hom.ext (pA := pA)
-    -- Make the mapped morphisms explicit so that `Hom.comp_hom` applies without typeclass noise.
     let f' :
         SingleMorphismDescentData.Hom (pA := pA)
           (cech_to_single_descent_data (pA := pA) p X) (cech_to_single_descent_data (pA := pA) p Y) :=
@@ -219,7 +207,6 @@ private def single_cech_unit_component
     D ≅ ((single_to_cech_functor (pA := pA) p ⋙ cech_to_single_functor (pA := pA) p).obj D) := by
   refine ⟨?hom, ?inv, ?hom_inv_id, ?inv_hom_id⟩
   · refine ⟨𝟙 D.obj, ?_⟩
-    -- Checklist: both sides use the same `π₂ → π₁` gluing orientation.
     simp [single_to_cech_functor, cech_to_single_functor,
       single_to_cech_descent_data, cech_to_single_descent_data]
   · refine ⟨𝟙 D.obj, ?_⟩
@@ -248,7 +235,6 @@ private def single_cech_counit_component
     ((cech_to_single_functor (pA := pA) p ⋙ single_to_cech_functor (pA := pA) p).obj D) ≅ D := by
   refine ⟨?hom, ?inv, ?hom_inv_id, ?inv_hom_id⟩
   · refine ⟨𝟙 D.obj, ?_⟩
-    -- Checklist: morphism-level cocycle convention remains `ξ₂₃ ≫ ξ₁₂ = ξ₁₃`.
     simp [single_to_cech_functor, cech_to_single_functor,
       single_to_cech_descent_data, cech_to_single_descent_data]
   · refine ⟨𝟙 D.obj, ?_⟩

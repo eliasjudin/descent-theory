@@ -47,7 +47,6 @@ example (D : CechDescentData (F := F) p) :
 example (D : CechDescentData (F := F) p) :
     D.ξ =
       ((single_to_singleton_functor (F := F) p ⋙ singleton_to_single_functor (F := F) p).obj D).ξ := by
-  -- The unit isomorphism has underlying morphism `𝟙`, so `comm` reduces to equality of `ξ`.
   simpa [single_singleton_unit] using (single_singleton_unit (F := F) p D).hom.comm
 
 end
