@@ -17,7 +17,7 @@ We set `cechTripleOverlap p := pullback (p2 p) (p1 p)` so the cocycle reads
 
 open CategoryTheory
 
-namespace CategoryTheory.Cech
+namespace Descent.Cech
 
 universe u v
 
@@ -136,4 +136,4 @@ lemma p13_p2 {E B : C} (p : E ⟶ B) :
 
 end
 
-end CategoryTheory.Cech
+end Descent.Cech

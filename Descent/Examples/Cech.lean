@@ -57,10 +57,10 @@ example : Limits.pullback.fst (eqDom p) (eqCod p) = p12 p := rfl
 example : Limits.pullback.snd (eqDom p) (eqCod p) = p23 p := rfl
 
 example : eqComp p ≫ p1 p = p12 p ≫ p1 p := by
-  simp [eqComp, CategoryTheory.Cech.p13]
+  simp [eqComp, Descent.Cech.p13]
 
 example : eqComp p ≫ p2 p = p23 p ≫ p2 p := by
-  simp [eqComp, CategoryTheory.Cech.p13]
+  simp [eqComp, Descent.Cech.p13]
 
 end Eq
 
