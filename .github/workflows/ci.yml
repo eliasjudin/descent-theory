@@ -26,6 +26,7 @@ jobs:
           }
 
           run_and_log "lake build" lake build
+          run_and_log "lake build Descent.All" lake build Descent.All
           run_and_log "lake lint" lake lint
           run_and_log "lake exe lint-style Descent" lake exe lint-style Descent
           run_and_log "lake test" lake test

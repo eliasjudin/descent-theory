@@ -19,10 +19,17 @@ In addition, the project relates the single-morphism formulation to Mathlib’s
 
 ## Status
 
-This library is under active development: APIs and file organization may change.
+This repository is now structured for public collaboration:
 
-If you are looking for the main entry point, start with `Descent.lean` and then
-follow imports into `Descent/`.
+- CI enforces `lake build`, `lake build Descent.All`, `lake lint`, `lake exe lint-style Descent`,
+  and `lake test`.
+- Warning hygiene is gated, with an explicit `SORRY_TRACKER.md` allowlist policy.
+- Descent APIs are exposed through stable entry points (`Descent.lean`, `Descent/FiberedCategory.lean`,
+  `Descent/Pseudofunctor.lean`).
+- Full project compilation coverage is exposed via `Descent.All`.
+
+If you are looking for the main entry point, start with `Descent.lean` and then follow imports into
+`Descent/`.
 
 ## Local quality loop
 
@@ -30,6 +37,7 @@ Use the same commands locally that CI enforces:
 
 ```bash
 lake build
+lake build Descent.All
 lake lint
 lake exe lint-style Descent
 lake test
@@ -46,8 +54,15 @@ lake test
 - Treat edits touching `[simp]` attributes, instances, syntax/macros, priorities,
   or global options (`set_option`) as high-risk and run the full quality loop.
 
+## Contribution workflow
+
+- Start with `CONTRIBUTING.md` for local setup and PR checklist.
+- For upstream strategy and mathlib-facing naming/module notes, see `MATHLIB_INTEGRATION.md`.
+- Keep `CHANGELOG.md` updated under the `Unreleased` section for user-visible changes.
+
 ## Project layout
 
+- `Descent/All.lean`: full-project import aggregator used by CI for maintained-module coverage.
 - `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.
 - `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.
 - `Descent/FiberedCategory/Descent/PseudofunctorEquiv.lean`: bridge between fibered-category
