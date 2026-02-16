@@ -107,20 +107,15 @@ private lemma fibers_map₂_associator (pA : 𝒜 ⥤ C) [pA.IsFibered] :
       (a := (reindex (pA := pA) f.as.unop).obj a)]
     rw [reindex_map_comp_pullback_assoc (pA := pA) (f := h.as.unop)
       (φ := (reindex_comp_iso_obj (pA := pA) g.as.unop f.as.unop a).hom)]
-    have h_gf :=
-      reindex_comp_iso_obj_hom_comp_pullback (pA := pA) (g := g.as.unop) (f := f.as.unop) a
-    have h_hgf :=
+    rw [reindex_comp_iso_obj_hom_comp_pullback (pA := pA) (g := g.as.unop) (f := f.as.unop) a]
+    exact
       reindex_comp_iso_obj_hom_comp_pullback (pA := pA) (g := h.as.unop)
         (f := g.as.unop ≫ f.as.unop) a
-    rw [h_gf]
-    exact h_hgf
-  have h_assoc : h.as.unop ≫ (g.as.unop ≫ f.as.unop) = (h.as.unop ≫ g.as.unop) ≫ f.as.unop := by
-    simp [Category.assoc]
-  simpa [h_assoc, Category.assoc] using
+  simpa [Category.assoc] using
     (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
       (f := h.as.unop ≫ (g.as.unop ≫ f.as.unop))
       (g := (h.as.unop ≫ g.as.unop) ≫ f.as.unop)
-      (h := h_assoc) a).symm
+      (h := by simp [Category.assoc]) a).symm
 
 /-- Left unitor coherence for the pseudofunctor of fibers. -/
 private lemma fibers_map₂_left_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
@@ -140,13 +135,11 @@ private lemma fibers_map₂_left_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
   apply IsCartesian.ext (p := pA) (f := f.as.unop) (φ := φ)
   simp [φ, fibers_map, fibers_mapComp, fibers_mapId, Fiber.fiberInclusion, reindex_id_iso_hom_eq,
     reindex_comp_iso_obj_hom_comp_pullback, Category.assoc]
-  have h_id : f.as.unop ≫ 𝟙 (unop X.as) = f.as.unop := by
-    simp
-  simpa [reindex, reindex_id_iso, fiber_iso, h_id, Category.assoc] using
+  simpa [reindex, reindex_id_iso, fiber_iso, Category.assoc] using
     (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
       (f := f.as.unop ≫ 𝟙 (unop X.as))
       (g := f.as.unop)
-      (h := h_id) a).symm
+      (h := by simp) a).symm
 
 /-- Right unitor coherence for the pseudofunctor of fibers. -/
 private lemma fibers_map₂_right_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
@@ -166,13 +159,11 @@ private lemma fibers_map₂_right_unitor (pA : 𝒜 ⥤ C) [pA.IsFibered] :
   apply IsCartesian.ext (p := pA) (f := f.as.unop) (φ := φ)
   simp [φ, fibers_map, fibers_mapComp, fibers_mapId, Fiber.fiberInclusion, reindex_id_iso_hom_eq,
     reindex_comp_iso_obj_hom_comp_pullback, Category.assoc]
-  have h_id : 𝟙 (unop Y.as) ≫ f.as.unop = f.as.unop := by
-    simp
-  simpa [h_id, Category.assoc] using
+  simpa [Category.assoc] using
     (reindex_obj_iso_of_eq_hom_comp_pullback (pA := pA)
       (f := 𝟙 (unop Y.as) ≫ f.as.unop)
       (g := f.as.unop)
-      (h := h_id) a).symm
+      (h := by simp) a).symm
 
 /-- The pseudofunctor of fibers associated to a fibered functor `pA : 𝒜 ⥤ C`. -/
 noncomputable def pseudofunctor_of_fibers (pA : 𝒜 ⥤ C) [pA.IsFibered] :

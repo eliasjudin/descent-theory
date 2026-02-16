@@ -251,16 +251,15 @@ lemma reindex_comp_iso_obj_inv_naturality {T R S : C} (g : T ⟶ R) (f : R ⟶ S
         (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv =
       (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).inv ≫
         (reindex (pA := pA) (g ≫ f)).map φ := by
-  have h :=
-    reindex_comp_iso_obj_hom_naturality (pA := pA) (g := g) (f := f) (a := a) (b := b) φ
   simpa [Category.assoc] using
     congrArg (fun k => (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) a).inv ≫ k ≫
-        (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv) h
+        (reindex_comp_iso_obj (pA := pA) (g := g) (f := f) b).inv)
+      (reindex_comp_iso_obj_hom_naturality (pA := pA) (g := g) (f := f) (a := a) (b := b) φ)
 
 /-- The canonical isomorphism `((𝟙 S)^* a) ≅ a`. -/
 def reindex_id_iso {S : C} (a : Fiber pA S) : reindexObj (pA := pA) (𝟙 S) a ≅ a := by
   haveI : IsIso (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) := by
-    have : pA.IsStronglyCartesian (𝟙 S) (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) := by
+    haveI : pA.IsStronglyCartesian (𝟙 S) (IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S)) := by
       infer_instance
     exact
       IsStronglyCartesian.isIso_of_base_isIso (p := pA) (f := 𝟙 S)

@@ -279,47 +279,30 @@ private lemma pullHom_diag_eq_id (D : CechDescentData (F := F) p) :
         𝟙 D.obj := by
     simpa [diag_iso_p1, diag_iso_p2, pullHom, reindex_comp_iso_obj, reindex, reindex_obj_iso_of_eq,
       CategoryTheory.Pseudofunctor.mapComp', PrelaxFunctor.map₂_eqToHom, Category.assoc] using D.unit
-  have hu' := congrArg (fun t =>
-    (reindex_id_iso_obj F D.obj).hom ≫ t ≫ (reindex_id_iso_obj F D.obj).inv) hu
-  simpa [Category.assoc] using hu'
+  simpa [Category.assoc] using
+    congrArg (fun t =>
+      (reindex_id_iso_obj F D.obj).hom ≫ t ≫ (reindex_id_iso_obj F D.obj).inv) hu
 
 
 private lemma pullHom_p1_diag_eq_id (D : CechDescentData (F := F) p) :
     pullHom (F := F) (φ := D.ξ) (g := p1 p ≫ diag p) (gf₁ := p1 p) (gf₂ := p1 p)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F (p1 p)).obj D.obj) := by
-  have hpull :=
-    (pullHom_pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
-      (g' := p1 p) (g'f₁ := p1 p) (g'f₂ := p1 p)
-      (hgf₁ := by simp) (hgf₂ := by simp) (hg'f₁ := by simp) (hg'f₂ := by simp))
-  have hId :
-      pullHom (F := F)
-          (φ := pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _)
-            (gf₂ := 𝟙 _) (hgf₁ := by simp) (hgf₂ := by simp))
-          (g := p1 p) (gf₁ := p1 p) (gf₂ := p1 p) =
-        𝟙 _ := by
-    rw [pullHom_diag_eq_id (F := F) (p := p) (D := D)]
-    simpa using (pullHom_id_of_id_comp (F := F) (g := p1 p) (M := D.obj))
-  rw [← hpull]
-  exact hId
+  rw [← (pullHom_pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _)
+    (gf₂ := 𝟙 _) (g' := p1 p) (g'f₁ := p1 p) (g'f₂ := p1 p)
+    (hgf₁ := by simp) (hgf₂ := by simp) (hg'f₁ := by simp) (hg'f₂ := by simp))]
+  rw [pullHom_diag_eq_id (F := F) (p := p) (D := D)]
+  simpa using (pullHom_id_of_id_comp (F := F) (g := p1 p) (M := D.obj))
 
 private lemma pullHom_p2_diag_eq_id (D : CechDescentData (F := F) p) :
     pullHom (F := F) (φ := D.ξ) (g := p2 p ≫ diag p) (gf₁ := p2 p) (gf₂ := p2 p)
         (hgf₁ := by simp) (hgf₂ := by simp) =
       𝟙 ((reindex F (p2 p)).obj D.obj) := by
-  have hpull :=
-    (pullHom_pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _) (gf₂ := 𝟙 _)
-      (g' := p2 p) (g'f₁ := p2 p) (g'f₂ := p2 p)
-      (hgf₁ := by simp) (hgf₂ := by simp) (hg'f₁ := by simp) (hg'f₂ := by simp))
-  have hId :
-      pullHom (F := F) (φ := pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _)
-          (gf₂ := 𝟙 _) (hgf₁ := by simp) (hgf₂ := by simp))
-          (g := p2 p) (gf₁ := p2 p) (gf₂ := p2 p) =
-        𝟙 _ := by
-    rw [pullHom_diag_eq_id (F := F) (p := p) (D := D)]
-    simpa using (pullHom_id_of_id_comp (F := F) (g := p2 p) (M := D.obj))
-  rw [← hpull]
-  exact hId
+  rw [← (pullHom_pullHom (F := F) (φ := D.ξ) (g := Limits.pullback.diagonal p) (gf₁ := 𝟙 _)
+    (gf₂ := 𝟙 _) (g' := p2 p) (g'f₁ := p2 p) (g'f₂ := p2 p)
+    (hgf₁ := by simp) (hgf₂ := by simp) (hg'f₁ := by simp) (hg'f₂ := by simp))]
+  rw [pullHom_diag_eq_id (F := F) (p := p) (D := D)]
+  simpa using (pullHom_id_of_id_comp (F := F) (g := p2 p) (M := D.obj))
 
 /-!
 #### The inverse laws
@@ -328,13 +311,6 @@ private lemma pullHom_p2_diag_eq_id (D : CechDescentData (F := F) p) :
 
 lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
     xi_inv (F := F) (p := p) D ≫ D.ξ = 𝟙 _ := by
-  have hc :=
-      congrArg
-        (fun t =>
-          pullHom (F := F) (φ := t) (g := swap_left p) (gf₁ := p1 p) (gf₂ := p1 p)
-            (hgf₁ := by simp) (hgf₂ := by simp))
-        (D.cocycle (p := p))
-
   have hcomp :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
@@ -361,7 +337,12 @@ lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
         pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_left p)
           (gf₁ := p1 p) (gf₂ := p1 p) (hgf₁ := by simp)
           (hgf₂ := by simp) := by
-    simpa [hcomp] using hc
+    simpa [hcomp] using
+      (congrArg
+        (fun t =>
+          pullHom (F := F) (φ := t) (g := swap_left p) (gf₁ := p1 p) (gf₂ := p1 p)
+            (hgf₁ := by simp) (hgf₂ := by simp))
+        (D.cocycle (p := p)))
 
   have h23 :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_left p)
@@ -388,13 +369,6 @@ lemma xi_inv_comp_xi (D : CechDescentData (F := F) p) :
 
 lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
     D.ξ ≫ xi_inv (F := F) (p := p) D = 𝟙 _ := by
-  have hc :=
-      congrArg
-        (fun t =>
-          pullHom (F := F) (φ := t) (g := swap_right p) (gf₁ := p2 p) (gf₂ := p2 p)
-            (hgf₁ := by simp) (hgf₂ := by simp))
-        (D.cocycle (p := p))
-
   have hcomp :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ ≫ xi12 (F := F) p D.ξ) (g := swap_right p)
           (gf₁ := p2 p) (gf₂ := p2 p) (hgf₁ := by simp)
@@ -421,7 +395,12 @@ lemma xi_comp_xi_inv (D : CechDescentData (F := F) p) :
         pullHom (F := F) (φ := xi13 (F := F) p D.ξ) (g := swap_right p)
           (gf₁ := p2 p) (gf₂ := p2 p) (hgf₁ := by simp)
           (hgf₂ := by simp) := by
-    simpa [hcomp] using hc
+    simpa [hcomp] using
+      (congrArg
+        (fun t =>
+          pullHom (F := F) (φ := t) (g := swap_right p) (gf₁ := p2 p) (gf₂ := p2 p)
+            (hgf₁ := by simp) (hgf₂ := by simp))
+        (D.cocycle (p := p)))
 
   have h23 :
       pullHom (F := F) (φ := xi23 (F := F) p D.ξ) (g := swap_right p)

@@ -130,13 +130,14 @@ noncomputable def cech_to_single_descent_data
         let ξIso : (Descent.FiberedCategory.reindex (pA := pA) (p2 p)).obj D.obj ≅
             (Descent.FiberedCategory.reindex (pA := pA) (p1 p)).obj D.obj :=
           asIso D.ξ
-        have hc :
+        simpa [xi12_fibers (pA := pA) (p := p), xi23_fibers (pA := pA) (p := p),
+          xi13_fibers (pA := pA) (p := p)] using
+          (show
             Descent.Pseudofunctor.Descent.xi23 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom ≫
                 Descent.Pseudofunctor.Descent.xi12 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom =
-              Descent.Pseudofunctor.Descent.xi13 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom := by
-          simpa [ξIso] using D.cocycle
-        simpa [xi12_fibers (pA := pA) (p := p), xi23_fibers (pA := pA) (p := p),
-          xi13_fibers (pA := pA) (p := p)] using hc }
+              Descent.Pseudofunctor.Descent.xi13 (F := fibers_pseudofunctor (pA := pA)) p ξIso.hom
+            from by
+              simpa [ξIso] using D.cocycle) }
 
 /-- The functor from fibered-category descent data to pseudofunctor Čech descent data. -/
 noncomputable def single_to_cech_functor :

@@ -32,8 +32,7 @@ example {T R S : C} (g : T ⟶ R) (f : R ⟶ S) {a b : F.obj (.mk (op S))} (φ :
       (reindex F (g ≫ f)).map φ ≫ (reindex_comp_iso_obj (F := F) g f b).hom := by
   dsimp [reindex_comp_iso_obj, reindex]
   let α := (CategoryTheory.Cat.Hom.toNatIso (F.mapComp f.op.toLoc g.op.toLoc)).hom
-  have h := α.naturality φ
-  exact h.symm
+  exact (α.naturality φ).symm
 
 example {S : C} {a b : F.obj (.mk (op S))} (φ : a ⟶ b) :
     (reindex F (𝟙 S)).map φ ≫ (reindex_id_iso_obj (F := F) b).hom =

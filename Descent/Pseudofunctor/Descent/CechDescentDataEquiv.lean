@@ -66,8 +66,8 @@ private lemma single_to_singleton_hom_aux_comp
   have hu23_2 : u23 ≫ p2 p = f₃ := Limits.pullback.lift_snd _ _ _
   have hu13_1 : u13 ≫ p1 p = f₁ := Limits.pullback.lift_fst _ _ _
   have hu13_2 : u13 ≫ p2 p = f₃ := Limits.pullback.lift_snd _ _ _
-  have h_u12_u23 : u12 ≫ p2 p = u23 ≫ p1 p := by simp [hu12_2, hu23_1]
-  let v : Y ⟶ cechTripleOverlap p := Limits.pullback.lift u12 u23 h_u12_u23
+  let v : Y ⟶ cechTripleOverlap p := Limits.pullback.lift u12 u23 (by
+    simp [hu12_2, hu23_1])
   have hv12 : v ≫ p12 p = u12 := Limits.pullback.lift_fst _ _ _
   have hv23 : v ≫ p23 p = u23 := Limits.pullback.lift_snd _ _ _
   have hv12_p1 : v ≫ p12 p ≫ p1 p = f₁ := by
@@ -213,12 +213,10 @@ private lemma single_to_singleton_hom_aux_self
   have hcomp : f ≫ f = f := by
     simpa [f] using
       (single_to_singleton_hom_aux_comp (F := F) (p := p) D g g g (by rfl) (by rfl) (by rfl))
-  have hIso : IsIso f := by
+  letI : IsIso f := by
     dsimp [f, single_to_singleton_hom_aux, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom]
     infer_instance
-  letI : IsIso f := hIso
-  have h' := congrArg (fun t => inv f ≫ t) hcomp
-  simpa [Category.assoc] using h'
+  simpa [Category.assoc] using congrArg (fun t => inv f ≫ t) hcomp
 
 private lemma single_to_singleton_hom_aux_p1_p2
     (D : CechDescentData (F := F) p) :
@@ -359,13 +357,9 @@ def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
   hom_comp := by
     intro Y q i₁ i₂ i₃ f₁ f₂ f₃ hf₁ hf₂ hf₃
     cases i₁; cases i₂; cases i₃
-    have h12 : f₁ ≫ p = f₂ ≫ p := by
-      rw [hf₁, hf₂]
-    have h23 : f₂ ≫ p = f₃ ≫ p := by
-      rw [hf₂, hf₃]
-    have h13 : f₁ ≫ p = f₃ ≫ p := by
-      rw [hf₁, hf₃]
-    simpa using (single_to_singleton_hom_aux_comp (F := F) p D f₁ f₂ f₃ h12 h23 h13)
+    simpa using
+      (single_to_singleton_hom_aux_comp (F := F) p D f₁ f₂ f₃
+        (by rw [hf₁, hf₂]) (by rw [hf₂, hf₃]) (by rw [hf₁, hf₃]))
 
 /-!
 ## Helper: transport for `DescentData.hom`
@@ -482,10 +476,6 @@ private lemma singleton_to_single_unit
         𝟙 _ := by
     simpa using
       (D.hom_self (q := p) (i := PUnit.unit) (g := 𝟙 E) (by simp))
-  have hdiag2 : Limits.pullback.diagonal p ≫ p2 p = 𝟙 E := by
-    simp
-  have hdiag1 : Limits.pullback.diagonal p ≫ p1 p = 𝟙 E := by
-    simp
   have hhom :
       eqToHom
             (by
@@ -513,7 +503,7 @@ private lemma singleton_to_single_unit
           simp)
         (hf₂' := by
           simp)
-        (h₁ := hdiag2) (h₂ := hdiag1))
+        (h₁ := by simp) (h₂ := by simp))
   simpa [hself] using congrArg (fun t =>
     (F.mapId { as := op E }).inv.toNatTrans.app (D.obj PUnit.unit) ≫ t ≫
       (F.mapId { as := op E }).hom.toNatTrans.app (D.obj PUnit.unit)) hhom
@@ -625,81 +615,6 @@ private lemma singleton_to_single_cocycle
     simp [xi13, reindex, CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom,
       CategoryTheory.Pseudofunctor.DescentData.iso, hφ, q0]
 
-  have hx12 :
-      xi12 (F := F) p
-            (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
-                  (by rfl)
-                  (by
-                    simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
-        D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
-          (by simpa using hf12_1) (by simpa using hf12_2) := by
-    have hpull :
-        CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
-            (g := p12 p) (gf₁ := p12 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p) (hgf₁ := rfl) (hgf₂ := rfl) =
-          D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
-            (by simpa using hf12_1) (by simpa using hf12_2) := by
-      have hq : p12 p ≫ q0 = q3 := rfl
-      simpa [φ] using
-        (D.pullHom_hom (g := p12 p) (q := q0) (q' := q3) (hq := hq)
-          (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
-          (hf₁ := by
-            simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
-          (hf₂ := by rfl)
-          (gf₁ := p12 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p) (hgf₁ := rfl) (hgf₂ := rfl))
-    simpa [hx12_pull] using hpull
-
-  have hx23 :
-      xi23 (F := F) p
-            (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
-                  (by rfl)
-                  (by
-                    simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
-        D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
-          (by simpa using hf23_1) (by simpa using hf12_1) := by
-    have hpull :
-        CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
-            (g := p23 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p2 p) (hgf₁ := rfl)
-            (hgf₂ := by simp) =
-          D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
-            (by simpa using hf23_1) (by simpa using hf12_1) := by
-      have hq : p23 p ≫ q0 = q3 := hq23
-      simpa [φ, hq] using
-        (D.pullHom_hom (g := p23 p) (q := q0) (q' := q3) (hq := hq)
-          (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
-          (hf₁ := by
-            simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
-          (hf₂ := by rfl)
-          (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p2 p) (hgf₁ := rfl)
-          (hgf₂ := by simp))
-    simpa [hx23_pull] using hpull
-
-  have hx13 :
-      xi13 (F := F) p
-            (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
-                  (by rfl)
-                  (by
-                    simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
-        D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p1 p)
-            (by simpa using hf23_1) (by simpa using hf12_2) := by
-    have hpull :
-        CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
-            (g := p13 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p)
-            (hgf₁ := by simp)
-            (hgf₂ := by simp) =
-          D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p1 p)
-            (by simpa using hf23_1) (by simpa using hf12_2) := by
-      have hq : p13 p ≫ q0 = q3 := hq13
-      simpa [φ, hq] using
-        (D.pullHom_hom (g := p13 p) (q := q0) (q' := q3) (hq := hq)
-          (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
-          (hf₁ := by
-            simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
-          (hf₂ := by rfl)
-          (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p)
-          (hgf₁ := by simp)
-          (hgf₂ := by simp))
-    simpa [hx13_pull] using hpull
-
   have hcomp :
       D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
             (by simpa using hf23_1) (by simpa using hf12_1) ≫
@@ -724,7 +639,79 @@ private lemma singleton_to_single_cocycle
             (by simpa using hf23_1) (by simpa using hf12_1) ≫
           D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
             (by simpa using hf12_1) (by simpa using hf12_2) := by
-      simp only [hx23, hx12]
+      have hx23 :
+          xi23 (F := F) p
+                (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
+                      (by rfl)
+                      (by
+                        simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
+            D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
+              (by simpa using hf23_1) (by simpa using hf12_1) := by
+        have hpull :
+            CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
+                (g := p23 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p2 p) (hgf₁ := rfl)
+                (hgf₂ := by simp) =
+              D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
+                (by simpa using hf23_1) (by simpa using hf12_1) := by
+          have hq : p23 p ≫ q0 = q3 := hq23
+          simpa [φ, hq] using
+            (D.pullHom_hom (g := p23 p) (q := q0) (q' := q3) (hq := hq)
+              (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
+              (hf₁ := by
+                simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
+              (hf₂ := by rfl)
+              (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p2 p) (hgf₁ := rfl)
+              (hgf₂ := by simp))
+        simpa [hx23_pull] using hpull
+      have hx12 :
+          xi12 (F := F) p
+                (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
+                      (by rfl)
+                      (by
+                        simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
+            D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
+              (by simpa using hf12_1) (by simpa using hf12_2) := by
+        have hpull :
+            CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
+                (g := p12 p) (gf₁ := p12 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p) (hgf₁ := rfl)
+                (hgf₂ := rfl) =
+              D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
+                (by simpa using hf12_1) (by simpa using hf12_2) := by
+          have hq : p12 p ≫ q0 = q3 := rfl
+          simpa [φ] using
+            (D.pullHom_hom (g := p12 p) (q := q0) (q' := q3) (hq := hq)
+              (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
+              (hf₁ := by
+                simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
+              (hf₂ := by rfl)
+              (gf₁ := p12 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p) (hgf₁ := rfl)
+              (hgf₂ := rfl))
+        simpa [hx12_pull] using hpull
+      calc
+        xi23 (F := F) p
+              (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
+                    (by rfl)
+                    (by
+                      simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom ≫
+            xi12 (F := F) p
+              (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
+                    (by rfl)
+                    (by
+                      simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom =
+          D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
+              (by simpa using hf23_1) (by simpa using hf12_1) ≫
+            xi12 (F := F) p
+              (D.iso (p1 p ≫ p) (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p1 p) (p2 p)
+                    (by rfl)
+                    (by
+                      simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom := by
+          rw [hx23]
+        _ =
+          D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p2 p)
+              (by simpa using hf23_1) (by simpa using hf12_1) ≫
+            D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p12 p ≫ p2 p) (p12 p ≫ p1 p)
+              (by simpa using hf12_1) (by simpa using hf12_2) := by
+          rw [hx12]
     _ =
         D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p1 p)
             (by simpa using hf23_1) (by simpa using hf12_2) := hcomp
@@ -734,7 +721,24 @@ private lemma singleton_to_single_cocycle
                 (by rfl)
                 (by
                   simpa using (p1_comp_p_eq_p2_comp_p p).symm)).symm.hom := by
-      simp only [hx13]
+      have hpull :
+          CategoryTheory.Pseudofunctor.LocallyDiscreteOpToCat.pullHom (F := F) (φ := φ)
+              (g := p13 p) (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p)
+              (hgf₁ := by simp)
+              (hgf₂ := by simp) =
+            D.hom q3 (i₁ := PUnit.unit) (i₂ := PUnit.unit) (p23 p ≫ p2 p) (p12 p ≫ p1 p)
+              (by simpa using hf23_1) (by simpa using hf12_2) := by
+        have hq : p13 p ≫ q0 = q3 := hq13
+        simpa [φ, hq] using
+          (D.pullHom_hom (g := p13 p) (q := q0) (q' := q3) (hq := hq)
+            (i₁ := PUnit.unit) (i₂ := PUnit.unit) (f₁ := p2 p) (f₂ := p1 p)
+            (hf₁ := by
+              simpa [q0] using (p1_comp_p_eq_p2_comp_p p).symm)
+            (hf₂ := by rfl)
+            (gf₁ := p23 p ≫ p2 p) (gf₂ := p12 p ≫ p1 p)
+            (hgf₁ := by simp)
+            (hgf₂ := by simp))
+      simpa [hx13_pull] using hpull.symm
 
 /-- Convert Mathlib's descent data for the singleton family to a single morphism descent datum. -/
 def singleton_to_single_descent_data
@@ -1056,8 +1060,6 @@ theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
   let e := single_singleton_descent_data_equiv (F := F) p
   let G := CategoryTheory.Pseudofunctor.single_morphism_comparison_functor (F := F) p
   let H := singleton_to_single_functor (F := F) p
-  have hH : H.FullyFaithful := by
-    simpa [H, e, single_singleton_descent_data_equiv] using e.fullyFaithfulInverse
   haveI : H.Faithful := by
     simpa [H, e, single_singleton_descent_data_equiv] using (show e.inverse.Faithful from inferInstance)
   refine ⟨fun ⟨hGH⟩ ↦ ?_, fun ⟨hG⟩ ↦ ?_⟩
@@ -1068,7 +1070,9 @@ theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
   ·
     refine ⟨?_⟩
     simpa [single_morphism_comparison_functor,
-      CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using hG.comp hH
+      CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using
+      hG.comp (by
+        simpa [H, e, single_singleton_descent_data_equiv] using e.fullyFaithfulInverse)
 
 theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     IsEffectiveDescentMorphism (F := F) p ↔
