@@ -95,22 +95,16 @@ structure InternalCategory where
               simpa [Category.assoc] using congrArg (fun k => π23 ≫ k) h_comp)
       let assocRight : assocObj ⟶ compObj :=
         Limits.pullback.lift (π12 ≫ Limits.pullback.fst dom cod) (π23 ≫ comp) (by
-          have h_assoc :
-              π12 ≫ Limits.pullback.snd dom cod =
-                π23 ≫ Limits.pullback.fst dom cod := by
-            simpa [Category.assoc] using
-              (Limits.pullback.condition (f := Limits.pullback.snd dom cod)
-                (g := Limits.pullback.fst dom cod))
-          have h_comp :
-              Limits.pullback.fst dom cod ≫ dom =
-                Limits.pullback.snd dom cod ≫ cod := by
-            simpa using (Limits.pullback.condition (f := dom) (g := cod))
           calc
             (π12 ≫ Limits.pullback.fst dom cod) ≫ dom =
                 (π12 ≫ Limits.pullback.snd dom cod) ≫ cod := by
-              simpa [Category.assoc] using congrArg (fun k => π12 ≫ k) h_comp
+              simpa [Category.assoc] using
+                congrArg (fun k => π12 ≫ k) (Limits.pullback.condition (f := dom) (g := cod))
             _ = (π23 ≫ Limits.pullback.fst dom cod) ≫ cod := by
-              simpa [Category.assoc] using congrArg (fun k => k ≫ cod) h_assoc
+              simpa [Category.assoc] using
+                congrArg (fun k => k ≫ cod)
+                  (Limits.pullback.condition (f := Limits.pullback.snd dom cod)
+                    (g := Limits.pullback.fst dom cod))
             _ = (π23 ≫ comp) ≫ cod := by
               simpa [Category.assoc] using congrArg (fun k => π23 ≫ k) comp_comp_cod.symm)
       assocLeft ≫ comp = assocRight ≫ comp

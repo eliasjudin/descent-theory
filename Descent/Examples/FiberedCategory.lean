@@ -37,8 +37,8 @@ example {T R S : C} (g : T ⟶ R) (f : R ⟶ S) (a : Fiber pA S) :
 
 example {S : C} (a : Fiber pA S) :
     (reindex_id_iso (pA := pA) a).hom.1 =
-      IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) := by
-  exact reindex_id_iso_hom_eq (pA := pA) a
+      IsPreFibered.pullbackMap (p := pA) a.2 (𝟙 S) :=
+  reindex_id_iso_hom_eq (pA := pA) a
 
 end
 
