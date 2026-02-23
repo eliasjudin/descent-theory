@@ -8,6 +8,9 @@ This document tracks how this repository is prepared for incremental upstreaming
 - Upstream-candidate core category-theory modules are isolated under `Descent/CategoryTheory/*`.
 - CI enforces warning hygiene, lint, style, regression builds, and full-module coverage
   through `lake build Descent.All`.
+- Regression examples are being kept import-lean (`Descent/Examples/BridgeSanity.lean`,
+  `Descent/Examples/SingletonEquiv.lean`) by targeting focused
+  `Descent/Pseudofunctor/Descent/CechDescentData/*` modules where possible.
 
 ## Upstream-candidate modules
 
@@ -24,6 +27,17 @@ These are valuable for the library but likely not first-wave upstream targets:
 - `Descent/FiberedCategory/Descent/SingleMorphismComparison.lean`
 - `Descent/Pseudofunctor/Descent/CechDescentData.lean`
 - `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean`
+
+`CechDescentDataEquiv` is retained as a compatibility aggregator.
+
+Current split for pseudofunctor single-morphism descent:
+
+- `Descent/Pseudofunctor/Descent/CechDescentData/Conversions.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Functors.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Equiv.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Comparison.lean`
+
+Prefer deep imports from the focused files above.
 
 ## Upstream checklist per module
 

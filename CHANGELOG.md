@@ -14,3 +14,10 @@ All notable changes to this project are documented in this file.
   `CONTRIBUTING.md`, `MATHLIB_INTEGRATION.md`, and this changelog.
 - Added `Descent.All` as a full-project import aggregator and wired CI/docs to build
   `Descent.All` explicitly for maintained-module coverage.
+- Reorganized regression examples to use focused pseudofunctor Čech descent imports.
+- Expanded bridge/singleton regression checks with additional convention and criteria sanity checks.
+- Split `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean` into focused modules under
+  `Descent/Pseudofunctor/Descent/CechDescentData/` and retained `CechDescentDataEquiv.lean` as
+  a compatibility aggregator.
+- Added fibered-side criteria bridge theorems in
+  `Descent/FiberedCategory/Descent/SingleMorphismComparison.lean`.

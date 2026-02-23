@@ -49,6 +49,9 @@ lake test
 ## Conventions
 
 - Prefer specific imports over broad imports.
+- For pseudofunctor Čech descent, prefer focused imports under
+  `Descent/Pseudofunctor/Descent/CechDescentData/*`; use
+  `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean` only for broad compatibility imports.
 - Keep module headers and module-level docstrings in every Lean file.
 - Keep warning output clean; only tracked temporary `sorry`s are allowed by CI.
 - Treat edits touching `[simp]` attributes, instances, syntax/macros, priorities,
@@ -67,9 +70,18 @@ lake test
 - `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.
 - `Descent/FiberedCategory/Descent/PseudofunctorEquiv.lean`: bridge between fibered-category
   descent data and pseudofunctor Čech descent data for the pseudofunctor of fibers.
+- `Descent/FiberedCategory/Descent/SingleMorphismComparison.lean`: fibered comparison functor and
+  singleton-criteria bridge theorems.
 - `Descent/Pseudofunctor/`: reindexing for pseudofunctors and single-morphism descent data.
-- `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean`: comparison with Mathlib’s
-  singleton-cover descent data.
+- `Descent/Pseudofunctor/Descent/CechDescentData/Conversions.lean`: single↔singleton data
+  conversions and morphism transport.
+- `Descent/Pseudofunctor/Descent/CechDescentData/Functors.lean`: conversion functors.
+- `Descent/Pseudofunctor/Descent/CechDescentData/Equiv.lean`: singleton equivalence.
+- `Descent/Pseudofunctor/Descent/CechDescentData/Comparison.lean`: single-morphism comparison
+  functor and descent/effective-descent criteria.
+- `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean`: compatibility aggregator.
+- `Descent/Examples/BridgeSanity.lean` and `Descent/Examples/SingletonEquiv.lean`: regression
+  checks.
 
 ## Related references
 
