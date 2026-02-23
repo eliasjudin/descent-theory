@@ -4,13 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Elias Judin
 -/
 
-import Descent.Pseudofunctor.Descent.CechDescentDataEquiv
+import Descent.Pseudofunctor.Descent.CechDescentData.Equiv
 
 /-!
 # Examples: singleton-cover equivalence
 
-This file exercises the equivalence between Čech-style descent data along `p : E ⟶ B` and
-Mathlib's singleton-family descent data.
+Regression checks for the singleton-cover equivalence.
 -/
 
 open CategoryTheory
@@ -35,9 +34,7 @@ noncomputable example :
 /-!
 ## Direction sanity checks
 
-These are lightweight checks that pin down the direction conventions used in the singleton-family
-comparison: our Čech gluing morphism is `π₂^* ⟶ π₁^*`, while Mathlib’s `DescentData.hom` uses the
-opposite direction; the equivalence compensates for this via `inv`/`symm`.
+Checks for the direction conventions used by the conversion/equivalence.
 -/
 
 example (D : CechDescentData (F := F) p) :

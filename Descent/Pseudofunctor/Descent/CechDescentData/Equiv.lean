@@ -27,11 +27,8 @@ variable (F : Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v', u'})
 noncomputable section
 
 variable {E B : C} (p : E ⟶ B)
-/-!
-## Equivalence
--/
 
-/-- The unit of the equivalence: `D ≅ singletonToSingle (singleToSingleton D)`. -/
+/-- Unit isomorphism for the single/singleton conversion functors. -/
 def single_singleton_unit (D : CechDescentData (F := F) p) :
     D ≅ (single_to_singleton_functor F p ⋙ singleton_to_single_functor F p).obj D where
   hom := ⟨𝟙 D.obj, by
@@ -93,7 +90,7 @@ private lemma singleton_to_single_pullHom_hom
       (hgf₁ := hgf₁)
       (hgf₂ := hgf₂))
 
-/-- The counit of the equivalence: `singleToSingleton (singletonToSingle D) ≅ D`. -/
+/-- Counit isomorphism for the single/singleton conversion functors. -/
 def single_singleton_counit
     (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
     (singleton_to_single_functor F p ⋙ single_to_singleton_functor F p).obj D ≅ D where
@@ -190,8 +187,7 @@ def single_singleton_counit
     cases i
     simp
 
-/-- The equivalence between single-morphism descent data and Mathlib's descent data
-for the singleton family. -/
+/-- Equivalence between single-morphism and singleton-family descent data. -/
 def single_singleton_descent_data_equiv :
     CechDescentData (F := F) p ≌
       CategoryTheory.Pseudofunctor.DescentData (F := F) (f := fun _ : PUnit.{1} ↦ p) where

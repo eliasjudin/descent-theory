@@ -5,17 +5,14 @@ Authors: Elias Judin
 -/
 
 import Descent.FiberedCategory.Descent.PseudofunctorEquiv
-import Descent.Pseudofunctor.Descent.CechDescentDataEquiv
+import Descent.FiberedCategory.Descent.SingleMorphismComparison
+import Descent.Pseudofunctor.Descent.CechDescentData
+import Descent.Pseudofunctor.Descent.CechDescentData.Equiv
 
 /-!
 # Examples: bridge sanity checks
 
-This file contains low-level sanity checks for the bridge between fibered-category single-morphism
-descent data and pseudofunctor Čech descent data for the pseudofunctor of fibers.
-
-These tests aim to detect convention mismatches (e.g. swapped projections or reversed cocycle
-convention) via definitional equalities and `simp`, without relying on the (currently partial)
-equivalence packaging in `single_cech_descent_data_equiv`.
+Low-level checks for the bridge between fibered and pseudofunctor descent data.
 -/
 
 open CategoryTheory
@@ -60,8 +57,6 @@ example (D : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)) p
 
 /-!
 ## Round-trip checks (on `.obj` and `.ξ`)
-
-These avoid any use of the (currently partial) `≌` data.
 -/
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
@@ -104,9 +99,6 @@ example {D D' : Descent.Pseudofunctor.Descent.CechDescentData (F := F (pA := pA)
 
 /-!
 ## Comparison isomorphisms: fibered vs. pseudofunctor
-
-For the pseudofunctor of fibers, the canonical comparison isomorphism `ξ` on `p^* a` should
-definitionally agree with the fibered-category construction.
 -/
 
 example (a : Fiber pA B) :
@@ -119,10 +111,7 @@ by
     CategoryTheory.FiberedCategory.pseudofunctor_of_fibers, CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 /-!
-## Compatibility of the induced morphisms on triple overlaps
-
-For the pseudofunctor of fibers, the induced morphisms `xi12/xi23/xi13` should reduce to the
-fibered-category ones (this catches swapped-projection or cocycle-convention mistakes).
+## Compatibility of induced morphisms on triple overlaps
 -/
 
 example {C₀ : Fiber pA E}
@@ -156,7 +145,7 @@ example {C₀ : Fiber pA E}
     CategoryTheory.pseudofunctorOfIsLocallyDiscrete]
 
 /-!
-## Compatibility with Mathlib's singleton-family descent data (object component)
+## Compatibility with singleton-family descent data (object component)
 -/
 
 example (D : SingleMorphismDescentData (pA := pA) p) :
@@ -164,6 +153,36 @@ example (D : SingleMorphismDescentData (pA := pA) p) :
           (single_to_cech_descent_data (pA := pA) p D)).obj PUnit.unit =
       D.obj :=
   rfl
+
+/-!
+## Fibered ↔ pseudofunctor criteria checks
+-/
+
+example :
+    IsDescentMorphism (pA := pA) p ↔
+      Descent.Pseudofunctor.Descent.IsDescentMorphism (F := F (pA := pA)) p := by
+  simpa using
+    (is_descent_morphism_iff_pseudofunctor_is_descent_morphism (pA := pA) (p := p))
+
+example :
+    IsEffectiveDescentMorphism (pA := pA) p ↔
+      Descent.Pseudofunctor.Descent.IsEffectiveDescentMorphism (F := F (pA := pA)) p := by
+  simpa using
+    (is_effective_descent_morphism_iff_pseudofunctor_is_effective_descent_morphism
+      (pA := pA) (p := p))
+
+example :
+    CategoryTheory.Pseudofunctor.IsPrestackFor (F := F (pA := pA))
+      (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        IsDescentMorphism (pA := pA) p := by
+  simpa using (is_prestack_for_singleton_iff_descent_morphism (pA := pA) (p := p))
+
+example :
+    CategoryTheory.Pseudofunctor.IsStackFor (F := F (pA := pA))
+      (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        IsEffectiveDescentMorphism (pA := pA) p := by
+  simpa using
+    (is_stack_for_singleton_iff_effective_descent_morphism (pA := pA) (p := p))
 
 end
 

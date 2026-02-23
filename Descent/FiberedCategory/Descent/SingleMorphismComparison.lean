@@ -5,7 +5,7 @@ Authors: Elias Judin
 -/
 
 import Descent.FiberedCategory.Descent.PseudofunctorEquiv
-import Descent.Pseudofunctor.Descent.CechDescentDataEquiv
+import Descent.Pseudofunctor.Descent.CechDescentData.Comparison
 
 /-!
 # The comparison functor for fibered-category descent data
@@ -64,6 +64,68 @@ abbrev IsDescentMorphism : Prop :=
 /-- `p` is an effective descent morphism for `pA` if `Φₚ` is an equivalence. -/
 abbrev IsEffectiveDescentMorphism : Prop :=
   (single_morphism_comparison_functor (pA := pA) p).IsEquivalence
+
+theorem is_descent_morphism_iff_pseudofunctor_is_descent_morphism :
+    IsDescentMorphism (pA := pA) p ↔
+      Descent.Pseudofunctor.Descent.IsDescentMorphism (F := fibers_pseudofunctor (pA := pA)) p := by
+  let e := single_cech_descent_data_equiv (pA := pA) p
+  let G := Descent.Pseudofunctor.Descent.single_morphism_comparison_functor
+    (F := fibers_pseudofunctor (pA := pA)) p
+  let H := cech_to_single_functor (pA := pA) (p := p)
+  haveI : H.Faithful := by
+    simpa [H, e, single_cech_descent_data_equiv] using (show e.inverse.Faithful from inferInstance)
+  refine ⟨fun ⟨hGH⟩ ↦ ?_, fun ⟨hG⟩ ↦ ?_⟩
+  ·
+    refine ⟨CategoryTheory.Functor.FullyFaithful.ofCompFaithful (F := G) (G := H) ?_⟩
+    simpa [single_morphism_comparison_functor,
+      Descent.Pseudofunctor.Descent.single_morphism_comparison_functor, G, H] using hGH
+  ·
+    refine ⟨?_⟩
+    simpa [single_morphism_comparison_functor,
+      Descent.Pseudofunctor.Descent.single_morphism_comparison_functor, G, H] using
+      hG.comp (by
+        simpa [H, e, single_cech_descent_data_equiv] using e.fullyFaithfulInverse)
+
+theorem is_effective_descent_morphism_iff_pseudofunctor_is_effective_descent_morphism :
+    IsEffectiveDescentMorphism (pA := pA) p ↔
+      Descent.Pseudofunctor.Descent.IsEffectiveDescentMorphism (F := fibers_pseudofunctor (pA := pA)) p := by
+  let e := single_cech_descent_data_equiv (pA := pA) p
+  let G := Descent.Pseudofunctor.Descent.single_morphism_comparison_functor
+    (F := fibers_pseudofunctor (pA := pA)) p
+  let H := cech_to_single_functor (pA := pA) (p := p)
+  haveI : H.IsEquivalence := by
+    simpa [H, e, single_cech_descent_data_equiv] using (show e.inverse.IsEquivalence from inferInstance)
+  refine ⟨fun hGH ↦ ?_, fun hG ↦ ?_⟩
+  ·
+    have : (G ⋙ H).IsEquivalence := by
+      simpa [single_morphism_comparison_functor,
+        Descent.Pseudofunctor.Descent.single_morphism_comparison_functor, G, H] using hGH
+    haveI : (G ⋙ H).IsEquivalence := this
+    exact CategoryTheory.Functor.isEquivalence_of_comp_right G H
+  ·
+    haveI : G.IsEquivalence := hG
+    have : (G ⋙ H).IsEquivalence := by infer_instance
+    simpa [single_morphism_comparison_functor,
+      Descent.Pseudofunctor.Descent.single_morphism_comparison_functor, G, H] using this
+
+theorem is_prestack_for_singleton_iff_descent_morphism :
+    CategoryTheory.Pseudofunctor.IsPrestackFor (F := fibers_pseudofunctor (pA := pA))
+      (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        IsDescentMorphism (pA := pA) p := by
+  let h₁ := is_descent_morphism_iff_pseudofunctor_is_descent_morphism (pA := pA) (p := p)
+  let h₂ := Descent.Pseudofunctor.Descent.is_prestack_for_singleton_iff_descent_morphism
+    (F := fibers_pseudofunctor (pA := pA)) (p := p)
+  exact h₂.trans h₁.symm
+
+theorem is_stack_for_singleton_iff_effective_descent_morphism :
+    CategoryTheory.Pseudofunctor.IsStackFor (F := fibers_pseudofunctor (pA := pA))
+      (S := B) (CategoryTheory.Presieve.singleton p) ↔
+        IsEffectiveDescentMorphism (pA := pA) p := by
+  let h₁ := is_effective_descent_morphism_iff_pseudofunctor_is_effective_descent_morphism
+    (pA := pA) (p := p)
+  let h₂ := Descent.Pseudofunctor.Descent.is_stack_for_singleton_iff_effective_descent_morphism
+    (F := fibers_pseudofunctor (pA := pA)) (p := p)
+  exact h₂.trans h₁.symm
 
 end HasPullbacks
 

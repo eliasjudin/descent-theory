@@ -7,7 +7,7 @@ Authors: Elias Judin
 import Descent.Pseudofunctor.Descent.CechDescentData.Conversions
 
 /-!
-# Functors between singleton and Čech descent data
+# Functors between single and singleton descent data
 -/
 
 open CategoryTheory
@@ -27,11 +27,8 @@ variable (F : Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v', u'})
 noncomputable section
 
 variable {E B : C} (p : E ⟶ B)
-/-!
-## Functors
--/
 
-/-- The functor from single-morphism descent data to mathlib descent data. -/
+/-- Single-to-singleton descent-data functor. -/
 def single_to_singleton_functor :
     CechDescentData (F := F) p ⥤
       CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) where
@@ -47,7 +44,7 @@ def single_to_singleton_functor :
     simp [single_to_singleton_hom, single_to_singleton_descent_data,
       CategoryTheory.Pseudofunctor.DescentData.comp_hom, CechDescentData.instCategory]
 
-/-- The functor from mathlib descent data to single-morphism descent data. -/
+/-- Singleton-to-single descent-data functor. -/
 def singleton_to_single_functor :
     CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) ⥤
       CechDescentData (F := F) p where

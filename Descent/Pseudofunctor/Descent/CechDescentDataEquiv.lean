@@ -12,7 +12,5 @@ import Descent.Pseudofunctor.Descent.CechDescentData.Comparison
 /-!
 # Equivalence with Mathlib's descent data
 
-Aggregator module for singleton-cover comparison and descent criteria.
-Prefer importing one of the focused modules under
-`Descent.Pseudofunctor.Descent.CechDescentData.*` when possible.
+Compatibility aggregator for singleton-cover conversion and criteria modules.
 -/

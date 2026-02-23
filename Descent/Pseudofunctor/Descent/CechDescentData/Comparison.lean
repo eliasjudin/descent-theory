@@ -9,8 +9,7 @@ import Descent.Pseudofunctor.Descent.CechDescentData.Equiv
 /-!
 # Descent criteria for a single morphism
 
-This file packages the comparison functor and descent/effective-descent criteria,
-including the singleton-cover prestack/stack equivalences.
+Comparison functor and singleton-cover descent criteria.
 -/
 
 open CategoryTheory
@@ -30,39 +29,22 @@ variable (F : Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v', u'})
 noncomputable section
 
 variable {E B : C} (p : E ⟶ B)
-/-- The comparison functor `Φₚ : F(B) ⥤ Des_F(p)` from the paper (Facets of Descent II, §3.2),
-landing in the Čech-style descent data defined in `CechDescentData.lean`.
-
-It is defined as `CategoryTheory.Pseudofunctor.single_morphism_comparison_functor` for the
-singleton family, followed by the (inverse) functor
-from Mathlib's descent data to our Čech-style descent data. -/
+/-- Comparison functor landing in `CechDescentData`. -/
 noncomputable def single_morphism_comparison_functor :
     F.obj (.mk (op B)) ⥤ CechDescentData (F := F) p :=
   (CategoryTheory.Pseudofunctor.single_morphism_comparison_functor (F := F) p) ⋙
     singleton_to_single_functor (F := F) p
 
-/-- `p` is a descent morphism for `F` if the comparison functor `Φₚ` is fully faithful
-(Facets of Descent II, §3.2). -/
+/-- `p` is a descent morphism for `F` when the comparison functor is fully faithful. -/
 abbrev IsDescentMorphism : Prop :=
   Nonempty (single_morphism_comparison_functor (F := F) p).FullyFaithful
 
-/-- `p` is an effective descent morphism for `F` if the comparison functor `Φₚ` is an equivalence
-of categories (Facets of Descent II, §3.2). -/
+/-- `p` is an effective descent morphism for `F` when the comparison functor is an equivalence. -/
 abbrev IsEffectiveDescentMorphism : Prop :=
   (single_morphism_comparison_functor (F := F) p).IsEquivalence
 
 /-!
 ## Relation with Mathlib's `IsPrestackFor`/`IsStackFor` for `Presieve.singleton p`
-
-Mathlib’s descent theory is formulated for arbitrary presieves `R` via the functor
-`F.toDescentData (fun (f : R.category) ↦ f.obj.hom)`. In the singleton case, the presieve
-`Presieve.singleton p` is (definitionally) the same as `Presieve.ofArrows _ (fun _ : PUnit.{1} ↦ p)`,
-see `CategoryTheory.Presieve.ofArrows_pUnit`.
-
-The functor `single_morphism_comparison_functor` differs from
-`CategoryTheory.Pseudofunctor.single_morphism_comparison_functor` only by postcomposition with the
-(inverse) equivalence `singleton_to_single_functor`, so it has the same “fully faithful” and “is
-equivalence” properties.
 -/
 
 theorem is_descent_morphism_iff_to_descent_data_fully_faithful :

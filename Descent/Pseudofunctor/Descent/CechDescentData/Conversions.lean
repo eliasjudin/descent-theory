@@ -10,8 +10,7 @@ import Descent.CategoryTheory.Sites.Descent.SingleMorphism
 /-!
 # Singleton-cover conversions for Čech descent data
 
-This file contains the conversion layer between
-`CechDescentData (F := F) p` and Mathlib's singleton-family
+Conversions between `CechDescentData (F := F) p` and singleton-family
 `CategoryTheory.Pseudofunctor.DescentData`.
 -/
 
@@ -36,11 +35,7 @@ variable {E B : C} (p : E ⟶ B)
 ## Helper: pulling back the Čech gluing isomorphism
 -/
 
-/-- Given Čech-style descent data `D` for `p : E ⟶ B`, this is the induced morphism
-`f₁^* D.obj ⟶ f₂^* D.obj` for any `f₁ f₂ : Y ⟶ E` with `f₁ ≫ p = f₂ ≫ p`.
-
-We define it by pulling back `inv D.ξ : π₁^* D.obj ⟶ π₂^* D.obj` along the canonical
-map `Y ⟶ E ×_B E`. -/
+/-- Induced map between pullbacks along `f₁ f₂ : Y ⟶ E` with `f₁ ≫ p = f₂ ≫ p`. -/
 def single_to_singleton_hom_aux (D : CechDescentData (F := F) p) {Y : C} (f₁ f₂ : Y ⟶ E)
     (h : f₁ ≫ p = f₂ ≫ p) :
     (F.map f₁.op.toLoc).toFunctor.obj D.obj ⟶ (F.map f₂.op.toLoc).toFunctor.obj D.obj := by
@@ -305,16 +300,12 @@ private lemma single_to_singleton_hom_aux_comm {D₁ D₂ : CechDescentData (F :
 ## Forward direction: Single → Singleton
 -/
 
-  /-- Convert a single morphism descent datum to Mathlib's descent data for the singleton family.
-
-The key mapping:
-- `obj ()` := `D.obj`
-- `hom q f₁ f₂` at Y mapping to E comes from `D.ξ` transported appropriately -/
+/-- Convert single-morphism descent data to singleton-family descent data. -/
 def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
     CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p)) where
   obj := fun _ => D.obj
   hom := fun {Y} q {i₁ i₂} f₁ f₂ hf₁ hf₂ => by
-    cases i₁; cases i₂ -- Both are PUnit.unit
+    cases i₁; cases i₂
     have h : f₁ ≫ p = f₂ ≫ p := by
       rw [hf₁, hf₂]
     exact single_to_singleton_hom_aux (F := F) p D f₁ f₂ h
@@ -362,9 +353,6 @@ def single_to_singleton_descent_data (D : CechDescentData (F := F) p) :
 
 /-!
 ## Helper: transport for `DescentData.hom`
-
-`simp` does not rewrite inside the dependent expression `D.hom q f₁ f₂`, since its type depends on
-`f₁` and `f₂`. We use the standard `eqToHom` transports instead.
 -/
 
 omit [Limits.HasPullbacks C] in
@@ -739,7 +727,7 @@ private lemma singleton_to_single_cocycle
             (hgf₂ := by simp))
       simpa [hx13_pull] using hpull.symm
 
-/-- Convert Mathlib's descent data for the singleton family to a single morphism descent datum. -/
+/-- Convert singleton-family descent data to single-morphism Čech descent data. -/
 def singleton_to_single_descent_data
     (D : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))) :
     CechDescentData (F := F) p where
@@ -758,7 +746,7 @@ def singleton_to_single_descent_data
 ## Morphisms
 -/
 
-/-- Convert a morphism of single-morphism descent data to a morphism of mathlib descent data. -/
+/-- Convert a morphism of single-morphism descent data to singleton-family descent data. -/
 def single_to_singleton_hom {D₁ D₂ : CechDescentData (F := F) p}
     (f : D₁ ⟶ D₂) :
     single_to_singleton_descent_data F p D₁ ⟶ single_to_singleton_descent_data F p D₂ where
@@ -770,7 +758,7 @@ def single_to_singleton_hom {D₁ D₂ : CechDescentData (F := F) p}
       rw [hg₁, hg₂]
     simpa using (single_to_singleton_hom_aux_comm (F := F) p f g₁ g₂ h)
 
-/-- Convert a morphism of mathlib descent data to a morphism of single-morphism descent data. -/
+/-- Convert a morphism of singleton-family descent data to single-morphism descent data. -/
 def singleton_to_single_hom
     {D₁ D₂ : CategoryTheory.Pseudofunctor.DescentData (F := F) (f := (fun _ : PUnit.{1} ↦ p))}
     (f : D₁ ⟶ D₂) :
