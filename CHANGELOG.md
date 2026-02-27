@@ -21,3 +21,6 @@ All notable changes to this project are documented in this file.
   a compatibility aggregator.
 - Added fibered-side criteria bridge theorems in
   `Descent/FiberedCategory/Descent/SingleMorphismComparison.lean`.
+- Added `Descent/API.lean` as the canonical downstream API aggregator, and aligned public docs
+  with the `Descent` (core), `Descent.API` (consumer API), `Descent.All` (maintenance coverage)
+  import split.

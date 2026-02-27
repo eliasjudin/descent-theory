@@ -13,4 +13,8 @@ import Descent.Pseudofunctor.Descent.CechDescentData.Comparison
 # Equivalence with Mathlib's descent data
 
 Compatibility aggregator for singleton-cover conversion and criteria modules.
+
+For granular imports, prefer the focused files under
+`Descent/Pseudofunctor/Descent/CechDescentData/*`.
+For a broad consumer-facing import surface, prefer `Descent.API`.
 -/

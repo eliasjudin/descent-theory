@@ -17,6 +17,9 @@ The library develops Čech-style descent along a single morphism `p : E ⟶ B`, 
 fibered categories (`pA : 𝒜 ⥤ C` with `pA.IsFibered`) and for pseudofunctors
 (`F : LocallyDiscrete Cᵒᵖ ⥤ᵖ Cat`).
 
+`Descent` is the minimal core entry point. For the canonical downstream API surface
+that also includes bridge/equivalence compatibility modules, import `Descent.API`.
+
 For the Čech groupoid `Eq(p)`, import `Descent.Cech.Eq`.
 
 To relate the Čech-style pseudofunctor descent data to Mathlib's

@@ -18,6 +18,12 @@ lake exe lint-style Descent
 lake test
 ```
 
+For a quick downstream surface smoke check, run:
+
+```bash
+lake build Descent.API
+```
+
 ## High-risk Lean edits
 
 Treat these as high-risk and run the full loop above:
@@ -40,8 +46,8 @@ CI also runs targeted builds when high-risk patterns are detected by `scripts/ci
 
 - Keep imports as narrow as practical.
 - Include module docstrings and declaration docstrings for nontrivial API.
-- Prefer stable entry points (`Descent.lean`, `Descent/FiberedCategory.lean`, `Descent/Pseudofunctor.lean`)
-  over deep module imports in downstream code.
+- Prefer stable entry points (`Descent.API`, `Descent.lean`, `Descent/FiberedCategory.lean`,
+  `Descent/Pseudofunctor.lean`) over deep module imports in downstream code.
 
 ## Pull request checklist
 

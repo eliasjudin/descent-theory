@@ -65,6 +65,8 @@ abbrev IsDescentMorphism : Prop :=
 abbrev IsEffectiveDescentMorphism : Prop :=
   (single_morphism_comparison_functor (pA := pA) p).IsEquivalence
 
+/-- Fibered-category `IsDescentMorphism` is equivalent to pseudofunctor
+`IsDescentMorphism` for the pseudofunctor of fibers. -/
 theorem is_descent_morphism_iff_pseudofunctor_is_descent_morphism :
     IsDescentMorphism (pA := pA) p ↔
       Descent.Pseudofunctor.Descent.IsDescentMorphism (F := fibers_pseudofunctor (pA := pA)) p := by
@@ -86,6 +88,8 @@ theorem is_descent_morphism_iff_pseudofunctor_is_descent_morphism :
       hG.comp (by
         simpa [H, e, single_cech_descent_data_equiv] using e.fullyFaithfulInverse)
 
+/-- Fibered-category `IsEffectiveDescentMorphism` is equivalent to pseudofunctor
+`IsEffectiveDescentMorphism` for the pseudofunctor of fibers. -/
 theorem is_effective_descent_morphism_iff_pseudofunctor_is_effective_descent_morphism :
     IsEffectiveDescentMorphism (pA := pA) p ↔
       Descent.Pseudofunctor.Descent.IsEffectiveDescentMorphism (F := fibers_pseudofunctor (pA := pA)) p := by
@@ -108,6 +112,8 @@ theorem is_effective_descent_morphism_iff_pseudofunctor_is_effective_descent_mor
     simpa [single_morphism_comparison_functor,
       Descent.Pseudofunctor.Descent.single_morphism_comparison_functor, G, H] using this
 
+/-- Fibered prestackness for `Presieve.singleton p` is equivalent to
+`IsDescentMorphism (pA := pA) p`. -/
 theorem is_prestack_for_singleton_iff_descent_morphism :
     CategoryTheory.Pseudofunctor.IsPrestackFor (F := fibers_pseudofunctor (pA := pA))
       (S := B) (CategoryTheory.Presieve.singleton p) ↔
@@ -117,6 +123,8 @@ theorem is_prestack_for_singleton_iff_descent_morphism :
     (F := fibers_pseudofunctor (pA := pA)) (p := p)
   exact h₂.trans h₁.symm
 
+/-- Fibered stackness for `Presieve.singleton p` is equivalent to
+`IsEffectiveDescentMorphism (pA := pA) p`. -/
 theorem is_stack_for_singleton_iff_effective_descent_morphism :
     CategoryTheory.Pseudofunctor.IsStackFor (F := fibers_pseudofunctor (pA := pA))
       (S := B) (CategoryTheory.Presieve.singleton p) ↔

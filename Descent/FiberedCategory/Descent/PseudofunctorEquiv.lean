@@ -52,6 +52,7 @@ abbrev fibers_pseudofunctor :
     Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v, w} :=
   CategoryTheory.FiberedCategory.pseudofunctor_of_fibers (pA := pA)
 
+/-- Reindexing for `fibers_pseudofunctor` is definitionally the same as fibered reindexing. -/
 @[simp]
 lemma fibers_pseudofunctor_reindex {R S : C} (f : R ⟶ S) :
     Descent.Pseudofunctor.reindex (F := fibers_pseudofunctor (pA := pA)) f =

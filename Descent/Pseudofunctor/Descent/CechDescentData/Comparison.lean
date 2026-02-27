@@ -47,6 +47,8 @@ abbrev IsEffectiveDescentMorphism : Prop :=
 ## Relation with Mathlib's `IsPrestackFor`/`IsStackFor` for `Presieve.singleton p`
 -/
 
+/-- The Čech-style comparison functor is fully faithful exactly when Mathlib's
+singleton-family comparison functor is fully faithful. -/
 theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
     IsDescentMorphism (F := F) p ↔
       Nonempty (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).FullyFaithful := by
@@ -67,6 +69,8 @@ theorem is_descent_morphism_iff_to_descent_data_fully_faithful :
       hG.comp (by
         simpa [H, e, single_singleton_descent_data_equiv] using e.fullyFaithfulInverse)
 
+/-- The Čech-style comparison functor is an equivalence exactly when Mathlib's
+singleton-family comparison functor is an equivalence. -/
 theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     IsEffectiveDescentMorphism (F := F) p ↔
       (CategoryTheory.Pseudofunctor.toDescentData (F := F) (f := fun _ : PUnit.{1} ↦ p)).IsEquivalence := by
@@ -88,6 +92,8 @@ theorem is_effective_descent_morphism_iff_to_descent_data_equivalence :
     simpa [single_morphism_comparison_functor,
       CategoryTheory.Pseudofunctor.single_morphism_comparison_functor, G, H] using this
 
+/-- `IsPrestackFor` for `Presieve.singleton p` is equivalent to `IsDescentMorphism` in the
+Čech single-morphism formulation. -/
 theorem is_prestack_for_singleton_iff_descent_morphism :
     CategoryTheory.Pseudofunctor.IsPrestackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
       IsDescentMorphism (F := F) p := by
@@ -106,6 +112,8 @@ theorem is_prestack_for_singleton_iff_descent_morphism :
   · exact hd.2 (h.1 hstack)
   · exact h.2 (hd.1 hdesc)
 
+/-- `IsStackFor` for `Presieve.singleton p` is equivalent to `IsEffectiveDescentMorphism` in the
+Čech single-morphism formulation. -/
 theorem is_stack_for_singleton_iff_effective_descent_morphism :
     CategoryTheory.Pseudofunctor.IsStackFor (F := F) (S := B) (CategoryTheory.Presieve.singleton p) ↔
       IsEffectiveDescentMorphism (F := F) p := by

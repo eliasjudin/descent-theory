@@ -24,12 +24,12 @@ This repository is now structured for public collaboration:
 - CI enforces `lake build`, `lake build Descent.All`, `lake lint`, `lake exe lint-style Descent`,
   and `lake test`.
 - Warning hygiene is gated, with an explicit `SORRY_TRACKER.md` allowlist policy.
-- Descent APIs are exposed through stable entry points (`Descent.lean`, `Descent/FiberedCategory.lean`,
-  `Descent/Pseudofunctor.lean`).
+- Descent APIs are exposed through stable entry points (`Descent.API`, `Descent.lean`,
+  `Descent/FiberedCategory.lean`, `Descent/Pseudofunctor.lean`).
 - Full project compilation coverage is exposed via `Descent.All`.
 
-If you are looking for the main entry point, start with `Descent.lean` and then follow imports into
-`Descent/`.
+For most downstream users, import `Descent.API`.
+Use `Descent.lean` when you want only the core single-morphism API without compatibility aggregators.
 
 ## Local quality loop
 
@@ -49,6 +49,7 @@ lake test
 ## Conventions
 
 - Prefer specific imports over broad imports.
+- For broad downstream use, prefer `Descent.API`.
 - For pseudofunctor Čech descent, prefer focused imports under
   `Descent/Pseudofunctor/Descent/CechDescentData/*`; use
   `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean` only for broad compatibility imports.
@@ -65,6 +66,7 @@ lake test
 
 ## Project layout
 
+- `Descent/API.lean`: canonical consumer-facing API aggregator.
 - `Descent/All.lean`: full-project import aggregator used by CI for maintained-module coverage.
 - `Descent/Cech.lean`: Čech kernel pair and triple-overlap conventions.
 - `Descent/FiberedCategory/`: reindexing on fibers and single-morphism descent data.

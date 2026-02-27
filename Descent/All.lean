@@ -5,6 +5,7 @@ Authors: Elias Judin
 -/
 
 import Descent
+import Descent.API
 import Descent.Cech.Eq
 import Descent.CategoryTheory.FiberedCategory.PseudofunctorOfFibers
 import Descent.CategoryTheory.InternalCategory.Basic
@@ -16,7 +17,8 @@ import Descent.Test
 /-!
 # Full project aggregator
 
-`Descent.All` imports the full public library, examples/regression modules, and the
+`Descent.All` imports the full public library (including `Descent.API`), examples/regression
+modules, and the
 upstream-candidate category-theory modules that are not necessarily reached by the default
 `Descent` target.
 
