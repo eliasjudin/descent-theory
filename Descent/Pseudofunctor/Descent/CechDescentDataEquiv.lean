@@ -16,5 +16,5 @@ Compatibility aggregator for singleton-cover conversion and criteria modules.
 
 For granular imports, prefer the focused files under
 `Descent/Pseudofunctor/Descent/CechDescentData/*`.
-For a broad consumer-facing import surface, prefer `Descent.API`.
+For a broad user-facing import surface, prefer `Descent`.
 -/

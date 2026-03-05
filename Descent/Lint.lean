@@ -5,19 +5,15 @@ Authors: Elias Judin
 -/
 
 import Descent
-import Descent.Cech.Eq
-import Descent.FiberedCategory.Descent.PseudofunctorEquiv
-import Descent.Pseudofunctor.Descent.CechDescentDataEquiv
 
 /-!
 # Lint
 
-This module is intended to be built in CI to enforce Mathlib-style linter expectations for
-the `Descent` package.
+This module is intended to be built in CI to enforce mathlib-style linter expectations for the
+`Descent` package.
 
-We keep `Descent.lean` as a minimal entry point. In contrast, this lint module explicitly
-imports heavier/bridge modules (e.g. `Eq(p)` and the singleton-cover equivalence) so that the
-linters see the whole library.
+`Descent.lean` is the public umbrella for the user-facing library, so importing `Descent` here is
+enough to lint the exposed API surface.
 -/
 
 #lint in Descent

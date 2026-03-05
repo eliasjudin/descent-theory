@@ -12,15 +12,18 @@ All notable changes to this project are documented in this file.
   `CategoryTheory.Pseudofunctor.single_morphism_comparison_functor`.
 - Added project release/integration documentation:
   `CONTRIBUTING.md`, `MATHLIB_INTEGRATION.md`, and this changelog.
-- Added `Descent.All` as a full-project import aggregator and wired CI/docs to build
-  `Descent.All` explicitly for maintained-module coverage.
 - Reorganized regression examples to use focused pseudofunctor Čech descent imports.
 - Expanded bridge/singleton regression checks with additional convention and criteria sanity checks.
 - Split `Descent/Pseudofunctor/Descent/CechDescentDataEquiv.lean` into focused modules under
   `Descent/Pseudofunctor/Descent/CechDescentData/` and retained `CechDescentDataEquiv.lean` as
   a compatibility aggregator.
+- Split fibered reindexing and singleton-cover conversion internals into focused submodules under
+  `Descent/CategoryTheory/FiberedCategory/Reindexing/` and
+  `Descent/Pseudofunctor/Descent/CechDescentData/Conversions/`, while preserving the stable
+  `Reindexing.lean` and `Conversions.lean` umbrellas.
 - Added fibered-side criteria bridge theorems in
   `Descent/FiberedCategory/Descent/SingleMorphismComparison.lean`.
-- Added `Descent/API.lean` as the canonical downstream API aggregator, and aligned public docs
-  with the `Descent` (core), `Descent.API` (consumer API), `Descent.All` (maintenance coverage)
-  import split.
+- Aligned package organization with mathlib-style root/topic modules by making `Descent.lean` the
+  user-facing umbrella, removing the repository-wide `Descent/API.lean` and `Descent/All.lean`
+  aggregators, keeping regression wiring in `DescentTestDriver.lean` with direct example imports,
+  and updating CI/docs accordingly.

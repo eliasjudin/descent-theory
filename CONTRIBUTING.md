@@ -12,16 +12,16 @@ Run the same checks as CI before opening a PR:
 
 ```bash
 lake build
-lake build Descent.All
+lake build Descent
 lake lint
 lake exe lint-style Descent
 lake test
 ```
 
-For a quick downstream surface smoke check, run:
+For a quick public-surface smoke check, run:
 
 ```bash
-lake build Descent.API
+lake build Descent
 ```
 
 ## High-risk Lean edits
@@ -45,9 +45,16 @@ CI also runs targeted builds when high-risk patterns are detected by `scripts/ci
 ## Style and structure
 
 - Keep imports as narrow as practical.
+- Organize internals into focused one-topic files, while keeping topic-level umbrellas stable.
 - Include module docstrings and declaration docstrings for nontrivial API.
-- Prefer stable entry points (`Descent.API`, `Descent.lean`, `Descent/FiberedCategory.lean`,
-  `Descent/Pseudofunctor.lean`) over deep module imports in downstream code.
+- Prefer stable entry points (`Descent.lean`, `Descent/Cech.lean`,
+  `Descent/FiberedCategory.lean`, `Descent/Pseudofunctor.lean`) over deep module imports in
+  downstream code.
+- For local implementation files, prefer focused imports such as
+  `.../Reindexing/Basic`, `.../Reindexing/Iso`, and
+  `.../CechDescentData/Conversions/*` instead of broader umbrellas.
+- Keep regression/test aggregation outside the `Descent.*` library hierarchy; this repository uses
+  `DescentTestDriver.lean` to compile the example modules directly for that purpose.
 
 ## Pull request checklist
 

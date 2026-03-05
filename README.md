@@ -33,19 +33,34 @@ Main bridges proved in the repository:
 For downstream use, import:
 
 ```lean
-import Descent.API
+import Descent
 ```
 
-Core and full aggregators:
+Main entry points:
 
-- `Descent`: core single-morphism API
-- `Descent.API`: canonical public API (core + bridge/equivalence modules)
-- `Descent.All`: full-project aggregator used in CI
+- `Descent`: user-facing umbrella for the library
+- `Descent.Cech`: focused Čech overlap API
+- `Descent.Cech.Eq`: Čech groupoid API
+- `Descent.FiberedCategory`: focused fibered-category API
+- `Descent.Pseudofunctor`: focused pseudofunctor API
+
+Focused internal implementation files now live under:
+
+- `Descent/CategoryTheory/FiberedCategory/Reindexing/Basic.lean`
+- `Descent/CategoryTheory/FiberedCategory/Reindexing/Iso.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Conversions/SingleToSingleton.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Conversions/SingletonToSingle.lean`
+- `Descent/Pseudofunctor/Descent/CechDescentData/Conversions/Hom.lean`
+
+Keep using the stable topic modules (`Descent`, `Descent.Cech`, `Descent.FiberedCategory`,
+`Descent.Pseudofunctor`, `.../Reindexing.lean`, `.../Conversions.lean`) rather than importing
+these internal files from downstream projects.
 
 ## Build
 
 ```bash
 lake build
+lake build Descent
 lake lint
 lake test
 ```
