@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Elias Judin
 -/
 
-import Descent.Pseudofunctor.Descent.CechDescentData.Conversions
+import Descent.Pseudofunctor.Descent.CechDescentData.Conversions.Hom
 
 /-!
 # Functors between single and singleton descent data
